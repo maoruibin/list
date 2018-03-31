@@ -1,4 +1,4 @@
-# Byte-compiled / optimized / DLL files
+modu# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
@@ -99,3 +99,5 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+node_modules/
