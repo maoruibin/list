@@ -1,6 +1,6 @@
 <template>
 	<header class="main-header">
-		<h1>咕咚 Todo</h1>
+		<h1>今日 Todo</h1>
 	</header>
 </template>
 <style lang="stylus" scoped>

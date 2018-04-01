@@ -1,15 +1,15 @@
 {
-  "name": "vue-ssr-demo",
+  "name": "TodayTodo",
   "version": "1.0.0",
-  "description": "demo",
+  "description": "todo app",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "cross-env NODE_ENV=production  webpack            --config webpack.config.js",
-    "dev"  : "cross-env NODE_ENV=development webpack-dev-server --config webpack.config.js"
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --config webpack.config.js"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "gudong",
+  "license": "MIT",
   "dependencies": {
     "babel-helper-vue-jsx-merge-props": "^2.0.3",
     "babel-loader": "^7.1.4",
