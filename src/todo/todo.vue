@@ -79,7 +79,7 @@ export default{
 			if(this.selectGroup.length == 0){
 				return
 			}
-			const apiTodoByGroup = "http://0.0.0.0:3000/todos/api/v1/todo/"+this.selectGroup
+			const apiTodoByGroup = "http://waishuo.leanapp.cn/todos/api/v1/todo/"+this.selectGroup
 	        this.$http.get(apiTodoByGroup).then(response => {
 
 				this.todos = response.body.results
@@ -99,7 +99,7 @@ export default{
 	methods: {
 		// 添加一个 todo 
 		addTodo(e){
-			const api = "http://0.0.0.0:3000/todos/api/v1/todo"
+			const api = "http://waishuo.leanapp.cn/todos/api/v1/todo"
 			const params = {
 				'content': e.target.value.trim(),
 				'groupId': this.selectGroup
