@@ -44,7 +44,8 @@
 import Item from './item.vue'
 import Tabs from './tabs.vue'
 let id = 0
-let host = '0.0.0.0:3000'
+// let host = '0.0.0.0:3000'
+let host = 'waishuo.leanapp.cn'
 export default{
 	data(){
 		return{
