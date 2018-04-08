@@ -6,6 +6,9 @@ import Resource from 'vue-resource'
 Vue.use(Resource)
 
 // Vue.http.options.emulateJSON =true
+// Vue.http.interceptors.push((request, next) => {
+//     request.headers.set('Access-Control-Allow-Origin', '*')
+// })
 
 import './assets/styles/global.styl'
 
