@@ -74,7 +74,7 @@ if(isDev){
 	})
 	config.devtool = '#cheap-module-eval-source-map'
 	config.devServer = {
-		port:'8000',
+		port:'8001',
 		host:'0.0.0.0',
 		overlay:{
 			// webpack编译出现错误，则显示到网页上
