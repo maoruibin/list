@@ -6,7 +6,7 @@
 				type="text"
 				class="add-input"
 				autofocus="autofocus"
-				placeholder="今日要做什么"
+				placeholder="今日要做什么呢"
 				@keyup.enter="addTodo"/>
 
 				<select
@@ -96,7 +96,7 @@ export default{
 	methods: {
 		// 添加一个 todo
 		addTodo(e){
-			const api = "http://"+host+"/todos/api/v1/todo"
+			const api = "http://"+host+"/todos/api/v1/todos"
 			const params = {
 				'content': e.target.value.trim(),
 				'groupId': this.selectGroup,
@@ -105,21 +105,40 @@ export default{
 				'completed': 0
 			}
 			console.log("params is "+params)
-			var vm = this
-			vm.$http(
-				api,
-				'post',
-				params,
-				{
-          'Access-Control-Allow-Origin': '*',
+			// var vm = this
+			// vm.$http(
+			// 	api,
+			// 	'post',
+			// 	params,
+			// 	{
+      //     'Access-Control-Allow-Origin': '*',
+			//
+      //   },
+			// 	{emulateJSON: true}
+			// )
+			// 	.then((response) =>{
+			// 		vm.todos.unshift(response.data.results)
+			// 		e.target.value = ''
+			// })
 
-        },
-				{emulateJSON: true}
-			)
-				.then((response) =>{
-					vm.todos.unshift(response.data.results)
-					e.target.value = ''
-			})
+			// POST /someUrl
+		  this.$http.post(api, params).then(response => {
+
+		    // get status
+		    console.log(response.status);
+
+		    // get status text
+		    console.log(response.statusText);
+
+		    // get 'Expires' header
+		    // response.headers.get('Expires');
+
+		    // get body data
+		    this.someData = response.body;
+				console.log(this.someData.todo)
+		  }, response => {
+		    // error callback
+		  });
 
 		},
 
