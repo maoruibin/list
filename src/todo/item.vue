@@ -5,7 +5,9 @@
 		 class="toggle"
 		 v-model="todo.completed"
 		>
-		<label>{{todo.content}}</label>
+		
+		<label>{{todo.title}}</label>
+
 		<button
 			class="destroy"
 			@click="deleteTodo"
@@ -23,7 +25,7 @@
 		methods: {
 			deleteTodo(){
 				// 传递给父组件让其执行删除
-				this.$emit('delete',this.todo.id)
+				this.$emit('delete',this.todo.objectId)
 			}
 		}
 	}

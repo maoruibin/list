@@ -10,6 +10,8 @@ Vue.use(Resource)
 //     request.headers.set('Access-Control-Allow-Origin', '*')
 // })
 
+// Vue.http.headers.common['Access-Control-Allow-Origin'] = '*';
+
 import './assets/styles/global.styl'
 
 
