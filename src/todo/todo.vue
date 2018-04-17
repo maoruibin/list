@@ -14,13 +14,13 @@
 				v-model="selectGroup">
 				  	<option
 				  		v-for="item in groups"
-				  		v-bind:value="item.objectId"
-				  		@click="changeGroup(item.objectId)"
+				  		v-bind:value="item.name"
 				  		>
 				  		{{item.name}}
 					</option>
 				</select>
 
+				<span style="display:none">Selected: {{ selectGroup }}</span>
 			</div>
 
 			<Item
@@ -64,87 +64,81 @@ export default{
 	},
 	mounted:function(){
 		//获取分组信息
-		const apiGroup = "http://"+host+"/todos/api/v1/group"
-        this.$http.get(apiGroup).then(response => {
+		const apiGroup = "http://"+host+"/todos/api/v1.0/group"
+    this.$http.get(apiGroup).then(response => {
+				this.groups = response.body.results
+				console.log("len is "+this.groups.length);
+				if(this.groups.length === 0){
 
-		    this.groups = response.body.results
-
-		  }, response => {
-
-		});
+				}else{
+					this.getTodosByGroup(this.groups[0])
+					this.selectGroup = this.groups[0].name
+				}
+		  }, response => {});
     },
 	computed: {
 		filterTodos(){
-			//
-			// const apiTodoByGroup = "http://waishuo.leanapp.cn/todos/api/v1/todo/"+this.selectGroup
-	    // this.$http.get(apiTodoByGroup).then(response => {
-			//
-			// this.todos = response.body.results
-			//     console.log(this.selectGroup+"  --> size is "+this.todos.length)
-			//   }, response => {
-			//
-			// });
+
 			if(this.filter === 'all'){
 				return this.todos
 			}
 
 			const completed = this.filter === 'completed'
 
-			return this.todos.filter(todo => completed === todo.completed)
+			return this.todos.filter(todo => todo.completed)
 		}
 	},
 	methods: {
 		// 添加一个 todo
 		addTodo(e){
-			const api = "http://"+host+"/todos/api/v1/todos"
-			const params = {
-				'content': e.target.value.trim(),
-				'groupId': this.selectGroup,
-				'title': e.target.value.trim(),
-				'priority': 0,
-				'completed': 0
-			}
-			console.log("params is "+params)
-			// var vm = this
-			// vm.$http(
-			// 	api,
-			// 	'post',
-			// 	params,
-			// 	{
-      //     'Access-Control-Allow-Origin': '*',
-			//
-      //   },
-			// 	{emulateJSON: true}
-			// )
-			// 	.then((response) =>{
-			// 		vm.todos.unshift(response.data.results)
-			// 		e.target.value = ''
-			// })
+		  const api = "http://"+host+"/todos/api/v1.0/todos"
+			var that = this
+			var select = this.groups.find(function(group){return group.name === that.selectGroup})
+			console.log("select is "+select.objectId);
+			var formData = new FormData();
+			formData.append('title', e.target.value.trim());
+			formData.append('content', e.target.value.trim());
+			formData.append('groupId', select.objectId);
+			formData.append('priority', '0');
+			formData.append('completed', 'false');
 
 			// POST /someUrl
-		  this.$http.post(api, params).then(response => {
-
-		    // get status
-		    console.log(response.status);
-
-		    // get status text
-		    console.log(response.statusText);
-
-		    // get 'Expires' header
-		    // response.headers.get('Expires');
-
-		    // get body data
-		    this.someData = response.body;
-				console.log(this.someData.todo)
+		  this.$http.post(api, formData).then(response => {
+				this.todos.unshift(response.body.todo)
+				e.target.value= ''
 		  }, response => {
-		    // error callback
+
 		  });
 
 		},
 
+		getTodosByGroup(group){
+			console.log("get by "+group.name+" group id "+group.objectId);
+			const api = "http://"+host+"/todos/api/v1.0/group/"+group.objectId
+			this.$http.get(api).then(response => {
+					console.log("len groups is "+response.body.results.length);
+					for(var item in response.body.results){
+						this.todos.unshift(response.body.results[item])
+					}
+				}, response => {});
+		},
+
 		deleteItem(objectId){
 			console.log("current objectId is "+objectId)
-			this.todos.splice(this.todos.findIndex(todo => todo.objectId === objectId),1)
+
+			const api = "http://"+host+"/todos/api/v1.0/todos/"+objectId
+			const config = [
+				{
+					"headers":{
+						"Access-Control-Allow-Origin":"*"
+					}
+				}
+			]
+			this.$http.delete(api,config).then(response => {
+					console.log("result is "+response.body.result);
+					this.todos.splice(this.todos.findIndex(todo => todo.objectId === objectId),1)
+					console.log("删除成功");
+				}, response => {});
 		},
 
 		toggleFilter(state){
@@ -153,9 +147,6 @@ export default{
 		},
 		clearAll(){
 			this.todos = this.todos.filter(todo => !todo.completed)
-		},
-		changeGroup(id){
-			console.log(id)
 		}
 	}
 }

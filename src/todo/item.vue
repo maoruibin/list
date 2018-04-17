@@ -1,13 +1,13 @@
 <template>
 	<div :class="['todo-item',todo.completed ? 'completed':'']">
 		<input
-		 type="checkbox" 
+		 type="checkbox"
 		 class="toggle"
 		 v-model="todo.completed"
 		>
-		<label>{{todo.content}}</label>
-		<button 
-			class="destroy" 
+		<label>{{todo.title}}</label>
+		<button
+			class="destroy"
 			@click="deleteTodo"
 		/>
 	</div>
@@ -23,7 +23,7 @@
 		methods: {
 			deleteTodo(){
 				// 传递给父组件让其执行删除
-				this.$emit('delete',this.todo.id)
+				this.$emit('delete',this.todo.objectId)
 			}
 		}
 	}
