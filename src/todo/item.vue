@@ -1,13 +1,13 @@
 <template>
 	<div :class="['todo-item',todo.completed ? 'completed':'']">
 		<input
-		 type="checkbox" 
+		 type="checkbox"
 		 class="toggle"
 		 v-model="todo.completed"
 		>
 		<label>{{todo.content}}</label>
-		<button 
-			class="destroy" 
+		<button
+			class="destroy"
 			@click="deleteTodo"
 		/>
 	</div>
