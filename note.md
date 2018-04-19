@@ -24,3 +24,11 @@
 * 使用 Vue-Resource 进行网络请求
 
 [Vue\.js——vue\-resource全攻略 \- keepfool \- 博客园](http://www.cnblogs.com/keepfool/p/5657065.html)
+
+## 解决跨域问题
+
+delete 一直失败，先设置了 flask 的 response，让所有的请求都支持跨域，具体通过参考
+* [修改 Flask 的默认响应头实现跨域\(CORS\)支持 \| ZRONG's Blog](https://blog.zengrong.net/post/2615.html)
+好文啊
+但是还是提示删除失败，然后找 Vue 的原因，找到了。
+* [javascript \- Request header field Access\-Control\-Allow\-Headers is not allowed by Access\-Control\-Allow\-Headers \- Stack Overflow](https://stackoverflow.com/questions/25727306/request-header-field-access-control-allow-headers-is-not-allowed-by-access-contr)

@@ -19,10 +19,6 @@
 				  		{{item.name}}
 					</option>
 				</select>
-				<div>
-				<span>Selected: {{ selectGroup.name }}</span>
-				</div>
-
 				<span style="display:none">Selected: {{ selectGroup }}</span>
 			</div>
 
@@ -31,6 +27,7 @@
 				v-for="todo in filterTodos"
 				:key="todo.objectId"
 				@delete="deleteItem"
+				@update="updateItem"
 			/>
 			<Tabs
 				:filter="filter"
@@ -114,6 +111,8 @@ export default{
 
 			// POST /someUrl
 		  this.$http.post(api, formData).then(response => {
+				var flag = response.body.todo.completed
+				response.body.todo.completed =  flag === "false" ? false : true;
 				this.todos.unshift(response.body.todo)
 				e.target.value= ''
 		  }, response => {
@@ -128,22 +127,44 @@ export default{
 			this.$http.get(api).then(response => {
 					console.log("len groups is "+response.body.results.length);
 					for(var item in response.body.results){
+						var flag = response.body.results[item].completed
+						response.body.results[item].completed =  flag === "false" ? false : true;
 						this.todos.unshift(response.body.results[item])
 					}
 				}, response => {});
 		},
+		updateItem(todo){
+			var objectId = todo.objectId
+			console.log("update  "+todo.title+" objectId is "+objectId);
+			const api = "http://"+host+"/todos/api/v1.0/todos/"+objectId
+			const config = {
+					headers : {
+							'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+					}
+			}
+			var formData = new FormData();
+			formData.append('title', todo.title);
+			formData.append('content', todo.content);
+			formData.append('groupId', todo.groupId);
+			formData.append('priority', todo.priority);
+			formData.append('completed', todo.completed == true ? 'true' : 'false');
 
+			this.$http.put(api, formData, config).then(response => {
+					console.log("result is "+response.body.todo);
+					// this.todos.splice(this.todos.findIndex(todo => todo.objectId === objectId),0,0)
+					console.log("更新成功");
+				}, response => {});
+		},
 		deleteItem(objectId){
 			console.log("current objectId is "+objectId)
 
 			const api = "http://"+host+"/todos/api/v1.0/todos/"+objectId
-			const config = [
+			const config =
 				{
-					"headers":{
-						"Access-Control-Allow-Origin":"*"
-					}
+				    headers : {
+				        'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+				    }
 				}
-			]
 			this.$http.delete(api,config).then(response => {
 					console.log("result is "+response.body.result);
 					this.todos.splice(this.todos.findIndex(todo => todo.objectId === objectId),1)

@@ -3,9 +3,10 @@
 		<input
 		 type="checkbox"
 		 class="toggle"
+		 v-on:change="toggleCompleted"
 		 v-model="todo.completed"
 		>
-		
+
 		<label>{{todo.title}}</label>
 
 		<button
@@ -26,6 +27,12 @@
 			deleteTodo(){
 				// 传递给父组件让其执行删除
 				this.$emit('delete',this.todo.objectId)
+			},
+			toggleCompleted(event){
+				console.log("name is  checked "+this.todo.completed);
+
+      	let data = this.todo
+				this.$emit('update',data)
 			}
 		}
 	}
