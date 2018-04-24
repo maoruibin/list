@@ -1,6 +1,7 @@
 <template>
 	<div id="app">
 		<div id="cover"></div>
+		<Login/>
 		<Header/>
 		<Todo/>
 		<Footer/>
@@ -9,10 +10,12 @@
 
 <script >
 import Header from './todo/header.vue'
+import Login from './todo/login.vue'
 import Todo from './todo/todo.vue'
 import Footer from './todo/footer.jsx'
 	export default{
 		components: {
+			Login,
 			Header,
 			Footer,
 			Todo
