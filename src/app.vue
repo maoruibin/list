@@ -1,10 +1,14 @@
 <template>
 	<div id="app">
 		<div id="cover"></div>
-		<Login/>
+
+		<Login />
 		<Header/>
-		<Todo/>
-		<Footer/>
+		<div v-if="user != null">
+				<Todo/>
+				<Footer/>
+		</div>
+
 	</div>
 </template>
 
@@ -14,6 +18,11 @@ import Login from './todo/login.vue'
 import Todo from './todo/todo.vue'
 import Footer from './todo/footer.jsx'
 	export default{
+		data(){
+			return{
+				user:JSON.parse(localStorage.getItem("user"))
+			}
+		},
 		components: {
 			Login,
 			Header,

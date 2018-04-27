@@ -19,7 +19,6 @@
 				  		{{item.name}}
 					</option>
 				</select>
-				<span style="display:none">Selected: {{ selectGroup }}</span>
 			</div>
 
 			<Item
@@ -54,7 +53,8 @@ export default{
 			// 过滤器
 			filter:'all',
 			groups:[],
-			selectGroup:''
+			selectGroup:'',
+			user:{}
 		}
 	},
 
@@ -68,8 +68,11 @@ export default{
 	},
 
 	mounted:function(){
-
-		const apiGroup = "http://"+host+"/todos/api/v1.0/group"
+		this.user = JSON.parse(localStorage.getItem("user"))
+		if(!this.user){
+			return
+		}
+		const apiGroup = "http://"+host+"/todos/api/v1.0/group/"+this.user.id
     this.$http.get(apiGroup).then(response => {
 				this.groups = response.body.results
 				console.log("len is "+this.groups.length);
@@ -108,24 +111,24 @@ export default{
 			formData.append('groupId', select.objectId);
 			formData.append('priority', '0');
 			formData.append('completed', 'false');
+			formData.append('userId', this.user.id);
 
 			// POST /someUrl
 		  this.$http.post(api, formData).then(response => {
-				var flag = response.body.todo.completed
-				response.body.todo.completed =  flag === "false" ? false : true;
-				this.todos.unshift(response.body.todo)
+				var flag = response.body.entity.completed
+				response.body.entity.completed =  flag === "false" ? false : true;
+				this.todos.unshift(response.body.entity)
 				e.target.value= ''
 		  }, response => {
 
 		  });
 
 		},
-
+		// 获取指定分组的 todo
 		getTodosByGroup(group){
 			console.log("get by "+group.name+" group id "+group.objectId);
-			const api = "http://"+host+"/todos/api/v1.0/group/"+group.objectId
+			const api = "http://"+host+"/todos/api/v1.0/todos/"+this.user.id+"/"+group.objectId
 			this.$http.get(api).then(response => {
-					console.log("len groups is "+response.body.results.length);
 					for(var item in response.body.results){
 						var flag = response.body.results[item].completed
 						response.body.results[item].completed =  flag === "false" ? false : true;
@@ -150,7 +153,7 @@ export default{
 			formData.append('completed', todo.completed == true ? 'true' : 'false');
 
 			this.$http.put(api, formData, config).then(response => {
-					console.log("result is "+response.body.todo);
+					console.log("result is "+response.body.entity);
 					// this.todos.splice(this.todos.findIndex(todo => todo.objectId === objectId),0,0)
 					console.log("更新成功");
 				}, response => {});
