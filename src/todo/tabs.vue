@@ -11,7 +11,7 @@
 			{{state}}
 			</span>
 		</span>
-		<span 
+		<span
 			class="clear"
 			@click="clearAllCompleted"
 		>
@@ -57,7 +57,7 @@
 
 <style lang="stylus" scoped>
     .helper {
-        font-weight 100
+        font-weight 80
         display flex
         justify-content space-between
         padding 5px 0

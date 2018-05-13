@@ -5,6 +5,10 @@ import App from './app.vue'
 import Resource from 'vue-resource'
 Vue.use(Resource)
 
+
+import { Button, Select } from 'element-ui';
+Vue.use(Button)
+
 // Vue.http.options.emulateJSON =true
 // Vue.http.interceptors.push((request, next) => {
 //     request.headers.set('Access-Control-Allow-Origin', '*')
@@ -13,7 +17,6 @@ Vue.use(Resource)
 // Vue.http.headers.common['Access-Control-Allow-Origin'] = '*';
 
 import './assets/styles/global.styl'
-
 
 const root = document.createElement('div')
 document.body.appendChild(root)

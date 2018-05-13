@@ -1,42 +1,34 @@
 <template>
-	<div>
+
+	<div class="child">
+
+		<div class="topAction">
+			<span>{{group.name}}</span>
+			<div class="actionArea">
+				<span @click="showAddInput">添加</span>
+				<span>更多</span>
+				<el-button type="success">成功按钮</el-button>
+			</div>
+		</div>
+
 		<section class="real-app">
-			<div class="box">
+			<div class="box" v-show="showInput">
 				<input
 				type="text"
 				class="add-input"
 				autofocus="autofocus"
-				placeholder="今日要做什么"
+				placeholder="请输入要做的事"
 				@keyup.enter="addTodo"/>
-
-				<select
-				class="select-group"
-				v-model="selectGroup">
-				  	<option
-				  		v-for="item in groups"
-				  		v-bind:value="item.name"
-				  		>
-				  		{{item.name}}
-					</option>
-				</select>
 			</div>
-
-			<Item
-				:todo="todo"
-				v-for="todo in filterTodos"
-				:key="todo.objectId"
-				@delete="deleteItem"
-				@update="updateItem"
-			/>
-			<Tabs
-				:filter="filter"
-				:todos="todos"
-				@toggle="toggleFilter"
-				@clear="clearAll"
-			/>
 		</section>
+		<Item
+			:todo="todo"
+			v-for="todo in filterTodos"
+			:key="todo.objectId"
+			@delete="deleteItem"
+			@update="updateItem"
+		/>
 	</div>
-
 
 </template>
 <script>
@@ -46,15 +38,24 @@ let id = 0
 // let host = '0.0.0.0:3000'
 let host = 'waishuo.leanapp.cn'
 export default{
+	props: {
+		group: {
+			type: Object,
+			required: true
+		},
+		user: {
+			type: Object,
+			required: true
+		},
+	},
 	data(){
 		return{
 			// 容纳 TODO 的集合
 			todos:[],
 			// 过滤器
 			filter:'all',
-			groups:[],
-			selectGroup:'',
-			user:{}
+			// 显示添加 todo 的输入框
+			showInput:false
 		}
 	},
 
@@ -64,51 +65,44 @@ export default{
 	},
 
 	created:function(){
-		this.selectGroup = '这周'
+
 	},
 
 	mounted:function(){
-		this.user = JSON.parse(localStorage.getItem("user"))
-		if(!this.user){
-			return
-		}
-		const apiGroup = "http://"+host+"/todos/api/v1.0/group/"+this.user.id
-    this.$http.get(apiGroup).then(response => {
-				this.groups = response.body.results
-				console.log("len is "+this.groups.length);
-				if(this.groups.length === 0){
-
-				}else{
-					this.getTodosByGroup(this.groups[0])
-					this.selectGroup = this.groups[0].name
+		const api = "http://"+host+"/todos/api/v1.0/todos/"+this.user.id+"/"+this.group.objectId
+		this.$http.get(api).then(response => {
+				for(var item in response.body.results){
+					var flag = response.body.results[item].completed
+					response.body.results[item].completed =  flag === "false" ? false : true;
+					this.todos.unshift(response.body.results[item])
 				}
-		  }, response => {});
-
-    },
+			}, response => {});
+  },
 	computed: {
 		filterTodos(){
-
 			if(this.filter === 'all'){
 				return this.todos
 			}
 
 			const completed = this.filter === 'completed'
-
 			return this.todos.filter(todo => todo.completed)
 		}
 	},
 	methods: {
-
+		showAddInput:function(event){
+			console.log("显示添加输入框");
+			this.showInput = !this.showInput
+		},
 		// 添加一个 todo
 		addTodo(e){
 		  const api = "http://"+host+"/todos/api/v1.0/todos"
 			var that = this
-			var select = this.groups.find(function(group){return group.name === that.selectGroup})
-			console.log("select is "+select.objectId);
+
+
 			var formData = new FormData();
 			formData.append('title', e.target.value.trim());
 			formData.append('content', e.target.value.trim());
-			formData.append('groupId', select.objectId);
+			formData.append('groupId', this.group.objectId);
 			formData.append('priority', '0');
 			formData.append('completed', 'false');
 			formData.append('userId', this.user.id);
@@ -124,18 +118,7 @@ export default{
 		  });
 
 		},
-		// 获取指定分组的 todo
-		getTodosByGroup(group){
-			console.log("get by "+group.name+" group id "+group.objectId);
-			const api = "http://"+host+"/todos/api/v1.0/todos/"+this.user.id+"/"+group.objectId
-			this.$http.get(api).then(response => {
-					for(var item in response.body.results){
-						var flag = response.body.results[item].completed
-						response.body.results[item].completed =  flag === "false" ? false : true;
-						this.todos.unshift(response.body.results[item])
-					}
-				}, response => {});
-		},
+
 		updateItem(todo){
 			var objectId = todo.objectId
 			console.log("update  "+todo.title+" objectId is "+objectId);
@@ -188,49 +171,58 @@ export default{
 
 <style lang="stylus" scoped>
 	.real-app {
-        width 600px
-        margin 0 auto
-        box-shadow 0 0 5px #666
-    }
+    width: 100%;
+    margin: 0 auto;
+    box-shadow: 0 0 5px #666;
+		border: 0px solid blue;
+  }
 
 	.box{
 		display: flex
 		flex-direction: row
+		margin-bottom: 10px;
 	}
 
-    .add-input {
-        position: relative;
-        margin: 0;
-        width: 80%;
-        font-size: 24px;
-        font-family: inherit;
-        font-weight: inherit;
-        line-height: 1.4em;
-        border: 0;
-        outline: none;
-        color: inherit;
-        box-sizing: border-box;
-        font-smoothing: antialiased;
-        padding: 16px 16px 16px 36px;
-        border: none;
-        box-shadow: inset 0 -2px 1px rgba(0, 0, 0, 0.03);
-    }
-    .select-group{
-    	position: relative;
-        margin: 0;
-        width: 20%;
-        background-color:#ffffff;
-        font-size: 24px;
-        font-family: inherit;
-        font-weight: inherit;
-        line-height: 1.4em;
-        border: 0;
-        outline: none;
-        color: inherit;
-        box-sizing: border-box;
-        font-smoothing: antialiased;
-        padding: 16px 16px 16px 36px;
-        border: none;
-        box-shadow: inset 0 -2px 1px rgba(0, 0, 0, 0.03);
-    }
+  .add-input {
+      position: relative;
+      margin: 0;
+      width: 100%;
+      font-size: 18px;
+      font-family: inherit;
+      font-weight: inherit;
+      line-height: 1.2em;
+      border: 0;
+      outline: none;
+      color: inherit;
+      box-sizing: border-box;
+      font-smoothing: antialiased;
+      padding: 10px 10px 10px 16px;
+      border: none;
+      box-shadow: inset 0 -2px 1px rgba(0, 0, 0, 0.03);
+  }
+
+	.child{
+		overflow:scroll;
+		padding:16px;
+		margin-right:10px;
+	}
+	.child > ul > li{
+		height: 30px;
+	}
+
+	.topAction{
+		width: 100%;
+		line-height:40px;
+		display: inline-block;
+		border: 0px solid red;
+	}
+	.actionArea{
+		float: right;
+	}
+
+	.actionArea > span{
+		color:#000000;
+		cursor:pointer;
+	}
+
 </style>

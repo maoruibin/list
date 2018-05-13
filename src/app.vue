@@ -5,7 +5,7 @@
 		<Login />
 		<Header/>
 		<div v-if="user != null">
-				<Todo/>
+				<Container/>
 				<Footer/>
 		</div>
 
@@ -16,6 +16,7 @@
 import Header from './todo/header.vue'
 import Login from './todo/login.vue'
 import Todo from './todo/todo.vue'
+import Container from './todo/container.vue'
 import Footer from './todo/footer.jsx'
 	export default{
 		data(){
@@ -27,7 +28,8 @@ import Footer from './todo/footer.jsx'
 			Login,
 			Header,
 			Footer,
-			Todo
+			Todo,
+			Container
 		}
 	}
 </script>

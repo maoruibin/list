@@ -28,6 +28,14 @@ const config =  {
 				loader: 'vue-loader'
 			},
 			{
+         test: /\\\\\\\\.css$/,
+         loader: "style!css"
+       },
+       {
+         test: /\\\\\\\\.(eot|woff|woff2|ttf)([\\\\\\\\?]?.*)$/,
+         loader: "file"
+       },
+			{
 				test: /\.(gif|jpg|jpeg|png|svg)$/,
 				use: [
 					{

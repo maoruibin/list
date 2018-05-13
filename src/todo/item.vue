@@ -40,10 +40,13 @@
 
 <style lang="stylus" scoped>
     .todo-item{
-        position relative
-        background-color #fff
-        font-size 24px
-        border-bottom 1px solid rgba(0,0,0,0.06)
+        position: relative;
+        background-color: #fff;
+        font-size: 18px;
+				margin-bottom: 10px;
+				background-color: #ffffff;
+	      border:1px solid #ccc;
+	      border-radius:6px;
         &:hover{
             .destroy:after{
                 content: '×'
@@ -61,7 +64,7 @@
         &.completed{
             label{
                 color: #d9d9d9;
-                text-decoration line-through
+                text-decoration: line-through;
             }
         }
     }
