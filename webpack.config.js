@@ -1,7 +1,7 @@
 const path = require('path')
 const HTMLPlugin = require('html-webpack-plugin')
 const webpack = require('webpack')
-//分离 CSS 文件
+//打正式包时 分离 CSS 文件 把它从 JS 文件中分离
 const ExtractPlugin = require('extract-text-webpack-plugin')
 
 const isDev = process.env.NODE_ENV === 'development'
@@ -9,7 +9,7 @@ const isDev = process.env.NODE_ENV === 'development'
 const config =  {
 	target: 'web',
 	// 入口配置 也就是目标文件
-	entry:path.join(__dirname,'src/index.js'),
+	entry:path.join(__dirname,'src/main.js'),
 
 	// 最终的输入文件
 	output:{
@@ -28,13 +28,17 @@ const config =  {
 				loader: 'vue-loader'
 			},
 			{
-         test: /\\\\\\\\.css$/,
-         loader: "style!css"
-       },
-       {
-         test: /\\\\\\\\.(eot|woff|woff2|ttf)([\\\\\\\\?]?.*)$/,
-         loader: "file"
-       },
+				test: /\.css$/,
+				use:[
+					'style-loader',
+					'css-loader'
+				]
+			},
+			//引入 UI 框架时 他们有自己的 ttf 文件这里需要处理下
+			{
+        test: /\.(woff|woff2|eot|ttf|svg)(\?.*$|$)/,
+        loader: 'url-loader?importLoaders=1&limit=100000'
+      },
 			{
 				test: /\.(gif|jpg|jpeg|png|svg)$/,
 				use: [
@@ -44,7 +48,6 @@ const config =  {
 							limit:1024,
 							name:'[name]-bbb.[ext]'
 						}
-
 					}
 				]
 			},
@@ -80,6 +83,7 @@ if(isDev){
 				'stylus-loader'
 			]
 	})
+	// es6 代码映射为可以看懂的代码
 	config.devtool = '#cheap-module-eval-source-map'
 	config.devServer = {
 		port:'8001',

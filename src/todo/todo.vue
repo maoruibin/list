@@ -5,9 +5,19 @@
 		<div class="topAction">
 			<span>{{group.name}}</span>
 			<div class="actionArea">
-				<span @click="showAddInput">添加</span>
-				<span>更多</span>
-				<el-button type="success">成功按钮</el-button>
+
+
+				<i class="el-icon-plus" @click="showAddInput"></i>
+
+				<el-dropdown trigger="click"  @command="handleCommand">
+				      <span class="el-dropdown-link">
+				        <i class="el-icon-more"></i>
+				      </span>
+				      <el-dropdown-menu slot="dropdown">
+				        <el-dropdown-item command="e" >编辑</el-dropdown-item>
+								<el-dropdown-item divided command="d">删除</el-dropdown-item>
+				      </el-dropdown-menu>
+				    </el-dropdown>
 			</div>
 		</div>
 
@@ -34,6 +44,7 @@
 <script>
 import Item from './item.vue'
 import Tabs from './tabs.vue'
+
 let id = 0
 // let host = '0.0.0.0:3000'
 let host = 'waishuo.leanapp.cn'
@@ -92,6 +103,30 @@ export default{
 		showAddInput:function(event){
 			console.log("显示添加输入框");
 			this.showInput = !this.showInput
+		},
+		handleCommand:function(command){
+			if(command === 'd'){
+				this.deleteGroup()
+			}else{
+				this.$message('click on item ' + command);
+			}
+		},
+		deleteGroup:function(){
+			this.$confirm('此操作将永久删除该分组, 是否继续?', '提示', {
+			          confirmButtonText: '删除',
+			          cancelButtonText: '取消',
+			          type: 'warning'
+			        }).then(() => {
+			          this.$message({
+			            type: 'success',
+			            message: '删除成功!'
+			          });
+			        }).catch(() => {
+			          this.$message({
+			            type: 'info',
+			            message: '已取消删除'
+			          });
+			        });
 		},
 		// 添加一个 todo
 		addTodo(e){
@@ -203,7 +238,9 @@ export default{
 
 	.child{
 		overflow:scroll;
-		padding:16px;
+		padding-left:16px;
+		padding-right:16px;
+		padding-bottom:16px;
 		margin-right:10px;
 	}
 	.child > ul > li{

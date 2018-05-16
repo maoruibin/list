@@ -5,9 +5,16 @@ import App from './app.vue'
 import Resource from 'vue-resource'
 Vue.use(Resource)
 
+//
+// import VueBlu from 'vue-blu'
+// import 'vue-blu/dist/css/vue-blu.min.css'
+//
+// Vue.use(VueBlu)
 
-import { Button, Select } from 'element-ui';
-Vue.use(Button)
+
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+Vue.use(ElementUI);
 
 // Vue.http.options.emulateJSON =true
 // Vue.http.interceptors.push((request, next) => {
