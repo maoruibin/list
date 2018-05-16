@@ -1,8 +1,7 @@
 <template>
-
 	<div class="child">
 
-		<div class="topAction">
+		<div v-show="!lastGroupAction" class="topAction">
 			<span>{{group.name}}</span>
 			<div class="actionArea">
 
@@ -38,6 +37,8 @@
 			@delete="deleteItem"
 			@update="updateItem"
 		/>
+
+		<el-button style="margin-top:12px;" v-show="lastGroupAction" @click="addGroup" type="primary" plain>添加分组</el-button>
 	</div>
 
 </template>
@@ -66,7 +67,8 @@ export default{
 			// 过滤器
 			filter:'all',
 			// 显示添加 todo 的输入框
-			showInput:false
+			showInput:false,
+			lastGroupAction:this.group.name === 'addGroup'
 		}
 	},
 
@@ -101,26 +103,30 @@ export default{
 	},
 	methods: {
 		showAddInput:function(event){
-			console.log("显示添加输入框");
 			this.showInput = !this.showInput
 		},
 		handleCommand:function(command){
 			if(command === 'd'){
-				this.deleteGroup()
-			}else{
-				this.$message('click on item ' + command);
+				this.showDeleteDialog()
+			}else if(command === 'e'){
+				this.$emit('edit',this.group)
 			}
 		},
 		deleteGroup:function(){
+			console.log('delete real');
+			//传递给父组件让其执行删除
+			this.$emit('delete',this.group.objectId)
+		},
+		addGroup:function(){
+			this.$emit('actionGroup')
+		},
+		showDeleteDialog:function(){
 			this.$confirm('此操作将永久删除该分组, 是否继续?', '提示', {
 			          confirmButtonText: '删除',
 			          cancelButtonText: '取消',
 			          type: 'warning'
 			        }).then(() => {
-			          this.$message({
-			            type: 'success',
-			            message: '删除成功!'
-			          });
+								this.deleteGroup()
 			        }).catch(() => {
 			          this.$message({
 			            type: 'info',
