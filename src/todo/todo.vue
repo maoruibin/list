@@ -5,7 +5,7 @@
 			<span>{{group.name}}</span>
 			<div class="actionArea">
 
-				<i class="el-icon-plus" @click="showAddInput"></i>
+				<i class="el-icon-plus" @click="showAddInput" style="margin-left:8dp;"></i>
 
 				<el-dropdown trigger="click"  @command="handleCommand">
 				      <span class="el-dropdown-link">

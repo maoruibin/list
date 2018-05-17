@@ -5,13 +5,6 @@ import App from './app.vue'
 import Resource from 'vue-resource'
 Vue.use(Resource)
 
-//
-// import VueBlu from 'vue-blu'
-// import 'vue-blu/dist/css/vue-blu.min.css'
-//
-// Vue.use(VueBlu)
-
-
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
@@ -27,6 +20,7 @@ import './assets/styles/global.styl'
 
 const root = document.createElement('div')
 document.body.appendChild(root)
+document.title = 'TodayTodo'
 
 new Vue({
 	render:(h) => h(App)
