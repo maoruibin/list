@@ -16,21 +16,22 @@
 		/>
 	</div> -->
 	<el-card shadow="hover" style="margin-bottom:12px;">
-		<div :class="['bottom clearfix todo-item',todo.completed ? 'completed':'']">
+		<div :class="['item todo-item',todo.completed ? 'completed':'']">
 			 <el-checkbox
+			 id="checkBox"
 			 v-on:change="toggleCompleted"
 			 v-model="todo.completed">
 		  </el-checkbox>
 
-			 <span>{{todo.title}}</span>
+			 <span id="content">{{todo.title}}</span>
 
 
-			 <el-dropdown trigger="click" class="button"  @command="handleCommand">
+			 <el-dropdown trigger="click" id="action"  @command="handleCommand">
 						 <span class="el-dropdown-link">
 							 <i class="el-icon-more"></i>
 						 </span>
-						 <el-dropdown-menu slot="dropdown">
-							 <el-dropdown-item command="e" >编辑</el-dropdown-item>
+						 <el-dropdown-menu slot="dropdown" style="margin-top:-8px;">
+							 <el-dropdown-item command="e">编辑</el-dropdown-item>
 							 <el-dropdown-item divided command="d">删除</el-dropdown-item>
 						 </el-dropdown-menu>
 			 </el-dropdown>
@@ -89,7 +90,7 @@
 
 			toggleCompleted(event){
 				console.log("this toggleCompleted todo ----> "+this.todo.completed);
-				this.$emit('edit',this.todo)
+				this.$emit('edit',this.todo,true)
 			}
 		}
 	}
@@ -98,9 +99,6 @@
 <style lang="stylus" scoped>
     .todo-item{
         span{
-            white-space: pre-line;
-            word-break: break-all;
-            line-height: 1.2;
             transition: color 0.4s;
         }
         &.completed{
@@ -149,22 +147,36 @@
         cursor pointer
         outline none
     }
-		.clearfix:before,
-		.clearfix:after {
-				display: table;
-				content: "";
+
+		.item {
+			display: flex;
+			flex-direction:row;
+			justify-content: space-between;
+			align-items: flex-start;
+			border: 0px solid #000777;
 		}
 
-		.clearfix:after {
-				clear: both
-		}
+		.item >span{
+      text-align: left;
+    }
 
-		.bottom {
-			line-height: 12px;
-		}
+		#checkBox{
+			flex-grow: 0;
 
-		.button {
-			padding: 0;
-			float: right;
+		}
+		#content{
+			flex-grow: 1;
+			text-align: left;
+			word-break:normal;
+      width:auto;
+      display:block;
+      white-space:pre-wrap;
+      word-wrap : break-word ;
+      overflow: hidden ;
+			padding-left:8px;
+			padding-right:8px;
+		}
+		el-dropdown{
+			flex-grow: 0;
 		}
 </style>

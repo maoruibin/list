@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <style type="text/css">
+    .item{
+        width: inherit;
+        display: flex;
+        flex-direction:row;
+        justify-content: space-between;
+        align-items: flex-start;
+        border: 1px solid #ff0;
+    }
+    .item >span{
+      text-align: left;
+
+    }
+    #checkBox{
+      flex-grow: 0;
+      border: 1px solid #00f;
+    }
+    #content{
+
+      flex-grow: 1;
+      word-break:normal;
+      width:auto;
+      display:block;
+      white-space:pre-wrap;
+      word-wrap : break-word ;
+      overflow: hidden ;
+      border: 1px solid #000;
+    }
+    #action{
+      flex-grow: 0;
+    }
+    </style>
+  </head>
+
+  <body>
+    <div class="ccc" style="width:300px;">
+      <div class="item">
+        <span id="checkBox">完成</span>
+        <div id="content">7777777777777777777777777777777777777777777777777777777777777777</div>
+        <span id="action">操作</span>
+      </div>
+    </div>
+
+  </body>
+</html>

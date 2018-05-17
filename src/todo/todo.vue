@@ -5,7 +5,6 @@
 			<span>{{group.name}}</span>
 			<div class="actionArea">
 
-
 				<i class="el-icon-plus" @click="showAddInput"></i>
 
 				<el-dropdown trigger="click"  @command="handleCommand">
@@ -20,7 +19,20 @@
 			</div>
 		</div>
 
-		<section class="real-app">
+		<el-card shadow="always" v-show="showInput" style="margin-bottom:12px;">
+		      <el-input
+					v-model="input"
+					clearable="true"
+					autofocus="autofocus"
+					@keyup.enter.native="addTodo"
+					placeholder="请输入要做的事">
+				</el-input>
+				<div class="bottom clearfix">
+           <el-button type="primary" size="small" plain @click="addTodo">确定</el-button>
+					 <i class="el-icon-close" style="margin-left:12px;" @click="hideInput"></i>
+        </div>
+		</el-card>
+		<!-- <section class="real-app">
 			<div class="box" v-show="showInput">
 				<input
 				type="text"
@@ -29,7 +41,7 @@
 				placeholder="请输入要做的事"
 				@keyup.enter="addTodo"/>
 			</div>
-		</section>
+		</section> -->
 		<Item
 			:todo="todo"
 			v-for="todo in filterTodos"
@@ -66,6 +78,7 @@ export default{
 			todos:[],
 			// 过滤器
 			filter:'all',
+			input: '',
 			// 显示添加 todo 的输入框
 			showInput:false,
 			lastGroupAction:this.group.name === 'addGroup'
@@ -84,11 +97,14 @@ export default{
 	mounted:function(){
 		const api = "http://"+host+"/todos/api/v1.0/todos/"+this.user.id+"/"+this.group.objectId
 		this.$http.get(api).then(response => {
-				for(var item in response.body.results){
-					var flag = response.body.results[item].completed
-					response.body.results[item].completed =  flag === "false" ? false : true;
-					this.todos.unshift(response.body.results[item])
+				const results = response.body.results;
+				for(var item in results){
+					var flag = results[item].completed
+					results[item].completed =  flag === "false" ? false : true;
+					this.todos.unshift(results[item])
 				}
+
+
 			}, response => {});
   },
 	computed: {
@@ -104,6 +120,9 @@ export default{
 	methods: {
 		showAddInput:function(event){
 			this.showInput = !this.showInput
+		},
+		hideInput:function(event){
+			this.showInput = false
 		},
 		handleCommand:function(command){
 			if(command === 'd'){
@@ -135,14 +154,20 @@ export default{
 			        });
 		},
 		// 添加一个 todo
-		addTodo(e){
+		addTodo(){
+			if(this.input.length == 0){
+				this.$message({
+					type: 'info',
+					message: '输入不能为空'
+				});
+				return
+			}
 		  const api = "http://"+host+"/todos/api/v1.0/todos"
 			var that = this
 
-
 			var formData = new FormData();
-			formData.append('title', e.target.value.trim());
-			formData.append('content', e.target.value.trim());
+			formData.append('title', this.input.trim());
+			formData.append('content', this.input.trim());
 			formData.append('groupId', this.group.objectId);
 			formData.append('priority', '0');
 			formData.append('completed', 'false');
@@ -153,14 +178,14 @@ export default{
 				var flag = response.body.entity.completed
 				response.body.entity.completed =  flag === "false" ? false : true;
 				this.todos.unshift(response.body.entity)
-				e.target.value= ''
+				this.input= ''
 		  }, response => {
 
 		  });
 
 		},
 
-		editItem(todo){
+		editItem(todo,isToggle){
 			var objectId = todo.objectId
 			console.log("update  "+todo.title+" objectId is "+objectId);
 			const api = "http://"+host+"/todos/api/v1.0/todos/"+objectId
@@ -179,7 +204,21 @@ export default{
 			this.$http.put(api, formData, config).then(response => {
 					const editResult = response.body.entity;
 					editResult.completed = editResult.completed === 'true'
-					this.todos.splice(this.todos.findIndex(todo => todo.objectId === objectId),1,editResult)
+					//正常更新
+					if(!isToggle){
+						this.todos.splice(this.todos.findIndex(todo => todo.objectId === objectId),1,editResult)
+						return;
+					}
+					//先删除
+					this.todos.splice(this.todos.findIndex(todo => todo.objectId === objectId),1)
+
+					if(editResult.completed){
+						//如果已完成则追加到末尾
+						this.todos.push(editResult)
+					}else{
+						//如果未完成则追加到队头
+						this.todos.unshift(editResult)
+					}
 				}, response => {});
 		},
 		deleteItem(todo){
@@ -271,5 +310,25 @@ export default{
 		color:#000000;
 		cursor:pointer;
 	}
+
+	.bottom {
+    margin-top: 13px;
+    line-height: 12px;
+  }
+
+  .button {
+    padding: 0;
+    float: right;
+  }
+
+	.clearfix:before,
+  .clearfix:after {
+      display: table;
+      content: "";
+  }
+
+  .clearfix:after {
+      clear: both
+  }
 
 </style>
