@@ -35,3 +35,22 @@ delete 一直失败，先设置了 flask 的 response，让所有的请求都支
 好文啊
 但是还是提示删除失败，然后找 Vue 的原因，找到了。
 * [javascript \- Request header field Access\-Control\-Allow\-Headers is not allowed by Access\-Control\-Allow\-Headers \- Stack Overflow](https://stackoverflow.com/questions/25727306/request-header-field-access-control-allow-headers-is-not-allowed-by-access-contr)
+
+## 技巧
+
+filter 用法
+```js
+return this.todos.filter(todo => todo.completed)
+
+//先删除
+this.todos.splice(this.todos.findIndex(todo => todo.objectId === todoId),1)
+
+if(editResult.completed){
+  //如果已完成则追加到末尾
+  this.todos.push(editResult)
+}else{
+  //如果未完成则追加到队头
+  this.todos.unshift(editResult)
+}
+
+```

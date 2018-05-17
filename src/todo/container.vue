@@ -163,8 +163,8 @@ export default{
     }
 
     #todoContainer > div {
-      width: 22%;
-      height: 480px;
+      width: 20%;
+      height: 500px;
       background-color: #eff1f3;
       border:1px solid #ccc;
       border-radius:6px;

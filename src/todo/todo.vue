@@ -5,15 +5,16 @@
 			<span>{{group.name}}</span>
 			<div class="actionArea">
 
-				<i class="el-icon-plus" @click="showAddInput" style="margin-left:8dp;"></i>
+				<i class="el-icon-plus" @click="showAddInput"></i>
 
 				<el-dropdown trigger="click"  @command="handleCommand">
 				      <span class="el-dropdown-link">
 				        <i class="el-icon-more"></i>
 				      </span>
 				      <el-dropdown-menu slot="dropdown">
-				        <el-dropdown-item command="e" >编辑</el-dropdown-item>
-								<el-dropdown-item divided command="d">删除</el-dropdown-item>
+				        <el-dropdown-item command="edit" >编辑分组</el-dropdown-item>
+				        <el-dropdown-item command="completeList">{{this.showCompleteList?'未完成':'已完成'}}</el-dropdown-item>
+								<el-dropdown-item divided command="delete">删除分组</el-dropdown-item>
 				      </el-dropdown-menu>
 				</el-dropdown>
 			</div>
@@ -22,7 +23,7 @@
 		<el-card shadow="always" v-show="showInput" style="margin-bottom:12px;">
 		      <el-input
 					v-model="input"
-					clearable="true"
+					clearable = true
 					autofocus="autofocus"
 					@keyup.enter.native="addTodo"
 					placeholder="请输入要做的事">
@@ -32,23 +33,17 @@
 					 <i class="el-icon-close" style="margin-left:12px;" @click="hideInput"></i>
         </div>
 		</el-card>
-		<!-- <section class="real-app">
-			<div class="box" v-show="showInput">
-				<input
-				type="text"
-				class="add-input"
-				autofocus="autofocus"
-				placeholder="请输入要做的事"
-				@keyup.enter="addTodo"/>
-			</div>
-		</section> -->
+
+
 		<Item
-			:todo="todo"
 			v-for="todo in filterTodos"
+			:todo="todo"
 			:key="todo.objectId"
 			@delete="deleteItem"
 			@edit="editItem"
 		/>
+
+
 
 		<el-button style="margin-top:12px;" v-show="lastGroupAction" @click="addGroup" type="primary" plain>添加分组</el-button>
 	</div>
@@ -76,11 +71,15 @@ export default{
 		return{
 			// 容纳 TODO 的集合
 			todos:[],
+			// 已完成 todo 集合
+			todosComplete:[],
 			// 过滤器
 			filter:'all',
 			input: '',
 			// 显示添加 todo 的输入框
 			showInput:false,
+			// 是否展示已完成列表
+			showCompleteList:false,
 			lastGroupAction:this.group.name === 'addGroup'
 		}
 	},
@@ -99,22 +98,25 @@ export default{
 		this.$http.get(api).then(response => {
 				const results = response.body.results;
 				for(var item in results){
-					var flag = results[item].completed
-					results[item].completed =  flag === "false" ? false : true;
-					this.todos.unshift(results[item])
+					results[item].completed = false
+					this.todos.push(results[item])
 				}
 
+				const resultsComplete = response.body.resultsComplete;
+				for(var item in resultsComplete){
+					resultsComplete[item].completed = true
+					this.todosComplete.push(resultsComplete[item])
+				}
 
 			}, response => {});
   },
 	computed: {
 		filterTodos(){
-			if(this.filter === 'all'){
+			if(this.showCompleteList){
+				return this.todosComplete
+			}else{
 				return this.todos
 			}
-
-			const completed = this.filter === 'completed'
-			return this.todos.filter(todo => todo.completed)
 		}
 	},
 	methods: {
@@ -125,10 +127,12 @@ export default{
 			this.showInput = false
 		},
 		handleCommand:function(command){
-			if(command === 'd'){
+			if(command === 'delete'){
 				this.showDeleteDialog()
-			}else if(command === 'e'){
+			}else if(command === 'edit'){
 				this.$emit('edit',this.group)
+			}else if(command === 'completeList'){
+				this.showCompleteList = !this.showCompleteList
 			}
 		},
 		deleteGroup:function(){
@@ -185,10 +189,11 @@ export default{
 
 		},
 
+		// todo 要编辑的 todo
+		// isToggle 是不是编辑完成状态 默认为 false
 		editItem(todo,isToggle){
-			var objectId = todo.objectId
-			console.log("update  "+todo.title+" objectId is "+objectId);
-			const api = "http://"+host+"/todos/api/v1.0/todos/"+objectId
+			var todoId = todo.objectId
+			const api = "http://"+host+"/todos/api/v1.0/todos/"+todoId
 			const config = {
 					headers : {
 							'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
@@ -200,25 +205,40 @@ export default{
 			formData.append('groupId', todo.groupId);
 			formData.append('priority', todo.priority);
 			formData.append('completed', todo.completed);
+			if(isToggle){
+				formData.append('completedAt', new Date().getTime());
+			}
 
 			this.$http.put(api, formData, config).then(response => {
 					const editResult = response.body.entity;
 					editResult.completed = editResult.completed === 'true'
+
 					//正常更新
 					if(!isToggle){
-						this.todos.splice(this.todos.findIndex(todo => todo.objectId === objectId),1,editResult)
-						return;
+						if(this.showCompleteList){
+							this.todosComplete.splice(this.todos.findIndex(todo => todo.objectId === todoId),1,editResult)
+						}else{
+							this.todos.splice(this.todos.findIndex(todo => todo.objectId === todoId),1,editResult)
+						}
+						return
 					}
-					//先删除
-					this.todos.splice(this.todos.findIndex(todo => todo.objectId === objectId),1)
-
 					if(editResult.completed){
-						//如果已完成则追加到末尾
-						this.todos.push(editResult)
+						//添加到已完成列表
+						this.todosComplete.push(editResult)
+						//从未完成列表删除
+						this.todos.splice(this.todos.findIndex(todo => todo.objectId === todoId),1)
+
+						this.$message({
+							type: 'success',
+							message: '完成任务 '+editResult.title
+						});
 					}else{
-						//如果未完成则追加到队头
-						this.todos.unshift(editResult)
+						//添加到未完成列表
+						this.todos.push(editResult)
+						//从已完成列表删除
+						this.todosComplete.splice(this.todosComplete.findIndex(todo => todo.objectId === todoId),1)
 					}
+
 				}, response => {});
 		},
 		deleteItem(todo){
@@ -254,36 +274,6 @@ export default{
 </script>
 
 <style lang="stylus" scoped>
-	.real-app {
-    width: 100%;
-    margin: 0 auto;
-    box-shadow: 0 0 5px #666;
-		border: 0px solid blue;
-  }
-
-	.box{
-		display: flex
-		flex-direction: row
-		margin-bottom: 10px;
-	}
-
-  .add-input {
-      position: relative;
-      margin: 0;
-      width: 100%;
-      font-size: 18px;
-      font-family: inherit;
-      font-weight: inherit;
-      line-height: 1.2em;
-      border: 0;
-      outline: none;
-      color: inherit;
-      box-sizing: border-box;
-      font-smoothing: antialiased;
-      padding: 10px 10px 10px 16px;
-      border: none;
-      box-shadow: inset 0 -2px 1px rgba(0, 0, 0, 0.03);
-  }
 
 	.child{
 		overflow:scroll;
@@ -291,9 +281,6 @@ export default{
 		padding-right:16px;
 		padding-bottom:16px;
 		margin-right:10px;
-	}
-	.child > ul > li{
-		height: 30px;
 	}
 
 	.topAction{
@@ -304,8 +291,13 @@ export default{
 	}
 	.actionArea{
 		float: right;
+		border: 0px solid blue;
 	}
 
+	.actionArea > .el-icon-plus{
+		border: 0px solid black;
+		padding-right:8px;
+	}
 	.actionArea > span{
 		color:#000000;
 		cursor:pointer;

@@ -1,20 +1,5 @@
 <template>
-	<!-- <div :class="['todo-item',todo.completed ? 'completed':'']">
-		<input
-		 type="checkbox"
-		 class="toggle"
-		 v-on:change="toggleCompleted"
-		 v-model="todo.completed"
-		>
 
-		<label>{{todo.title}}</label>
-
-
-		<button
-			class="destroy"
-			@click="deleteTodo"
-		/>
-	</div> -->
 	<el-card shadow="hover" style="margin-bottom:12px;">
 		<div :class="['item todo-item',todo.completed ? 'completed':'']">
 			 <el-checkbox
@@ -24,7 +9,6 @@
 		  </el-checkbox>
 
 			 <span id="content">{{todo.title}}</span>
-
 
 			 <el-dropdown trigger="click" id="action"  @command="handleCommand">
 						 <span class="el-dropdown-link">
@@ -36,6 +20,9 @@
 						 </el-dropdown-menu>
 			 </el-dropdown>
 
+		 </div>
+		 <div class="time" v-show="todo.completed">
+			 完成于 {{getLocalTime(todo.completedAt)}}
 		 </div>
 	</el-card>
 </template>
@@ -54,6 +41,9 @@
 				}else if(command === 'e'){
 					this.showEditDialog()
 				}
+			},
+			getLocalTime(nS) {
+				return new Date(parseInt(nS)).toLocaleString().replace(/:\d{1,2}$/,' ');
 			},
 
 			showDeleteDialog(){
@@ -97,6 +87,7 @@
 </script>
 
 <style lang="stylus" scoped>
+
     .todo-item{
         span{
             transition: color 0.4s;
@@ -178,5 +169,10 @@
 		}
 		el-dropdown{
 			flex-grow: 0;
+		}
+		.time{
+			font-size: 4px;
+			color: #ccc;
+			margin-top:4px;
 		}
 </style>

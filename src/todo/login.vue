@@ -8,7 +8,11 @@
           <p>密&nbsp;&nbsp;&nbsp;码：<input v-model="user.password" type="password" placeholder="请输入密码"></p>
           <p><input class="action" type="submit" value="登录"/></p>
           <p class="error">{{msg}}</p>
+          <p class="userChoise"><a href="#" @click="guestLogin">游客模式访问</a></p>
+          </br>
           <p class="userChoise">还没有账号，<a href="#" @click="showRegister">去注册</a></p>
+
+
         </form>
 
 
@@ -22,9 +26,8 @@
           <p><input class="action" type="submit" value="注册"/></p>
           <p class="error">{{msg}}</p>
           <p class="userChoise">已有账号，<a href="#" @click="showLogin">直接登录</a></p>
+
         </form>
-
-
       </div>
     </div>
   </div>
@@ -62,6 +65,10 @@
       showRegister(){
         this.msg = ''
         this.inLoginMode = false;
+      },
+      guestLogin(){
+        this.user.username = 'guest@163.com'
+        this.user.password = '666999'
       },
       showLogin(){
         this.msg = ''
