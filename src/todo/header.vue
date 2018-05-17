@@ -8,8 +8,8 @@
     .main-header {
         text-align center
         h1 {
-            font-size 80px
-            color rgba(255, 47, 47, 0.4)
+            font-size 60px
+            color rgba(224,224,224,1)
             margin 20px
         }
     }

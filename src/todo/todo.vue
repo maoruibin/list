@@ -1,8 +1,7 @@
 <template>
-
 	<div class="child">
 
-		<div class="topAction">
+		<div v-show="!lastGroupAction" class="topAction">
 			<span>{{group.name}}</span>
 			<div class="actionArea">
 
@@ -17,7 +16,7 @@
 				        <el-dropdown-item command="e" >编辑</el-dropdown-item>
 								<el-dropdown-item divided command="d">删除</el-dropdown-item>
 				      </el-dropdown-menu>
-				    </el-dropdown>
+				</el-dropdown>
 			</div>
 		</div>
 
@@ -36,8 +35,10 @@
 			v-for="todo in filterTodos"
 			:key="todo.objectId"
 			@delete="deleteItem"
-			@update="updateItem"
+			@edit="editItem"
 		/>
+
+		<el-button style="margin-top:12px;" v-show="lastGroupAction" @click="addGroup" type="primary" plain>添加分组</el-button>
 	</div>
 
 </template>
@@ -66,7 +67,8 @@ export default{
 			// 过滤器
 			filter:'all',
 			// 显示添加 todo 的输入框
-			showInput:false
+			showInput:false,
+			lastGroupAction:this.group.name === 'addGroup'
 		}
 	},
 
@@ -101,26 +103,30 @@ export default{
 	},
 	methods: {
 		showAddInput:function(event){
-			console.log("显示添加输入框");
 			this.showInput = !this.showInput
 		},
 		handleCommand:function(command){
 			if(command === 'd'){
-				this.deleteGroup()
-			}else{
-				this.$message('click on item ' + command);
+				this.showDeleteDialog()
+			}else if(command === 'e'){
+				this.$emit('edit',this.group)
 			}
 		},
 		deleteGroup:function(){
+			console.log('delete real');
+			//传递给父组件让其执行删除
+			this.$emit('delete',this.group.objectId)
+		},
+		addGroup:function(){
+			this.$emit('actionGroup')
+		},
+		showDeleteDialog:function(){
 			this.$confirm('此操作将永久删除该分组, 是否继续?', '提示', {
 			          confirmButtonText: '删除',
 			          cancelButtonText: '取消',
 			          type: 'warning'
 			        }).then(() => {
-			          this.$message({
-			            type: 'success',
-			            message: '删除成功!'
-			          });
+								this.deleteGroup()
 			        }).catch(() => {
 			          this.$message({
 			            type: 'info',
@@ -154,7 +160,7 @@ export default{
 
 		},
 
-		updateItem(todo){
+		editItem(todo){
 			var objectId = todo.objectId
 			console.log("update  "+todo.title+" objectId is "+objectId);
 			const api = "http://"+host+"/todos/api/v1.0/todos/"+objectId
@@ -172,8 +178,11 @@ export default{
 
 			this.$http.put(api, formData, config).then(response => {
 					console.log("result is "+response.body.entity);
-					// this.todos.splice(this.todos.findIndex(todo => todo.objectId === objectId),0,0)
-					console.log("更新成功");
+					this.todos.splice(this.todos.findIndex(todo => todo.objectId === objectId),1,response.body.entity)
+					this.$message({
+            type: 'success',
+            message: '编辑成功!'
+          });
 				}, response => {});
 		},
 		deleteItem(objectId){
@@ -189,7 +198,10 @@ export default{
 			this.$http.delete(api,config).then(response => {
 					console.log("result is "+response.body.result);
 					this.todos.splice(this.todos.findIndex(todo => todo.objectId === objectId),1)
-					console.log("删除成功");
+					this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
 				}, response => {});
 		},
 

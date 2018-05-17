@@ -52,7 +52,7 @@ import Footer from './todo/footer.jsx'
         top 0
         bottom 0
         background-color #555
-        opacity 0.5
+        opacity 0.0
         z-index -1
     }
 </style>

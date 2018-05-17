@@ -36,7 +36,7 @@ const config =  {
 			},
 			//引入 UI 框架时 他们有自己的 ttf 文件这里需要处理下
 			{
-        test: /\.(woff|woff2|eot|ttf|svg)(\?.*$|$)/,
+        test: /\.(woff|woff2|eot|ttf)(\?.*$|$)/,
         loader: 'url-loader?importLoaders=1&limit=100000'
       },
 			{
