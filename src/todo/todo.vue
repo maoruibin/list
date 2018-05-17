@@ -16,7 +16,7 @@
 				        <el-dropdown-item command="e" >编辑</el-dropdown-item>
 								<el-dropdown-item divided command="d">删除</el-dropdown-item>
 				      </el-dropdown-menu>
-				    </el-dropdown>
+				</el-dropdown>
 			</div>
 		</div>
 
@@ -35,7 +35,7 @@
 			v-for="todo in filterTodos"
 			:key="todo.objectId"
 			@delete="deleteItem"
-			@update="updateItem"
+			@edit="editItem"
 		/>
 
 		<el-button style="margin-top:12px;" v-show="lastGroupAction" @click="addGroup" type="primary" plain>添加分组</el-button>
@@ -160,7 +160,7 @@ export default{
 
 		},
 
-		updateItem(todo){
+		editItem(todo){
 			var objectId = todo.objectId
 			console.log("update  "+todo.title+" objectId is "+objectId);
 			const api = "http://"+host+"/todos/api/v1.0/todos/"+objectId
@@ -178,8 +178,11 @@ export default{
 
 			this.$http.put(api, formData, config).then(response => {
 					console.log("result is "+response.body.entity);
-					// this.todos.splice(this.todos.findIndex(todo => todo.objectId === objectId),0,0)
-					console.log("更新成功");
+					this.todos.splice(this.todos.findIndex(todo => todo.objectId === objectId),1,response.body.entity)
+					this.$message({
+            type: 'success',
+            message: '编辑成功!'
+          });
 				}, response => {});
 		},
 		deleteItem(objectId){
@@ -195,7 +198,10 @@ export default{
 			this.$http.delete(api,config).then(response => {
 					console.log("result is "+response.body.result);
 					this.todos.splice(this.todos.findIndex(todo => todo.objectId === objectId),1)
-					console.log("删除成功");
+					this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
 				}, response => {});
 		},
 

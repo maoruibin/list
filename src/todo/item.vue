@@ -1,5 +1,5 @@
 <template>
-	<div :class="['todo-item',todo.completed ? 'completed':'']">
+	<!-- <div :class="['todo-item',todo.completed ? 'completed':'']">
 		<input
 		 type="checkbox"
 		 class="toggle"
@@ -9,11 +9,27 @@
 
 		<label>{{todo.title}}</label>
 
+
 		<button
 			class="destroy"
 			@click="deleteTodo"
 		/>
-	</div>
+	</div> -->
+	<el-card shadow="hover" style="margin-bottom:12px;">
+		<div class="bottom clearfix">
+			 <span>{{todo.title}}</span>
+
+			 <el-dropdown trigger="click" class="button"  @command="handleCommand">
+						 <span class="el-dropdown-link">
+							 <i class="el-icon-more"></i>
+						 </span>
+						 <el-dropdown-menu slot="dropdown">
+							 <el-dropdown-item command="e" >编辑</el-dropdown-item>
+							 <el-dropdown-item divided command="d">删除</el-dropdown-item>
+						 </el-dropdown-menu>
+			 </el-dropdown>
+		 </div>
+	</el-card>
 </template>
 <script>
 	export default{
@@ -24,10 +40,46 @@
 			}
 		},
 		methods: {
-			deleteTodo(){
-				// 传递给父组件让其执行删除
-				this.$emit('delete',this.todo.objectId)
+			handleCommand:function(command){
+				if(command === 'd'){
+					this.showDeleteDialog()
+				}else if(command === 'e'){
+					this.showEditDialog()
+				}
 			},
+
+			showDeleteDialog(){
+				this.$confirm('此操作将永久删除该 Todo, 是否继续?', '提示', {
+									confirmButtonText: '删除',
+									cancelButtonText: '取消',
+									type: 'warning'
+								}).then(() => {
+									this.$emit('delete',this.todo)
+								}).catch(() => {
+									this.$message({
+										type: 'info',
+										message: '已取消删除'
+								 });
+				});
+			},
+			showEditDialog(){
+				this.$prompt('', '编辑', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						inputValue: this.todo.title,
+						inputPattern: /[\u4e00-\u9fa5_a-zA-Z0-9]{1,20}/,
+						inputErrorMessage: '格式不正确'
+					}).then(({ value }) => {
+						this.todo.title = value
+						this.$emit('edit',this.todo)
+					}).catch(() => {
+						this.$message({
+							type: 'info',
+							message: '取消编辑'
+						});
+					});
+			},
+
 			toggleCompleted(event){
 				console.log("name is  checked "+this.todo.completed);
 
@@ -107,4 +159,22 @@
         cursor pointer
         outline none
     }
+		.clearfix:before,
+		.clearfix:after {
+				display: table;
+				content: "";
+		}
+
+		.clearfix:after {
+				clear: both
+		}
+
+		.bottom {
+			line-height: 12px;
+		}
+
+		.button {
+			padding: 0;
+			float: right;
+		}
 </style>
