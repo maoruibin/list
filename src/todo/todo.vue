@@ -174,18 +174,16 @@ export default{
 			formData.append('content', todo.content);
 			formData.append('groupId', todo.groupId);
 			formData.append('priority', todo.priority);
-			formData.append('completed', todo.completed == true ? 'true' : 'false');
+			formData.append('completed', todo.completed);
 
 			this.$http.put(api, formData, config).then(response => {
-					console.log("result is "+response.body.entity);
-					this.todos.splice(this.todos.findIndex(todo => todo.objectId === objectId),1,response.body.entity)
-					this.$message({
-            type: 'success',
-            message: '编辑成功!'
-          });
+					const editResult = response.body.entity;
+					editResult.completed = editResult.completed === 'true'
+					this.todos.splice(this.todos.findIndex(todo => todo.objectId === objectId),1,editResult)
 				}, response => {});
 		},
-		deleteItem(objectId){
+		deleteItem(todo){
+			const objectId = todo.objectId
 			console.log("current objectId is "+objectId)
 
 			const api = "http://"+host+"/todos/api/v1.0/todos/"+objectId

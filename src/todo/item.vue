@@ -16,8 +16,14 @@
 		/>
 	</div> -->
 	<el-card shadow="hover" style="margin-bottom:12px;">
-		<div class="bottom clearfix">
+		<div :class="['bottom clearfix todo-item',todo.completed ? 'completed':'']">
+			 <el-checkbox
+			 v-on:change="toggleCompleted"
+			 v-model="todo.completed">
+		  </el-checkbox>
+
 			 <span>{{todo.title}}</span>
+
 
 			 <el-dropdown trigger="click" class="button"  @command="handleCommand">
 						 <span class="el-dropdown-link">
@@ -28,6 +34,7 @@
 							 <el-dropdown-item divided command="d">删除</el-dropdown-item>
 						 </el-dropdown-menu>
 			 </el-dropdown>
+
 		 </div>
 	</el-card>
 </template>
@@ -81,10 +88,8 @@
 			},
 
 			toggleCompleted(event){
-				console.log("name is  checked "+this.todo.completed);
-
-      	let data = this.todo
-				this.$emit('update',data)
+				console.log("this toggleCompleted todo ----> "+this.todo.completed);
+				this.$emit('edit',this.todo)
 			}
 		}
 	}
@@ -92,29 +97,14 @@
 
 <style lang="stylus" scoped>
     .todo-item{
-        position: relative;
-        background-color: #fff;
-        font-size: 18px;
-				margin-bottom: 10px;
-				background-color: #ffffff;
-	      border:1px solid #ccc;
-	      border-radius:6px;
-        &:hover{
-            .destroy:after{
-                content: '×'
-            }
-        }
-        label{
+        span{
             white-space: pre-line;
             word-break: break-all;
-            padding: 15px 60px 15px 15px;
-            margin-left: 45px;
-            display: block;
             line-height: 1.2;
             transition: color 0.4s;
         }
         &.completed{
-            label{
+            span{
                 color: #d9d9d9;
                 text-decoration: line-through;
             }
