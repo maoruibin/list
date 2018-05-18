@@ -1,5 +1,5 @@
 <template>
-	<div class="child">
+	<div>
 
 		<div v-show="!lastGroupAction" class="topAction">
 			<span>{{group.name}}</span>
@@ -14,6 +14,7 @@
 				      <el-dropdown-menu slot="dropdown">
 				        <el-dropdown-item command="edit" >编辑分组</el-dropdown-item>
 				        <el-dropdown-item command="completeList">{{this.showCompleteList?'未完成':'已完成'}}</el-dropdown-item>
+				        <!-- <el-dropdown-item command="onFile">已归档列表</el-dropdown-item> -->
 								<el-dropdown-item divided command="delete">删除分组</el-dropdown-item>
 				      </el-dropdown-menu>
 				</el-dropdown>
@@ -44,8 +45,10 @@
 		/>
 
 
+		<el-card shadow="never" style="margin-top:12px;" v-show="lastGroupAction">
+    		<el-button  @click="addGroup" icon="el-icon-plus" plain>添加新分组</el-button>
+    </el-card>
 
-		<el-button style="margin-top:12px;" v-show="lastGroupAction" @click="addGroup" type="primary" plain>添加分组</el-button>
 	</div>
 
 </template>
@@ -107,6 +110,9 @@ export default{
 					resultsComplete[item].completed = true
 					this.todosComplete.push(resultsComplete[item])
 				}
+				// for(var index in this.todosComplete){
+				// 	this.todos.push(this.todosComplete[index])
+				// }
 
 			}, response => {});
   },
@@ -213,30 +219,23 @@ export default{
 					const editResult = response.body.entity;
 					editResult.completed = editResult.completed === 'true'
 
-					//正常更新
-					if(!isToggle){
-						if(this.showCompleteList){
-							this.todosComplete.splice(this.todos.findIndex(todo => todo.objectId === todoId),1,editResult)
-						}else{
-							this.todos.splice(this.todos.findIndex(todo => todo.objectId === todoId),1,editResult)
-						}
-						return
-					}
-					if(editResult.completed){
-						//添加到已完成列表
-						this.todosComplete.push(editResult)
-						//从未完成列表删除
-						this.todos.splice(this.todos.findIndex(todo => todo.objectId === todoId),1)
+					this.todos.splice(this.todos.findIndex(todo => todo.objectId === todoId),1,editResult)
 
-						this.$message({
-							type: 'success',
-							message: '完成任务 '+editResult.title
-						});
-					}else{
-						//添加到未完成列表
-						this.todos.push(editResult)
-						//从已完成列表删除
-						this.todosComplete.splice(this.todosComplete.findIndex(todo => todo.objectId === todoId),1)
+					// if(this.showCompleteList){
+					// 	this.todosComplete.splice(this.todosComplete.findIndex(todo => todo.objectId === todoId),1,editResult)
+					// }else{
+					// 	this.todos.splice(this.todos.findIndex(todo => todo.objectId === todoId),1,editResult)
+					// }
+					if(isToggle){
+						if(editResult.completed){
+							this.todosComplete.push(editResult)
+							this.$message({
+								type: 'success',
+								message: '完成任务 '+editResult.title
+							});
+						}else{
+							this.todos.push(editResult)
+						}
 					}
 
 				}, response => {});
@@ -274,14 +273,6 @@ export default{
 </script>
 
 <style lang="stylus" scoped>
-
-	.child{
-		overflow:scroll;
-		padding-left:16px;
-		padding-right:16px;
-		padding-bottom:16px;
-		margin-right:10px;
-	}
 
 	.topAction{
 		width: 100%;

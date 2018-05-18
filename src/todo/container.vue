@@ -160,16 +160,26 @@ export default{
       &::-webkit-scrollbar {
           display: block;
       }
+
+			border:0px solid #000;
     }
 
     #todoContainer > div {
       width: 20%;
-      height: 500px;
+			height:auto;
+      max-height: 500px;
       background-color: #eff1f3;
-      border:1px solid #ccc;
       border-radius:6px;
-      display: inline-block;
+			display: inline-block;
+			vertical-align: top;
+
+			overflow:scroll;
+			padding-left:12px;
+			padding-right:12px;
+			padding-bottom:12px;
+			margin-right:12px;
     }
+
 
 
 </style>

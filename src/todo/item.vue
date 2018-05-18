@@ -16,6 +16,7 @@
 						 </span>
 						 <el-dropdown-menu slot="dropdown" style="margin-top:-8px;">
 							 <el-dropdown-item command="e">编辑</el-dropdown-item>
+							 <!-- <el-dropdown-item command="d">归档</el-dropdown-item> -->
 							 <el-dropdown-item divided command="d">删除</el-dropdown-item>
 						 </el-dropdown-menu>
 			 </el-dropdown>

@@ -54,3 +54,9 @@ if(editResult.completed){
 }
 
 ```
+
+css 技巧
+```
+//顶部对其
+vertical-align: top;
+```
