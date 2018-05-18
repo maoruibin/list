@@ -63,7 +63,10 @@ const config =  {
 				NODE_ENV:isDev? '"development"' : '"production"'
 			}
 		}),
-		new HTMLPlugin()
+		new HTMLPlugin({
+			title:'TodayTodo',
+			favicon:'./src/assets/images/favicon.ico'
+		})
 	]
 
 }

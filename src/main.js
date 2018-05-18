@@ -20,7 +20,7 @@ import './assets/styles/global.styl'
 
 const root = document.createElement('div')
 document.body.appendChild(root)
-document.title = 'TodayTodo'
+
 
 new Vue({
 	render:(h) => h(App)
