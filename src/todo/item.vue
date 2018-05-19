@@ -15,9 +15,11 @@
 							 <i class="el-icon-more"></i>
 						 </span>
 						 <el-dropdown-menu slot="dropdown" style="margin-top:-8px;">
-							 <el-dropdown-item command="e">编辑</el-dropdown-item>
-							 <!-- <el-dropdown-item command="d">归档</el-dropdown-item> -->
-							 <el-dropdown-item divided command="d">删除</el-dropdown-item>
+							 <el-dropdown-item command="e">编辑条目</el-dropdown-item>
+
+							 <!-- <el-dropdown-item  command="move">移动</el-dropdown-item> -->
+							 <el-dropdown-item command="onFile">{{todo.onFile?'还原到列表':'归档条目'}}</el-dropdown-item>
+							 <el-dropdown-item divided v-show="todo.onFile" command="d">删除条目</el-dropdown-item>
 						 </el-dropdown-menu>
 			 </el-dropdown>
 
@@ -25,6 +27,7 @@
 		 <div class="time" v-show="todo.completed">
 			 完成于 {{getLocalTime(todo.completedAt)}}
 		 </div>
+
 	</el-card>
 </template>
 <script>
@@ -35,12 +38,21 @@
 				required: true
 			}
 		},
+		data() {
+		 return {
+			 dialogVisible: false
+		 };
+	 	},
 		methods: {
 			handleCommand:function(command){
 				if(command === 'd'){
 					this.showDeleteDialog()
 				}else if(command === 'e'){
 					this.showEditDialog()
+				}else if(command === 'move'){
+					this.showMoveDialog()
+				}else if(command === 'onFile'){
+					this.$emit('onFile',this.todo)
 				}
 			},
 			getLocalTime(nS) {
@@ -60,6 +72,9 @@
 										message: '已取消删除'
 								 });
 				});
+			},
+			showMoveDialog(){
+				this.$emit('move',this.todo)
 			},
 			showEditDialog(){
 				this.$prompt('', '编辑', {

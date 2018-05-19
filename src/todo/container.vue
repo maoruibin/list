@@ -18,8 +18,8 @@
 import Todo from './todo.vue'
 
 
-// let host = '0.0.0.0:3000'
-let host = 'waishuo.leanapp.cn'
+let host = '0.0.0.0:3000'
+// let host = 'waishuo.leanapp.cn'
 
 export default{
 	data(){

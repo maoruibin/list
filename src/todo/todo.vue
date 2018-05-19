@@ -13,8 +13,7 @@
 				      </span>
 				      <el-dropdown-menu slot="dropdown">
 				        <el-dropdown-item command="edit" >编辑分组</el-dropdown-item>
-				        <el-dropdown-item command="completeList">{{this.showCompleteList?'未完成':'已完成'}}</el-dropdown-item>
-				        <!-- <el-dropdown-item command="onFile">已归档列表</el-dropdown-item> -->
+				        <el-dropdown-item command="onFile">{{this.showOnFileList?'正常列表':'已归档列表'}}</el-dropdown-item>
 								<el-dropdown-item divided command="delete">删除分组</el-dropdown-item>
 				      </el-dropdown-menu>
 				</el-dropdown>
@@ -42,12 +41,15 @@
 			:key="todo.objectId"
 			@delete="deleteItem"
 			@edit="editItem"
+			@move="moveItem"
+			@onFile="onFileItem"
 		/>
 
 
 		<el-card shadow="never" style="margin-top:12px;" v-show="lastGroupAction">
     		<el-button  @click="addGroup" icon="el-icon-plus" plain>添加新分组</el-button>
     </el-card>
+
 
 	</div>
 
@@ -57,8 +59,8 @@ import Item from './item.vue'
 import Tabs from './tabs.vue'
 
 let id = 0
-// let host = '0.0.0.0:3000'
-let host = 'waishuo.leanapp.cn'
+let host = '0.0.0.0:3000'
+// let host = 'waishuo.leanapp.cn'
 export default{
 	props: {
 		group: {
@@ -76,14 +78,17 @@ export default{
 			todos:[],
 			// 已完成 todo 集合
 			todosComplete:[],
+			// 已归档 todo 集合
+			todosOnFileList:[],
 			// 过滤器
 			filter:'all',
 			input: '',
 			// 显示添加 todo 的输入框
 			showInput:false,
 			// 是否展示已完成列表
-			showCompleteList:false,
-			lastGroupAction:this.group.name === 'addGroup'
+			showOnFileList:false,
+			lastGroupAction:this.group.name === 'addGroup',
+			moveDialogVisible: false
 		}
 	},
 
@@ -106,20 +111,29 @@ export default{
 				}
 
 				const resultsComplete = response.body.resultsComplete;
-				for(var item in resultsComplete){
-					resultsComplete[item].completed = true
-					this.todosComplete.push(resultsComplete[item])
+				for(var index in resultsComplete){
+					resultsComplete[index].completed = true
+					this.todosComplete.push(resultsComplete[index])
 				}
-				// for(var index in this.todosComplete){
-				// 	this.todos.push(this.todosComplete[index])
-				// }
+				for(var index in this.todosComplete){
+					this.todos.push(this.todosComplete[index])
+				}
+
+				this.todos = this.todos.filter(todo => {
+					if(todo.onFile){
+						return false;
+					}
+					return true;
+				})
+
+				this.todosOnFileList = response.body.resultsOnFile;
 
 			}, response => {});
   },
 	computed: {
 		filterTodos(){
-			if(this.showCompleteList){
-				return this.todosComplete
+			if(this.showOnFileList){
+				return this.todosOnFileList
 			}else{
 				return this.todos
 			}
@@ -137,8 +151,8 @@ export default{
 				this.showDeleteDialog()
 			}else if(command === 'edit'){
 				this.$emit('edit',this.group)
-			}else if(command === 'completeList'){
-				this.showCompleteList = !this.showCompleteList
+			}else if(command === 'onFile'){
+				this.showOnFileList = !this.showOnFileList
 			}
 		},
 		deleteGroup:function(){
@@ -194,7 +208,49 @@ export default{
 		  });
 
 		},
+		moveItem(todo){
+			this.moveDialogVisible = true
+		},
+		onFileItem(todo){
+			var todoId = todo.objectId
+			const api = "http://"+host+"/todos/api/v1.0/todos/onFile/"+todoId
+			const config = {
+					headers : {
+							'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+					}
+			}
+			var formData = new FormData();
+			var flag = todo.onFile === 'true'
 
+			formData.append('onFile', !flag);
+			formData.append('onFileAt', new Date().getTime());
+
+			this.$http.put(api, formData, config).then(response => {
+					const result = response.body.entity
+					if(result.onFile === 'true'){
+						this.todos.splice(this.todos.findIndex(todo => todo.objectId === todoId),1)
+						this.todosOnFileList.push(result)
+						this.$message({
+							type: 'success',
+							message: '已归档'
+						});
+					}else{
+						this.todosOnFileList.splice(this.todosOnFileList.findIndex(todo => todo.objectId === todoId),1)
+						this.todos.push(result)
+						this.$message({
+							type: 'success',
+							message: '已还原'
+						});
+					}
+
+
+
+
+
+				}, response => {});
+
+
+		},
 		// todo 要编辑的 todo
 		// isToggle 是不是编辑完成状态 默认为 false
 		editItem(todo,isToggle){
@@ -221,21 +277,11 @@ export default{
 
 					this.todos.splice(this.todos.findIndex(todo => todo.objectId === todoId),1,editResult)
 
-					// if(this.showCompleteList){
-					// 	this.todosComplete.splice(this.todosComplete.findIndex(todo => todo.objectId === todoId),1,editResult)
-					// }else{
-					// 	this.todos.splice(this.todos.findIndex(todo => todo.objectId === todoId),1,editResult)
-					// }
 					if(isToggle){
-						if(editResult.completed){
-							this.todosComplete.push(editResult)
-							this.$message({
-								type: 'success',
-								message: '完成任务 '+editResult.title
-							});
-						}else{
-							this.todos.push(editResult)
-						}
+						this.$message({
+							type: 'success',
+							message: '完成任务 '+editResult.title
+						});
 					}
 
 				}, response => {});
