@@ -59,8 +59,8 @@ import Item from './item.vue'
 import Tabs from './tabs.vue'
 
 let id = 0
-let host = '0.0.0.0:3000'
-// let host = 'waishuo.leanapp.cn'
+// let host = '0.0.0.0:3000'
+let host = 'waishuo.leanapp.cn'
 export default{
 	props: {
 		group: {
@@ -220,7 +220,7 @@ export default{
 					}
 			}
 			var formData = new FormData();
-			var flag = todo.onFile === 'true'
+			var flag = todo.onFile == 'true'
 
 			formData.append('onFile', !flag);
 			formData.append('onFileAt', new Date().getTime());
