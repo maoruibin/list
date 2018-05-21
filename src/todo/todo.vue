@@ -36,14 +36,14 @@
 
 
 
-		<draggable :list="filterTodos" :options="{disabled:showOnFileList,animation: 150,group:{ name:'todoList'}}" @start="drag" @end="drop" >
+		<draggable class="dragList" :list="filterTodos" :options="{disabled:showOnFileList,animation: 150,group:{ name:'todoList'}}" @start="drag" @end="drop" >
 
 				<Item
 					v-for="todo in filterTodos"
 					:todo="todo"
 					:key="todo.objectId"
 					@delete="deleteItem"
-					@edit="editItem"
+					@toggleCompleted="toggleCompletedItem"
 					@move="moveItem"
 					@onFile="onFileItem"
 				/>
@@ -129,8 +129,19 @@ export default{
 			console.log('drag');
 		},
 		drop:function(e){
-			console.log('drop oldIndex is '+e.oldIndex);
-			console.log('drop newIndex is '+e.newIndex);
+			const that = this;
+			const len = this.todos.length
+			//优先级最低 0 最高为 size-1
+			this.todos.forEach(function(todo, index, array){
+					todo.priority = len-index-1
+					that.updateTodo(todo,function(result){})
+			})
+			// this.showPriority()
+		},
+		showPriority:function(){
+			this.todos.forEach(function(todo, index, array){
+					console.log(index+" ---> perority "+todo.priority)
+			})
 		},
 		showAddInput:function(event){
 			this.showInput = !this.showInput
@@ -180,12 +191,13 @@ export default{
 			}
 		  const api = host+"/todos/api/"+api_version+"/todos"
 			var that = this
-
+			//新增 todo 的排序 index 就是当前 todo 的大小
+			var todoSize = this.todos.length
 			var formData = new FormData();
 			formData.append('title', this.input.trim());
 			formData.append('content', this.input.trim());
 			formData.append('groupId', this.group.objectId);
-			formData.append('priority', '0');
+			formData.append('priority', todoSize);
 			formData.append('completed', 'false');
 			formData.append('onFile', 'false');
 			formData.append('userId', this.user.id);
@@ -236,9 +248,10 @@ export default{
 
 
 		},
+
 		// todo 要编辑的 todo
 		// isToggle 是不是编辑完成状态 默认为 false
-		editItem(todo,isToggle){
+		updateTodo(todo,callback){
 			var todoId = todo.objectId
 			const api = host+"/todos/api/"+api_version+"/todos/"+todoId
 			const config = {
@@ -252,22 +265,33 @@ export default{
 			formData.append('groupId', todo.groupId);
 			formData.append('priority', todo.priority);
 			formData.append('completed', todo.completed);
-			if(isToggle){
-				formData.append('completedAt', new Date().getTime());
-			}
+			formData.append('completedAt', todo.completedAt);
+			formData.append('onFile', todo.onFile);
+			formData.append('onFileAt', todo.onFileAt);
 
 			this.$http.put(api, formData, config).then(response => {
+					//编辑完的 todo 结果
 					const editResult = response.body.entity;
+					//更新当前的 todo
 					this.todos.splice(this.todos.findIndex(todo => todo.objectId === todoId),1,editResult)
-
-					if(isToggle && editResult.completed){
-						this.$message({
+					// 将编辑完的结果回调回去
+					callback(editResult)
+				}, response => {});
+		},
+		// todo 要编辑的 todo
+		toggleCompletedItem(todo){
+			if(todo.completed){
+				todo.completedAt = new Date().getTime()
+			}
+			const that = this
+			this.updateTodo(todo,function(result){
+					if(result.completed){
+						that.$message({
 							type: 'success',
-							message: '完成任务 '+editResult.title
+							message: '完成任务 '+todo.title
 						});
 					}
-
-				}, response => {});
+			})
 		},
 		deleteItem(todo){
 			const objectId = todo.objectId
@@ -342,5 +366,9 @@ export default{
   .clearfix:after {
       clear: both
   }
+
+	.dragList{
+     min-height: 10px;
+	}
 
 </style>

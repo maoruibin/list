@@ -96,7 +96,7 @@
 
 			toggleCompleted(event){
 				console.log("this toggleCompleted todo ----> "+this.todo.completed);
-				this.$emit('edit',this.todo,true)
+				this.$emit('toggleCompleted',this.todo)
 			}
 		}
 	}
