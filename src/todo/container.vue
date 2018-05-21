@@ -17,9 +17,8 @@
 <script >
 import Todo from './todo.vue'
 
-
-// let host = '0.0.0.0:3000'
-let host = 'waishuo.leanapp.cn'
+let host = process.env.API_HOST
+let api_version = process.env.API_VERSION
 
 export default{
 	data(){
@@ -70,7 +69,7 @@ export default{
 		},
 
 		addNewGroup(name,userId){
-			const api = "http://"+host+"/todos/api/v1.0/group"
+			const api = host+"/todos/api/"+api_version+"/group"
 			var formData = new FormData();
 			formData.append('name', name);
 			formData.append('userId', userId);
@@ -88,7 +87,7 @@ export default{
 		},
 
 		editGroup(groupId,name){
-			const api = "http://"+host+"/todos/api/v1.0/group/edit"
+			const api = host+"/todos/api/"+api_version+"/group/edit"
 			var formData = new FormData();
 			formData.append('name', name);
 			formData.append('groupId', groupId);
@@ -107,7 +106,7 @@ export default{
 
 		deleteGroup(objectId){
 			console.log("del group objectId is "+objectId)
-			const api = "http://"+host+"/todos/api/v1.0/group/"+objectId
+			const api = host+"/todos/api/"+api_version+"/group/"+objectId
 			const config =
 				{
 				    headers : {
@@ -132,7 +131,7 @@ export default{
     if(!this.user){
       return
     }
-    const apiGroup = "http://"+host+"/todos/api/v1.0/group/"+this.user.id
+    const apiGroup = host+"/todos/api/"+api_version+"/group/"+this.user.id
     this.$http.get(apiGroup).then(response => {
         this.groups = response.body.results
 				this.groups.push({"name":"addGroup"})

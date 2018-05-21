@@ -34,8 +34,8 @@
 
 </template>
 <script>
-  // let host = '0.0.0.0:3000'
-  let host = 'waishuo.leanapp.cn'
+  let host = process.env.API_HOST
+  let api_version = process.env.API_VERSION
   export default{
     data(){
       return{
@@ -79,7 +79,7 @@
             this.msg = '格式不正确！'
             return;
         }
-        const api = "http://"+host+"/users/api/v1.0/login"
+        const api = host+"/users/api/"+api_version+"/login"
         // var formData = JSON.stringify(this.user);
         var formData = new FormData(this.user);
         for (var key in this.user) {
@@ -119,7 +119,7 @@
             return;
       　}
         this.user.username = this.user.email
-        const api = "http://"+host+"/users/api/v1.0/users"
+        const api = host+"/users/api/"+api_version+"/users"
         var formData = new FormData(this.user);
         for (var key in this.user) {
           formData.append(key,this.user[key]);

@@ -35,21 +35,25 @@
 		</el-card>
 
 
-		<Item
-			v-for="todo in filterTodos"
-			:todo="todo"
-			:key="todo.objectId"
-			@delete="deleteItem"
-			@edit="editItem"
-			@move="moveItem"
-			@onFile="onFileItem"
-		/>
+
+		<draggable :list="filterTodos" :options="{disabled:showOnFileList,animation: 150,group:{ name:'todoList'}}" @start="drag" @end="drop" >
+
+				<Item
+					v-for="todo in filterTodos"
+					:todo="todo"
+					:key="todo.objectId"
+					@delete="deleteItem"
+					@edit="editItem"
+					@move="moveItem"
+					@onFile="onFileItem"
+				/>
+
+	   </draggable>
 
 
 		<el-card shadow="never" style="margin-top:12px;" v-show="lastGroupAction">
     		<el-button  @click="addGroup" icon="el-icon-plus" plain>添加新分组</el-button>
     </el-card>
-
 
 	</div>
 
@@ -57,11 +61,12 @@
 <script>
 import Item from './item.vue'
 import Tabs from './tabs.vue'
+import draggable from 'vuedraggable'
 
-let id = 0
-// let host = '0.0.0.0:3000'
-let host = 'waishuo.leanapp.cn'
+let host = process.env.API_HOST
+let api_version = process.env.API_VERSION
 export default{
+
 	props: {
 		group: {
 			type: Object,
@@ -94,7 +99,8 @@ export default{
 
 	components:{
 		Item,
-		Tabs
+		Tabs,
+		draggable
 	},
 
 	created:function(){
@@ -102,32 +108,11 @@ export default{
 	},
 
 	mounted:function(){
-		const api = "http://"+host+"/todos/api/v1.0/todos/"+this.user.id+"/"+this.group.objectId
+		const api = host+"/todos/api/"+api_version+"/todos/"+this.user.id+"/"+this.group.objectId
 		this.$http.get(api).then(response => {
-				const results = response.body.results;
-				for(var item in results){
-					results[item].completed = false
-					this.todos.push(results[item])
-				}
-
-				const resultsComplete = response.body.resultsComplete;
-				for(var index in resultsComplete){
-					resultsComplete[index].completed = true
-					this.todosComplete.push(resultsComplete[index])
-				}
-				for(var index in this.todosComplete){
-					this.todos.push(this.todosComplete[index])
-				}
-
-				this.todos = this.todos.filter(todo => {
-					if(todo.onFile){
-						return false;
-					}
-					return true;
-				})
-
+				this.todos = response.body.results;
+				this.todosComplete = response.body.resultsComplete;
 				this.todosOnFileList = response.body.resultsOnFile;
-
 			}, response => {});
   },
 	computed: {
@@ -140,6 +125,13 @@ export default{
 		}
 	},
 	methods: {
+		drag:function(){
+			console.log('drag');
+		},
+		drop:function(e){
+			console.log('drop oldIndex is '+e.oldIndex);
+			console.log('drop newIndex is '+e.newIndex);
+		},
 		showAddInput:function(event){
 			this.showInput = !this.showInput
 		},
@@ -186,7 +178,7 @@ export default{
 				});
 				return
 			}
-		  const api = "http://"+host+"/todos/api/v1.0/todos"
+		  const api = host+"/todos/api/"+api_version+"/todos"
 			var that = this
 
 			var formData = new FormData();
@@ -195,12 +187,12 @@ export default{
 			formData.append('groupId', this.group.objectId);
 			formData.append('priority', '0');
 			formData.append('completed', 'false');
+			formData.append('onFile', 'false');
 			formData.append('userId', this.user.id);
 
 			// POST /someUrl
 		  this.$http.post(api, formData).then(response => {
 				var flag = response.body.entity.completed
-				response.body.entity.completed =  flag === "false" ? false : true;
 				this.todos.unshift(response.body.entity)
 				this.input= ''
 		  }, response => {
@@ -213,21 +205,19 @@ export default{
 		},
 		onFileItem(todo){
 			var todoId = todo.objectId
-			const api = "http://"+host+"/todos/api/v1.0/todos/onFile/"+todoId
+			const api = host+"/todos/api/"+api_version+"/todos/onFile/"+todoId
 			const config = {
 					headers : {
 							'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
 					}
 			}
 			var formData = new FormData();
-			var flag = todo.onFile == 'true'
-
-			formData.append('onFile', !flag);
+			formData.append('onFile', !todo.onFile);
 			formData.append('onFileAt', new Date().getTime());
 
 			this.$http.put(api, formData, config).then(response => {
 					const result = response.body.entity
-					if(result.onFile === 'true'){
+					if(result.onFile){
 						this.todos.splice(this.todos.findIndex(todo => todo.objectId === todoId),1)
 						this.todosOnFileList.push(result)
 						this.$message({
@@ -242,11 +232,6 @@ export default{
 							message: '已还原'
 						});
 					}
-
-
-
-
-
 				}, response => {});
 
 
@@ -255,7 +240,7 @@ export default{
 		// isToggle 是不是编辑完成状态 默认为 false
 		editItem(todo,isToggle){
 			var todoId = todo.objectId
-			const api = "http://"+host+"/todos/api/v1.0/todos/"+todoId
+			const api = host+"/todos/api/"+api_version+"/todos/"+todoId
 			const config = {
 					headers : {
 							'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
@@ -273,11 +258,9 @@ export default{
 
 			this.$http.put(api, formData, config).then(response => {
 					const editResult = response.body.entity;
-					editResult.completed = editResult.completed === 'true'
-
 					this.todos.splice(this.todos.findIndex(todo => todo.objectId === todoId),1,editResult)
 
-					if(isToggle){
+					if(isToggle && editResult.completed){
 						this.$message({
 							type: 'success',
 							message: '完成任务 '+editResult.title
@@ -290,7 +273,7 @@ export default{
 			const objectId = todo.objectId
 			console.log("current objectId is "+objectId)
 
-			const api = "http://"+host+"/todos/api/v1.0/todos/"+objectId
+			const api = host+"/todos/api/"+api_version+"/todos/"+objectId
 			const config =
 				{
 				    headers : {
