@@ -1,11 +1,11 @@
 <template>
-	<div>
+	<div class="groupItem">
 
 		<div v-show="!lastGroupAction" class="topAction">
 			<span>{{group.name}}</span>
 			<div class="actionArea">
 
-				<i class="el-icon-plus" @click="showAddInput"></i>
+				<i :class="['topIconAction', showOnFileList ? 'el-icon-arrow-left' : 'el-icon-plus']" @click="showAddInput"></i>
 
 				<el-dropdown trigger="click"  @command="handleCommand">
 				      <span class="el-dropdown-link">
@@ -36,13 +36,14 @@
 
 
 
-		<draggable class="dragList" :list="filterTodos" :options="{disabled:showOnFileList,animation: 150,group:{ name:'todoList'}}" @start="drag" @end="drop" >
+		<draggable class="dragList" :list="filterTodos" :options="{disabled:showOnFileList,animation: 150,group:{ name:'todoList'}}" @add="moveTo" @start="drag" @end="drop" >
 
 				<Item
 					v-for="todo in filterTodos"
 					:todo="todo"
 					:key="todo.objectId"
 					@delete="deleteItem"
+					@edit="editItem"
 					@toggleCompleted="toggleCompletedItem"
 					@move="moveItem"
 					@onFile="onFileItem"
@@ -92,7 +93,7 @@ export default{
 			showInput:false,
 			// 是否展示已完成列表
 			showOnFileList:false,
-			lastGroupAction:this.group.name === 'addGroup',
+			lastGroupAction:this.group.name === 'appendGroup',
 			moveDialogVisible: false
 		}
 	},
@@ -128,23 +129,40 @@ export default{
 		drag:function(){
 			console.log('drag');
 		},
+		// 移动到另一个 group 触发
+		moveTo:function(e){
+			console.log('moveTo');
+			this.updateTodos(this.todos)
+			// this.showPriority()
+		},
 		drop:function(e){
+			console.log('drop');
+			this.updateTodos(this.todos)
+			// this.showPriority()
+		},
+		updateTodos:function(){
 			const that = this;
-			const len = this.todos.length
+			var len = this.todos.length
 			//优先级最低 0 最高为 size-1
 			this.todos.forEach(function(todo, index, array){
 					todo.priority = len-index-1
+					todo.groupId = that.group.objectId
 					that.updateTodo(todo,function(result){})
 			})
-			// this.showPriority()
 		},
 		showPriority:function(){
 			this.todos.forEach(function(todo, index, array){
 					console.log(index+" ---> perority "+todo.priority)
+					console.log(index+" ---> groupId "+todo.groupId)
 			})
 		},
 		showAddInput:function(event){
-			this.showInput = !this.showInput
+			if(this.showOnFileList){
+				this.showOnFileList = !this.showOnFileList
+			}else{
+				this.showInput = !this.showInput
+			}
+
 		},
 		hideInput:function(event){
 			this.showInput = false
@@ -164,7 +182,7 @@ export default{
 			this.$emit('delete',this.group.objectId)
 		},
 		addGroup:function(){
-			this.$emit('actionGroup')
+			this.$emit('appendGroup')
 		},
 		showDeleteDialog:function(){
 			this.$confirm('此操作将永久删除该分组, 是否继续?', '提示', {
@@ -248,7 +266,15 @@ export default{
 
 
 		},
-
+		editItem(todo){
+			const that = this
+			this.updateTodo(todo,function(result){
+				that.$message({
+					type: 'success',
+					message: '更新成功'
+				});
+			})
+		},
 		// todo 要编辑的 todo
 		// isToggle 是不是编辑完成状态 默认为 false
 		updateTodo(todo,callback){
@@ -273,7 +299,7 @@ export default{
 					//编辑完的 todo 结果
 					const editResult = response.body.entity;
 					//更新当前的 todo
-					this.todos.splice(this.todos.findIndex(todo => todo.objectId === todoId),1,editResult)
+					this.filterTodos.splice(this.filterTodos.findIndex(todo => todo.objectId === todoId),1,editResult)
 					// 将编辑完的结果回调回去
 					callback(editResult)
 				}, response => {});
@@ -306,7 +332,7 @@ export default{
 				}
 			this.$http.delete(api,config).then(response => {
 					console.log("result is "+response.body.result);
-					this.todos.splice(this.todos.findIndex(todo => todo.objectId === objectId),1)
+					this.filterTodos.splice(this.filterTodos.findIndex(todo => todo.objectId === objectId),1)
 					this.$message({
             type: 'success',
             message: '删除成功!'
@@ -326,6 +352,21 @@ export default{
 </script>
 
 <style lang="stylus" scoped>
+	.groupItem {
+		width: 20%;
+		height:auto;
+		max-height: 500px;
+		background-color: #eff1f3;
+		border-radius:6px;
+		display: inline-block;
+		vertical-align: top;
+
+		overflow:scroll;
+		padding-left:12px;
+		padding-right:12px;
+		padding-bottom:12px;
+		margin-right:12px;
+	}
 
 	.topAction{
 		width: 100%;
@@ -338,7 +379,7 @@ export default{
 		border: 0px solid blue;
 	}
 
-	.actionArea > .el-icon-plus{
+	.actionArea > .topIconAction{
 		border: 0px solid black;
 		padding-right:8px;
 	}

@@ -1,21 +1,26 @@
 <template>
 	<div id="todoContainer">
 
-    <Todo
-    v-for="group in groups"
-    :key="group.objectId"
-    :group="group"
-    :user="user"
-		@delete="deleteGroup"
-		@edit="showEditGroupDialog"
-		@actionGroup="addGroup"
-    />
+		<draggable class="dragList" :list="groups" :options="{animation: 150,group:{ name:'groupList'}}"  @start="drag" @end="drop" >
+
+	    <Todo
+		    v-for="group in groups"
+		    :key="group.objectId"
+		    :group="group"
+		    :user="user"
+				@delete="deleteGroup"
+				@edit="showEditGroupDialog"
+				@appendGroup="appendGroup"
+	    />
+
+		</draggable>
 
   </div>
 </template>
 
 <script >
 import Todo from './todo.vue'
+import draggable from 'vuedraggable'
 
 let host = process.env.API_HOST
 let api_version = process.env.API_VERSION
@@ -24,14 +29,42 @@ export default{
 	data(){
 		return{
       groups:[],
-			user:{}
+			user:{},
+			groupForAppend:{
+				'name':'appendGroup',
+				'objectId':'10000001'
+			}
 		}
 	},
 	components: {
-		Todo
+		Todo,
+		draggable
 	},
   methods:{
-    addGroup:function(event){
+		drag:function(){
+			console.log('drag');
+		},
+		drop:function(e){
+			console.log('drop');
+			const that = this;
+			var len = this.groups.length
+			//优先级最低 0 最高为 size-1
+			this.groups.forEach(function(group, index, array){
+					group.priority = index
+					// 不是最后一个
+					if(index<len-1){
+						console.log("更新 "+group.name);
+						that.updateGroup(group,function(result){})
+					}else{
+						console.log("无需更新 "+group.name);
+					}
+
+			})
+			this.groups.forEach(function(group, index, array){
+					console.log(group.name+" primary is "+group.priority);
+			})
+		},
+    appendGroup:function(event){
 			this.showAddGroupDialog();
     },
 
@@ -42,7 +75,12 @@ export default{
           inputPattern: /[\u4e00-\u9fa5_a-zA-Z0-9]{1,6}/,
           inputErrorMessage: '格式不正确'
         }).then(({ value }) => {
-					this.addNewGroup(value,this.user.id)
+					const group = {
+						'name':value,
+						'priority':this.groupForAppend.priority
+					}
+
+					this.addNewGroup(group,this.user.id)
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -59,7 +97,8 @@ export default{
           inputPattern: /[\u4e00-\u9fa5_a-zA-Z0-9]{1,6}/,
           inputErrorMessage: '格式不正确'
         }).then(({ value }) => {
-					this.editGroup(group.objectId,value)
+					group.name = value
+					this.editGroup(group)
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -68,10 +107,11 @@ export default{
         });
 		},
 
-		addNewGroup(name,userId){
+		addNewGroup(group,userId){
 			const api = host+"/todos/api/"+api_version+"/group"
 			var formData = new FormData();
-			formData.append('name', name);
+			formData.append('name', group.name);
+			formData.append('priority', group.priority);
 			formData.append('userId', userId);
 
 			// POST /someUrl
@@ -85,23 +125,29 @@ export default{
 
 		  });
 		},
-
-		editGroup(groupId,name){
+		// 更新 group
+		updateGroup(group,callback){
 			const api = host+"/todos/api/"+api_version+"/group/edit"
 			var formData = new FormData();
-			formData.append('name', name);
-			formData.append('groupId', groupId);
+			formData.append('name', group.name);
+			formData.append('objectId', group.objectId);
+			formData.append('priority', group.priority);
 
-			// POST /someUrl
 		  this.$http.post(api, formData).then(response => {
-				this.groups.splice(this.groups.findIndex(group => group.objectId === groupId),1,response.body.entity)
-				this.$message({
-					type: 'success',
-					message: '更新分组成功'
-				});
+				this.groups.splice(this.groups.findIndex(item => item.objectId === group.objectId),1,response.body.entity)
+				callback(response.body.entity)
 		  }, response => {
 
 		  });
+		},
+		editGroup(group){
+			const that = this
+			this.updateGroup(group,function(){
+				that.$message({
+					type: 'success',
+					message: '更新分组成功'
+				});
+			})
 		},
 
 		deleteGroup(objectId){
@@ -134,7 +180,8 @@ export default{
     const apiGroup = host+"/todos/api/"+api_version+"/group/"+this.user.id
     this.$http.get(apiGroup).then(response => {
         this.groups = response.body.results
-				this.groups.push({"name":"addGroup"})
+				this.groupForAppend.priority = this.groups.length
+				this.groups.push(this.groupForAppend)
         console.log("len is "+this.groups.length);
       }, response => {});
 
@@ -163,22 +210,9 @@ export default{
 			border:0px solid #000;
     }
 
-    #todoContainer > div {
-      width: 20%;
-			height:auto;
-      max-height: 500px;
-      background-color: #eff1f3;
-      border-radius:6px;
-			display: inline-block;
-			vertical-align: top;
-
-			overflow:scroll;
-			padding-left:12px;
-			padding-right:12px;
-			padding-bottom:12px;
-			margin-right:12px;
-    }
-
+		.dragList{
+			 min-height: 10px;
+		}
 
 
 </style>

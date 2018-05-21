@@ -15,11 +15,11 @@
 							 <i class="el-icon-more"></i>
 						 </span>
 						 <el-dropdown-menu slot="dropdown" style="margin-top:-8px;">
-							 <el-dropdown-item command="e">编辑条目</el-dropdown-item>
+							 <el-dropdown-item v-show="!todo.onFile" command="e">编辑条目</el-dropdown-item>
 
 							 <!-- <el-dropdown-item  command="move">移动</el-dropdown-item> -->
-							 <el-dropdown-item command="onFile">{{todo.onFile?'还原到列表':'归档条目'}}</el-dropdown-item>
-							 <el-dropdown-item divided v-show="todo.onFile" command="d">删除条目</el-dropdown-item>
+							 <el-dropdown-item command="onFile">{{todo.onFile?'还原条目':'归档条目'}}</el-dropdown-item>
+							 <el-dropdown-item divided v-show="todo.onFile" command="d">彻底删除</el-dropdown-item>
 						 </el-dropdown-menu>
 			 </el-dropdown>
 
