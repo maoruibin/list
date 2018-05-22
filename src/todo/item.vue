@@ -1,6 +1,6 @@
 <template>
 
-	<el-card shadow="hover" style="margin-bottom:12px;">
+	<el-card shadow="hover" body-style="padding:10px" class="cardContainer">
 		<div :class="['item todo-item',todo.completed ? 'completed':'']">
 			 <el-checkbox
 			 id="checkBox"
@@ -115,52 +115,18 @@
             }
         }
     }
-    .toggle{
-        text-align: center;
-        width: 40px;
-        height: 40px;
-        line-height: 40px
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        margin: auto 0;
-        border: none;
-        appearance: none;
-        outline none
-        padding-left 5px
-        cursor pointer
-        &:after{
-            content: url('../assets/images/round.svg')
-        }
-        &:checked:after{
-            content: url('../assets/images/done.svg')
-        }
-    }
-    .destroy{
-        position: absolute;
-        top: 0;
-        right: 10px;
-        bottom: 0;
-        width: 40px;
-        height: 40px;
-        margin: auto 0;
-        font-size: 30px;
-        color: #cc9a9a;
-        margin-bottom: 11px;
-        transition: color 0.2s ease-out;
-        background-color transparent
-        appearance none
-        border-width 0
-        cursor pointer
-        outline none
-    }
+
+		.cardContainer{
+			margin-bottom:8px;
+			border: 0px solid #000777;
+		}
 
 		.item {
 			display: flex;
 			flex-direction:row;
 			justify-content: space-between;
 			align-items: flex-start;
-			border: 0px solid #000777;
+			border: 0px solid #000000;
 		}
 
 		.item >span{

@@ -1,13 +1,3 @@
-#footer {
-  margin: 40px;
-  text-align: center;
-  color: #a1a3a6;
-  font-size: 8px;
-}
-#footer a {
-  text-decoration: none;
-  color: #a1a3a6;
-}
 html,
 body {
   margin: 0;
@@ -22,4 +12,14 @@ body {
   font: 14px 'microsoft yahei';
   color: #333;
   font-weight: 500;
+}
+#footer {
+  margin: 40px;
+  text-align: center;
+  color: #a1a3a6;
+  font-size: 8px;
+}
+#footer a {
+  text-decoration: none;
+  color: #a1a3a6;
 }
