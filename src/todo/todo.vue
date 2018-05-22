@@ -12,9 +12,10 @@
 				        <i class="el-icon-more"></i>
 				      </span>
 				      <el-dropdown-menu slot="dropdown">
-				        <el-dropdown-item command="edit" >编辑分组</el-dropdown-item>
-				        <el-dropdown-item command="onFile">{{this.showOnFileList?'正常列表':'已归档列表'}}</el-dropdown-item>
-								<el-dropdown-item divided command="delete">删除分组</el-dropdown-item>
+				        <el-dropdown-item command="edit"  v-show="!showOnFileList">编辑分组</el-dropdown-item>
+				        <el-dropdown-item command="onFile">{{this.showOnFileList?'Todo 列表':'已归档列表'}}</el-dropdown-item>
+								<el-dropdown-item divided command="delete"   v-show="!showOnFileList" >删除该分组</el-dropdown-item>
+								<el-dropdown-item divided command="deleteAll" v-show="showOnFileList & todosOnFileList.length != 0">清空已归档</el-dropdown-item>
 				      </el-dropdown-menu>
 				</el-dropdown>
 			</div>
@@ -24,17 +25,15 @@
 		      <el-input
 					v-model="input"
 					clearable = true
-					autofocus="autofocus"
+					autofocus = true
 					@keyup.enter.native="addTodo"
 					placeholder="请输入要做的事">
 				</el-input>
 				<div class="bottom clearfix">
            <el-button type="primary" size="small" plain @click="addTodo">确定</el-button>
-					 <i class="el-icon-close" style="margin-left:12px;" @click="hideInput"></i>
+					 <i class="el-icon-close" style="margin-left:12px;" @click="hideAddForm"></i>
         </div>
 		</el-card>
-
-
 
 		<draggable class="dragList" :list="filterTodos" :options="{disabled:showOnFileList,animation: 150,group:{ name:'todoList'}}" @add="moveTo" @start="drag" @end="drop" >
 
@@ -156,7 +155,7 @@ export default{
 					console.log(index+" ---> groupId "+todo.groupId)
 			})
 		},
-		showAddInput:function(event){
+		showAddInput:function(){
 			if(this.showOnFileList){
 				this.showOnFileList = !this.showOnFileList
 			}else{
@@ -164,7 +163,7 @@ export default{
 			}
 
 		},
-		hideInput:function(event){
+		hideAddForm:function(){
 			this.showInput = false
 		},
 		handleCommand:function(command){
@@ -174,8 +173,43 @@ export default{
 				this.$emit('edit',this.group)
 			}else if(command === 'onFile'){
 				this.showOnFileList = !this.showOnFileList
+			}else if(command === 'deleteAll'){
+				this.showDelteFileListDialog(this.todosOnFileList)
 			}
 		},
+		showDelteFileListDialog(onFileList){
+			const that = this
+			this.$confirm('此操作将永久删除已归档的所有 Todo, 是否继续?', '提示', {
+								confirmButtonText: '删除已归档',
+								cancelButtonText: '取消',
+								type: 'warning'
+							}).then(() => {
+								onFileList.forEach(function(todo, index, array){
+									that.deleteTodoCallback(todo,function(){
+											that.todosOnFileList.splice(that.todosOnFileList.findIndex(item => item.objectId === todo.objectId),1)
+									})
+								})
+								that.$message({
+			            type: 'success',
+			            message: '已删除所有已归档 Todo'
+			          });
+							}).catch(() => {});
+		},
+
+		deleteTodoCallback(todo,callback){
+			const objectId = todo.objectId
+			const api = host+"/todos/api/"+api_version+"/todos/"+objectId
+			const config =
+				{
+						headers : {
+								'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+						}
+				}
+			this.$http.delete(api,config).then(response => {
+						callback(todo)
+			}, response => {});
+		},
+
 		deleteGroup:function(){
 			console.log('delete real');
 			//传递给父组件让其执行删除
@@ -225,6 +259,7 @@ export default{
 				var flag = response.body.entity.completed
 				this.todos.unshift(response.body.entity)
 				this.input= ''
+				this.hideAddForm()
 		  }, response => {
 
 		  });
@@ -320,24 +355,14 @@ export default{
 			})
 		},
 		deleteItem(todo){
-			const objectId = todo.objectId
-			console.log("current objectId is "+objectId)
-
-			const api = host+"/todos/api/"+api_version+"/todos/"+objectId
-			const config =
-				{
-				    headers : {
-				        'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
-				    }
-				}
-			this.$http.delete(api,config).then(response => {
-					console.log("result is "+response.body.result);
-					this.filterTodos.splice(this.filterTodos.findIndex(todo => todo.objectId === objectId),1)
-					this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
-				}, response => {});
+			const that = this
+			this.deleteTodoCallback(todo,function(){
+				that.filterTodos.splice(that.filterTodos.findIndex(item => item.objectId === todo.objectId),1)
+				that.$message({
+					type: 'success',
+					message: '删除成功!'
+				});
+			})
 		},
 
 		toggleFilter(state){

@@ -149,7 +149,6 @@ export default{
 				});
 			})
 		},
-
 		deleteGroup(objectId){
 			console.log("del group objectId is "+objectId)
 			const api = host+"/todos/api/"+api_version+"/group/"+objectId
