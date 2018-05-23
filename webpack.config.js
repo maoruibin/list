@@ -9,7 +9,7 @@ const isDev = process.env.NODE_ENV === 'development'
 const config =  {
 	target: 'web',
 	// 入口配置 也就是目标文件
-	entry:path.join(__dirname,'src/main.js'),
+	entry:path.join(__dirname,'src/demo.js'),
 
 	// 最终的输入文件
 	output:{

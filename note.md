@@ -59,4 +59,8 @@ css 技巧
 ```
 //顶部对其
 vertical-align: top;
+
+//文字居中
+text-align: center;
+line-height: 160px;
 ```
