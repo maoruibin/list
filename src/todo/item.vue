@@ -4,13 +4,14 @@
 		<div :class="['item todo-item',todo.completed ? 'completed':'']">
 			 <el-checkbox
 			 id="checkBox"
+			 class="dragHandleItem"
 			 v-on:change="toggleCompleted"
 			 v-model="todo.completed">
 		  </el-checkbox>
 
 			 <span id="content">{{todo.title}}</span>
 
-			 <el-dropdown trigger="click" id="action"  @command="handleCommand">
+			 <el-dropdown trigger="click" class="dragHandleItem"  @command="handleCommand">
 						 <span class="el-dropdown-link">
 							 <i class="el-icon-more"></i>
 						 </span>
@@ -156,5 +157,9 @@
 			font-size: 4px;
 			color: #ccc;
 			margin-top:4px;
+		}
+		.dragHandleItem{
+			cursor: move;
+  		cursor: -webkit-grabbing;
 		}
 </style>

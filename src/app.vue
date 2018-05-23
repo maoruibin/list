@@ -3,11 +3,13 @@
 		<div id="cover"></div>
 
 		<Login />
-		<Header/>
-		<div v-if="user != null">
-				<Container/>
-				<Footer/>
-		</div>
+
+		<el-container>
+			<Header/>
+			<Container v-show="user"/>
+			<el-footer> Design by 咕咚</el-footer>
+		</el-container>
+
 
 	</div>
 

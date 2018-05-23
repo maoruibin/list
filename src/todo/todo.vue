@@ -10,10 +10,13 @@
 				<el-dropdown trigger="click"  @command="handleCommand">
 				      <span class="el-dropdown-link">
 				        <i class="el-icon-more"></i>
+
 				      </span>
 				      <el-dropdown-menu slot="dropdown">
 				        <el-dropdown-item command="edit"  v-show="!showOnFileList">编辑分组</el-dropdown-item>
-				        <el-dropdown-item command="onFile">{{this.showOnFileList?'Todo 列表':'已归档列表'}}</el-dropdown-item>
+								<el-dropdown-item command="onFileBatch" v-show="hasCompletedTodo" >归档已完成 Todo</el-dropdown-item>
+								<el-dropdown-item command="onFile">{{this.showOnFileList?'Todo 列表':'查看已归档 Todo'}}</el-dropdown-item>
+
 								<el-dropdown-item divided command="delete"   v-show="!showOnFileList" >删除该分组</el-dropdown-item>
 								<el-dropdown-item divided command="deleteAll" v-show="showOnFileList & todosOnFileList.length != 0">清空已归档</el-dropdown-item>
 				      </el-dropdown-menu>
@@ -35,7 +38,8 @@
         </div>
 		</el-card>
 
-		<draggable class="dragList" :list="filterTodos" :options="{disabled:showOnFileList,animation: 150,group:{ name:'todoList'}}" @add="moveTo" @start="drag" @end="drop" >
+		<!-- dragHandleItem 指定拖动区域 -->
+		<draggable class="dragList" :list="filterTodos" :options="{handle:'.dragHandleItem',ghostClass:'ghost',scroll: true,disabled:showOnFileList,animation: 150,group:{ name:'todoList'}}" @add="moveTo" @start="drag" @end="drop" >
 
 				<Item
 					v-for="todo in filterTodos"
@@ -92,6 +96,7 @@ export default{
 			showInput:false,
 			// 是否展示已完成列表
 			showOnFileList:false,
+
 			lastGroupAction:this.group.name === 'appendGroup',
 			moveDialogVisible: false
 		}
@@ -108,12 +113,14 @@ export default{
 	},
 
 	mounted:function(){
-		const api = host+"/todos/api/"+api_version+"/todos/"+this.user.id+"/"+this.group.objectId
-		this.$http.get(api).then(response => {
-				this.todos = response.body.results;
-				this.todosComplete = response.body.resultsComplete;
-				this.todosOnFileList = response.body.resultsOnFile;
-			}, response => {});
+		this.todos = this.group.todos.results;
+		this.todosOnFileList = this.group.todos.resultsOnFile;
+		// const api = host+"/todos/api/"+api_version+"/todos/"+this.user.id+"/"+this.group.objectId
+		// this.$http.get(api).then(response => {
+		// 		this.todos = response.body.results;
+		// 		this.todosComplete = response.body.resultsComplete;
+		// 		this.todosOnFileList = response.body.resultsOnFile;
+		// 	}, response => {});
   },
 	computed: {
 		filterTodos(){
@@ -122,9 +129,23 @@ export default{
 			}else{
 				return this.todos
 			}
+		},
+		// 列表是否包含已完成 todo
+		hasCompletedTodo(){
+			if(this.showOnFileList){
+				return false
+			}else{
+				let item = this.todos.find(function(item){
+					return item.completed
+				})
+				// 说明有已完成的 todo
+				return item != undefined
+			}
 		}
+
 	},
 	methods: {
+
 		drag:function(){
 			console.log('drag');
 		},
@@ -175,8 +196,30 @@ export default{
 				this.showOnFileList = !this.showOnFileList
 			}else if(command === 'deleteAll'){
 				this.showDelteFileListDialog(this.todosOnFileList)
+			}else if(command === 'onFileBatch'){
+				this.showOnFileBatchDialog()
 			}
 		},
+		// 提示将会归档所有已完成项目
+		showOnFileBatchDialog(){
+			const that = this
+			this.$confirm('此操作将归档所有已完成 Todo，归档后你可以在已归档列表中找到他们, 是否继续?', '提示', {
+								confirmButtonText: '归档已完成 Todo',
+								cancelButtonText: '取消',
+								type: 'warning'
+							}).then(() => {
+								that.todos.forEach(function(todo, index, array){
+									if(todo.completed){
+											that.onFileItemPure(todo,function(value){})
+									}
+								})
+								that.$message({
+									type: 'success',
+									message: '已将所有已完成 Todo 归档'
+								});
+							}).catch(() => {});
+		},
+
 		showDelteFileListDialog(onFileList){
 			const that = this
 			this.$confirm('此操作将永久删除已归档的所有 Todo, 是否继续?', '提示', {
@@ -219,7 +262,7 @@ export default{
 			this.$emit('appendGroup')
 		},
 		showDeleteDialog:function(){
-			this.$confirm('此操作将永久删除该分组, 是否继续?', '提示', {
+			this.$confirm('此操作将永久删除该分组以及分组下的 Todos, 是否继续?', '提示', {
 			          confirmButtonText: '删除',
 			          cancelButtonText: '取消',
 			          type: 'warning'
@@ -269,6 +312,22 @@ export default{
 			this.moveDialogVisible = true
 		},
 		onFileItem(todo){
+			const that = this
+			this.onFileItemPure(todo,function(value){
+				if(value>0){
+					that.$message({
+						type: 'success',
+						message: '已归档'
+					});
+				}else{
+					that.$message({
+						type: 'success',
+						message: '已还原'
+					});
+				}
+			})
+		},
+		onFileItemPure(todo,callback){
 			var todoId = todo.objectId
 			const api = host+"/todos/api/"+api_version+"/todos/onFile/"+todoId
 			const config = {
@@ -278,28 +337,23 @@ export default{
 			}
 			var formData = new FormData();
 			formData.append('onFile', !todo.onFile);
-			formData.append('onFileAt', new Date().getTime());
+			//未归档的项目才需要记录归档时间
+			if(!todo.onFile){
+				formData.append('onFileAt', new Date().getTime());
+			}
 
 			this.$http.put(api, formData, config).then(response => {
 					const result = response.body.entity
 					if(result.onFile){
 						this.todos.splice(this.todos.findIndex(todo => todo.objectId === todoId),1)
 						this.todosOnFileList.push(result)
-						this.$message({
-							type: 'success',
-							message: '已归档'
-						});
+						callback(1)
 					}else{
 						this.todosOnFileList.splice(this.todosOnFileList.findIndex(todo => todo.objectId === todoId),1)
 						this.todos.push(result)
-						this.$message({
-							type: 'success',
-							message: '已还原'
-						});
+						callback(-1)
 					}
 				}, response => {});
-
-
 		},
 		editItem(todo){
 			const that = this
@@ -385,7 +439,6 @@ export default{
 		border-radius:6px;
 		display: inline-block;
 		vertical-align: top;
-
 		overflow:scroll;
 		padding-left:12px;
 		padding-right:12px;
@@ -398,6 +451,8 @@ export default{
 		line-height:40px;
 		display: inline-block;
 		border: 0px solid red;
+		cursor: move;
+		cursor: -webkit-grabbing;
 	}
 	.actionArea{
 		float: right;

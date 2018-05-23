@@ -1,9 +1,9 @@
 <template>
-	<el-main>
-		<draggable class="dragList" :list="groups" :options="{animation: 150,group:{ name:'groupList'}}"  @start="drag" @end="drop" >
+	<el-main >
+		<draggable class="dragList" :list="groupTodos" :options="{handle:'.topAction',ghostClass:'ghost',scroll: true,animation: 150,group:{ name:'groupList'}}"  @start="drag" @end="drop" >
 
 	    <Todo
-		    v-for="group in groups"
+		    v-for="group in groupTodos"
 		    :key="group.objectId"
 		    :group="group"
 		    :user="user"
@@ -28,7 +28,7 @@ let api_version = process.env.API_VERSION
 export default{
 	data(){
 		return{
-      groups:[],
+      groupTodos:[],
 			user:{},
 			groupForAppend:{
 				'name':'appendGroup',
@@ -47,9 +47,9 @@ export default{
 		drop:function(e){
 			console.log('drop');
 			const that = this;
-			var len = this.groups.length
+			var len = this.groupTodos.length
 			//优先级最低 0 最高为 size-1
-			this.groups.forEach(function(group, index, array){
+			this.groupTodos.forEach(function(group, index, array){
 					group.priority = index
 					// 不是最后一个
 					if(index<len-1){
@@ -60,7 +60,7 @@ export default{
 					}
 
 			})
-			this.groups.forEach(function(group, index, array){
+			this.groupTodos.forEach(function(group, index, array){
 					console.log(group.name+" primary is "+group.priority);
 			})
 		},
@@ -116,7 +116,7 @@ export default{
 
 			// POST /someUrl
 		  this.$http.post(api, formData).then(response => {
-				this.groups.splice(this.groups.length-1,0,response.body.entity)
+				this.groupTodos.splice(this.groupTodos.length-1,0,response.body.entity)
 				this.$message({
 					type: 'success',
 					message: '插入新分组成功'
@@ -134,7 +134,7 @@ export default{
 			formData.append('priority', group.priority);
 
 		  this.$http.post(api, formData).then(response => {
-				this.groups.splice(this.groups.findIndex(item => item.objectId === group.objectId),1,response.body.entity)
+				this.groupTodos.splice(this.groupTodos.findIndex(item => item.objectId === group.objectId),1,response.body.entity)
 				callback(response.body.entity)
 		  }, response => {
 
@@ -161,7 +161,7 @@ export default{
 
 			this.$http.delete(api,config).then(response => {
 					console.log("result is "+response.body.result);
-					this.groups.splice(this.groups.findIndex(group => group.objectId === objectId),1)
+					this.groupTodos.splice(this.groupTodos.findIndex(group => group.objectId === objectId),1)
 
 					this.$message({
 						type: 'success',
@@ -176,12 +176,12 @@ export default{
     if(!this.user){
       return
     }
-    const apiGroup = host+"/todos/api/"+api_version+"/group/"+this.user.id
-    this.$http.get(apiGroup).then(response => {
-        this.groups = response.body.results
-				this.groupForAppend.priority = this.groups.length
-				this.groups.push(this.groupForAppend)
-        console.log("len is "+this.groups.length);
+    const apiTodosAll = host+"/todos/api/"+api_version+"/todos/all/"+this.user.id
+    this.$http.get(apiTodosAll).then(response => {
+        this.groupTodos = response.body.groupTodos
+				this.groupForAppend.priority = this.groupTodos.length
+				this.groupTodos.push(this.groupForAppend)
+        console.log("len is "+this.groupTodos.length);
       }, response => {});
 
     },
@@ -195,4 +195,5 @@ export default{
 .dragList{
 	 min-height: 10px;
 }
+
 </style>

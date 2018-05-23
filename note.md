@@ -53,6 +53,11 @@ if(editResult.completed){
   this.todos.unshift(editResult)
 }
 
+//打印对象
+console.log("result is "+result+" and ---> "+JSON.stringify(item));
+
+// 判断对象是不是 undi
+const result = item === undefined
 ```
 
 css 技巧
