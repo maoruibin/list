@@ -115,12 +115,6 @@ export default{
 	mounted:function(){
 		this.todos = this.group.todos.results;
 		this.todosOnFileList = this.group.todos.resultsOnFile;
-		// const api = host+"/todos/api/"+api_version+"/todos/"+this.user.id+"/"+this.group.objectId
-		// this.$http.get(api).then(response => {
-		// 		this.todos = response.body.results;
-		// 		this.todosComplete = response.body.resultsComplete;
-		// 		this.todosOnFileList = response.body.resultsOnFile;
-		// 	}, response => {});
   },
 	computed: {
 		filterTodos(){
