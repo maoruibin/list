@@ -1,25 +1,33 @@
 <template>
-	<el-row :gutter="20"  style="border:0px solid #000;">
-		<el-col :span="4"><div class="grid-content bg-purple"></div></el-col>
-		<el-col :span="16" style="border:0px solid #f00;">
-			<div class="grid-content bg-purple" style="margin-top:8px;color:#ffffff;text-align:center;">TodayTodo - 那些要做的，以及想做的事</div>
-		</el-col>
-		<el-col :span="4">
-			<div class="grid-content bg-purple">
-				<el-dropdown style="float:right;margin-top:8px;" @command="handleCommand">
-				  <span class="el-dropdown-link" style="color:#ffffff;">
-				    {{this.user.nickname}}<i class="el-icon-arrow-down el-icon--right"></i>
-				  </span>
-				  <el-dropdown-menu v-show="this.user != null" slot="dropdown">
-				    <el-dropdown-item command="info">个人信息</el-dropdown-item>
-				    <el-dropdown-item command="logout">注销</el-dropdown-item>
+	<el-header>
+		<el-row :gutter="10">
+			<el-col :span="6">
+				<div class="grid-content left_top">
+					<span style="font-family: Georgia, serif;font-size:large;">TodayTodo</span><span style="font-size:x-small;">-Beta</span>
+				</div>
+			</el-col>
+			<el-col :span="12">
+				<div class="grid-content center_title">
+					<span>那些要做的以及想做的事情、计划</span>
+				</div>
+			</el-col>
+			<el-col :span="6">
+				<div class="grid-content right_top">
 
-				  </el-dropdown-menu>
-				</el-dropdown>
-			</div>
-		</el-col>
-	</el-row>
+						<el-dropdown class="titleItem" @command="handleCommand" show-timeout=100>
+							<span class="el-dropdown-link" style="color:#ffffff;">
+								{{this.user.nickname}}<i class="el-icon-arrow-down el-icon--right"></i>
+							</span>
+							<el-dropdown-menu v-show="this.user != null" slot="dropdown">
+								<el-dropdown-item command="info">个人信息</el-dropdown-item>
+								<el-dropdown-item command="logout">注销</el-dropdown-item>
+							</el-dropdown-menu>
+						</el-dropdown>
+				</div>
+			</el-col>
+		</el-row>
 
+	</el-header>
 </template>
 <script>
   export default {
@@ -65,32 +73,42 @@
   }
 </script>
 <style lang="stylus" scoped>
+.el-col {
+	border-radius: 0px;
+}
 
-	.el-row {
-    margin-top: 10px;
-    margin-bottom: 20px;
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-  .el-col {
-    border-radius: 4px;
-  }
-  .bg-purple-dark {
+.left_top {
+	background: transparent;
+	padding-left:12px;
+}
 
-  }
-  .bg-purple {
+.center_title {
+	background: transparent;
+	text-align: center;
+}
 
-  }
-  .bg-purple-light {
+.right_top {
+	text-align: right;
+	padding-right: 12px;
+}
+.grid-content {
+	border-radius: 0px;
+	min-height: 56px;
+	line-height: 56px;
+}
 
-  }
-  .grid-content {
-    border-radius: 4px;
-    min-height: 36px;
-  }
-  .row-bg {
-    padding: 10px 0;
+.titleItem{
+	vertical-align: middle;
+	display: inline-block;
+}
 
-  }
+
+.el-row{
+	border: 0px solid #000;
+}
+
+
+body > .el-container {
+    margin-bottom: 0px;
+}
 </style>

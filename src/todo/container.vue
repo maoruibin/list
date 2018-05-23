@@ -1,6 +1,5 @@
 <template>
-	<div id="todoContainer">
-
+	<el-main>
 		<draggable class="dragList" :list="groups" :options="{animation: 150,group:{ name:'groupList'}}"  @start="drag" @end="drop" >
 
 	    <Todo
@@ -15,7 +14,8 @@
 
 		</draggable>
 
-  </div>
+  </el-main>
+
 </template>
 
 <script >
@@ -191,27 +191,8 @@ export default{
 
 <!-- 设置scoped 表示当前组件下的id只在当前组件起作用，不会跟其他组件引起冲突 -->
 <style lang="stylus" scoped>
-    #todoContainer {
-      width: 100%;
-      height: 500px;
-      padding:10px;
-      white-space: nowrap;
-      overflow: hidden;
-      overflow-x: auto;
-      -webkit-backface-visibility: hidden;
-      -webkit-perspective: 1000;
-      -webkit-overflow-scrolling: touch; /* 2 */
-      text-align: justify; /* 3 */
-      &::-webkit-scrollbar {
-          display: block;
-      }
 
-			border:0px solid #000;
-    }
-
-		.dragList{
-			 min-height: 10px;
-		}
-
-
+.dragList{
+	 min-height: 10px;
+}
 </style>
