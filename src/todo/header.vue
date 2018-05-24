@@ -1,33 +1,33 @@
 <template>
-	<el-header>
-		<el-row :gutter="10">
-			<el-col :span="6">
-				<div class="grid-content left_top">
-					<span style="font-family: Georgia, serif;font-size:large;">TodayTodo</span><span style="font-size:x-small;">-Beta</span>
-				</div>
-			</el-col>
-			<el-col :span="12">
-				<div class="grid-content center_title">
-					<span>那些要做的以及想做的事情、计划</span>
-				</div>
-			</el-col>
-			<el-col :span="6">
-				<div class="grid-content right_top">
+	<el-row :gutter="10">
+		<el-col :span="6">
+			<div class="grid-content left_top">
+				<span style="font-family: Georgia, serif;font-size:large;">TodayTodo</span><span style="font-size:x-small;">-Beta</span>
+			</div>
+		</el-col>
+		<el-col :span="12">
+			<div class="grid-content center_title">
+				<span>那些要做的以及想做的事情、计划</span>
+			</div>
+		</el-col>
+		<el-col :span="6">
+			<div class="grid-content right_top">
 
-						<el-dropdown class="titleItem" @command="handleCommand" show-timeout=100>
-							<span class="el-dropdown-link" style="color:#ffffff;">
-								{{this.user.nickname}}<i class="el-icon-arrow-down el-icon--right"></i>
-							</span>
-							<el-dropdown-menu v-show="this.user != null" slot="dropdown">
-								<el-dropdown-item command="info">个人信息</el-dropdown-item>
-								<el-dropdown-item command="logout">注销</el-dropdown-item>
-							</el-dropdown-menu>
-						</el-dropdown>
-				</div>
-			</el-col>
-		</el-row>
+					<el-dropdown class="titleItem" @command="handleCommand" show-timeout=100>
+						<span class="el-dropdown-link" style="color:#ffffff;">
+							{{this.user.nickname}}<i class="el-icon-arrow-down el-icon--right"></i>
+						</span>
+						<el-dropdown-menu v-show="this.user != null" slot="dropdown">
+							<el-dropdown-item command="info">个人信息</el-dropdown-item>
+							<el-dropdown-item command="dashboard">数据面板</el-dropdown-item>
+							<el-dropdown-item command="logout">注销</el-dropdown-item>
+						</el-dropdown-menu>
+					</el-dropdown>
+			</div>
+		</el-col>
+	</el-row>
 
-	</el-header>
+
 </template>
 <script>
   export default {
@@ -47,6 +47,9 @@
       handleCommand(command) {
 				if(command === 'logout'){
 					this.showLogoutDialog()
+				}
+				if(command === 'dashboard'){
+					this.$emit('dashboard')
 				}
       },
 			showLogoutDialog(){
@@ -107,8 +110,4 @@
 	border: 0px solid #000;
 }
 
-
-body > .el-container {
-    margin-bottom: 0px;
-}
 </style>

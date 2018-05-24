@@ -1,22 +1,19 @@
 <template>
-	<el-main >
-		<draggable class="dragList" :list="groupTodos" :options="{handle:'.topAction',ghostClass:'ghost',scroll: true,animation: 150,group:{ name:'groupList'}}"  @start="drag" @end="drop" >
+	<draggable class="dragList" :list="groupTodos" :options="{handle:'.topAction',ghostClass:'ghost',scroll: true,animation: 150,group:{ name:'groupList'}}"  @start="drag" @end="drop" >
 
-	    <childTodo
-		    v-for="group in groupTodos"
-		    :key="group.objectId"
-		    :group="group"
-		    :user="user"
-				ref="childTodo"
-				@delete="deleteGroup"
-				@edit="showEditGroupDialog"
-				@hideOtherInput="hideOtherInput"
-				@appendGroup="appendGroup"
-	    />
+		<childTodo
+			v-for="group in groupTodos"
+			:key="group.objectId"
+			:group="group"
+			:user="user"
+			ref="childTodo"
+			@delete="deleteGroup"
+			@edit="showEditGroupDialog"
+			@hideOtherInput="hideOtherInput"
+			@appendGroup="appendGroup"
+		/>
 
-		</draggable>
-
-  </el-main>
+	</draggable>
 
 </template>
 
@@ -42,6 +39,21 @@ export default{
 		childTodo: Todo,
 		draggable
 	},
+	mounted:function(){
+    this.user = JSON.parse(localStorage.getItem("user"))
+    if(!this.user){
+      return
+    }
+    const apiTodosAll = host+"/todos/api/"+api_version+"/todos/list/"+this.user.id
+    this.$http.get(apiTodosAll).then(response => {
+        this.groupTodos = response.body.groupTodos
+				this.groupForAppend.priority = this.groupTodos.length
+				this.groupTodos.push(this.groupForAppend)
+        console.log("len is "+this.groupTodos.length);
+      }, response => {});
+
+  },
+
   methods:{
 		drag:function(){
 			console.log('drag');
@@ -60,7 +72,7 @@ export default{
 						updateList.push(updateItem)
 					}
 			})
-			
+
 			const api = host+"/todos/api/"+api_version+"/group/batchEdit"
 			const config = {
 					headers : {
@@ -191,21 +203,8 @@ export default{
 
 				}, response => {});
 		}
-  },
-  mounted:function(){
-    this.user = JSON.parse(localStorage.getItem("user"))
-    if(!this.user){
-      return
-    }
-    const apiTodosAll = host+"/todos/api/"+api_version+"/todos/list/"+this.user.id
-    this.$http.get(apiTodosAll).then(response => {
-        this.groupTodos = response.body.groupTodos
-				this.groupForAppend.priority = this.groupTodos.length
-				this.groupTodos.push(this.groupForAppend)
-        console.log("len is "+this.groupTodos.length);
-      }, response => {});
+  }
 
-    },
 }
 </script>
 
