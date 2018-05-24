@@ -15,7 +15,6 @@
 
 [如何使用webpack在vue项目中写jsx语法 \- CSDN博客](https://blog.csdn.net/itkingone/article/details/77096895)
 
-
 * Restful API 设计
 [使用 Python 和 Flask 设计 RESTful API — Designing a RESTful API with Python and Flask 1\.0 documentation](http://www.pythondoc.com/flask-restful/first.html)
 
@@ -27,6 +26,9 @@
 * 使用 Vue-Resource 进行网络请求
 
 [Vue\.js——vue\-resource全攻略 \- keepfool \- 博客园](http://www.cnblogs.com/keepfool/p/5657065.html)
+
+* 父子组件通信 v-for and ref
+[vue2\.0父子组件间通信 \- 简书](https://www.jianshu.com/p/6389d424965f)
 
 ## 解决跨域问题
 

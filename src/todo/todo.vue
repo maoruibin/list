@@ -145,24 +145,45 @@ export default{
 		},
 		// 移动到另一个 group 触发
 		moveTo:function(e){
-			console.log('moveTo');
-			this.updateTodos(this.todos)
-			// this.showPriority()
+			console.log('拖动到另一组完成');
+			this.updateTodosBatch(function(msg){
+					console.log("move --> "+msg);
+			})
 		},
 		drop:function(e){
-			console.log('drop');
-			this.updateTodos(this.todos)
-			// this.showPriority()
+			console.log('同一组内拖动完成');
+			this.updateTodosBatch(function(msg){
+					console.log("drop --> "+msg);
+			})
 		},
-		updateTodos:function(){
+		updateTodosBatch:function(callback){
 			const that = this;
 			var len = this.todos.length
 			//优先级最低 0 最高为 size-1
+			var updateList = []
 			this.todos.forEach(function(todo, index, array){
-					todo.priority = len-index-1
+					todo.priority = String(len-index-1)
 					todo.groupId = that.group.objectId
-					that.updateTodo(todo,function(result){})
+					var updateItem = {objectId:todo.objectId,groupId:todo.groupId,priority:todo.priority}
+					updateList.push(updateItem)
 			})
+
+			const api = host+"/todos/api/"+api_version+"/todos/batchUpdate"
+			const config = {
+					headers : {
+							'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+					}
+			}
+			var formData = new FormData();
+			formData.append('list', JSON.stringify(updateList));
+
+			this.$http.put(api, formData, config).then(response => {
+					//编辑完的 todo 结果
+					const msg = response.body.msg;
+					// 将编辑完的结果回调回去
+					callback(msg)
+				}, response => {});
+
 		},
 		showPriority:function(){
 			this.todos.forEach(function(todo, index, array){
@@ -181,6 +202,11 @@ export default{
 		hideAddForm:function(){
 			this.showInput = false
 
+		},
+		checkAndHideGroupInputForm:function(triggleGroupId){
+			if(this.group.objectId != triggleGroupId){
+					this.showInput = false
+			}
 		},
 		handleCommand:function(command){
 			if(command === 'delete'){

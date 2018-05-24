@@ -7,6 +7,7 @@
 		    :key="group.objectId"
 		    :group="group"
 		    :user="user"
+				ref="childTodo"
 				@delete="deleteGroup"
 				@edit="showEditGroupDialog"
 				@hideOtherInput="hideOtherInput"
@@ -50,20 +51,33 @@ export default{
 			const that = this;
 			var len = this.groupTodos.length
 			//优先级最低 0 最高为 size-1
+			var updateList = []
 			this.groupTodos.forEach(function(group, index, array){
-					group.priority = index
+					group.priority = String(index)
 					// 不是最后一个
 					if(index<len-1){
-						console.log("更新 "+group.name);
-						that.updateGroup(group,function(result){})
-					}else{
-						console.log("无需更新 "+group.name);
+						var updateItem = {objectId:group.objectId,priority:group.priority}
+						updateList.push(updateItem)
 					}
+			})
+			
+			const api = host+"/todos/api/"+api_version+"/group/batchEdit"
+			const config = {
+					headers : {
+							'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+					}
+			}
+			var formData = new FormData();
+			formData.append('list', JSON.stringify(updateList));
 
-			})
-			this.groupTodos.forEach(function(group, index, array){
-					console.log(group.name+" primary is "+group.priority);
-			})
+			this.$http.post(api, formData, config).then(response => {
+					//编辑完的 todo 结果
+					const msg = response.body.msg;
+					// 将编辑完的结果回调回去
+					console.log(msg);
+				}, response => {});
+
+
 		},
     appendGroup:function(event){
 			this.showAddGroupDialog();
@@ -150,13 +164,14 @@ export default{
 				});
 			})
 		},
+		// 提供给父组件 让父组件隐藏改分组的输入表单
 		hideOtherInput(group){
-			console.log("=====00000");
-			//this.$refs.childTodo.hideDemo();
-			// this.$refs.childTodo.$emit('hideInputFrame', group);
+			// 隐藏其他正在显示的输入框
+			this.$refs.childTodo.forEach(function(child){
+					child.checkAndHideGroupInputForm(group.objectId);
+			})
 		},
 		deleteGroup(objectId){
-			console.log("del group objectId is "+objectId)
 			const api = host+"/todos/api/"+api_version+"/group/"+objectId
 			const config =
 				{
