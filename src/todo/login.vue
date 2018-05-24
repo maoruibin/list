@@ -69,6 +69,7 @@
       guestLogin(){
         this.user.username = 'guest@163.com'
         this.user.password = '666999'
+        this.submitLogin()
       },
       showLogin(){
         this.msg = ''
