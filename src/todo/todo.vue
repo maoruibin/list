@@ -5,7 +5,7 @@
 			<span>{{group.name}}</span>
 			<div class="actionArea">
 
-				<i :class="['topIconAction', showOnFileList ? 'el-icon-arrow-left' : 'el-icon-plus']" @click="showAddInput"></i>
+				<i :class="['topIconAction', showOnFileList ? 'el-icon-arrow-left' : 'el-icon-plus']" @click="toogleAddOrReturn"></i>
 
 				<el-dropdown trigger="click"  @command="handleCommand">
 				      <span class="el-dropdown-link">
@@ -170,16 +170,17 @@ export default{
 					console.log(index+" ---> groupId "+todo.groupId)
 			})
 		},
-		showAddInput:function(){
+		toogleAddOrReturn:function(){
 			if(this.showOnFileList){
 				this.showOnFileList = !this.showOnFileList
 			}else{
 				this.showInput = !this.showInput
+				this.$emit('hideOtherInput',this.group)
 			}
-
 		},
 		hideAddForm:function(){
 			this.showInput = false
+
 		},
 		handleCommand:function(command){
 			if(command === 'delete'){
@@ -296,7 +297,6 @@ export default{
 				var flag = response.body.entity.completed
 				this.todos.unshift(response.body.entity)
 				this.input= ''
-				this.hideAddForm()
 		  }, response => {
 
 		  });

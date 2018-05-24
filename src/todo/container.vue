@@ -2,13 +2,14 @@
 	<el-main >
 		<draggable class="dragList" :list="groupTodos" :options="{handle:'.topAction',ghostClass:'ghost',scroll: true,animation: 150,group:{ name:'groupList'}}"  @start="drag" @end="drop" >
 
-	    <Todo
+	    <childTodo
 		    v-for="group in groupTodos"
 		    :key="group.objectId"
 		    :group="group"
 		    :user="user"
 				@delete="deleteGroup"
 				@edit="showEditGroupDialog"
+				@hideOtherInput="hideOtherInput"
 				@appendGroup="appendGroup"
 	    />
 
@@ -37,7 +38,7 @@ export default{
 		}
 	},
 	components: {
-		Todo,
+		childTodo: Todo,
 		draggable
 	},
   methods:{
@@ -149,6 +150,11 @@ export default{
 				});
 			})
 		},
+		hideOtherInput(group){
+			console.log("=====00000");
+			//this.$refs.childTodo.hideDemo();
+			// this.$refs.childTodo.$emit('hideInputFrame', group);
+		},
 		deleteGroup(objectId){
 			console.log("del group objectId is "+objectId)
 			const api = host+"/todos/api/"+api_version+"/group/"+objectId
@@ -176,7 +182,7 @@ export default{
     if(!this.user){
       return
     }
-    const apiTodosAll = host+"/todos/api/"+api_version+"/todos/all/"+this.user.id
+    const apiTodosAll = host+"/todos/api/"+api_version+"/todos/list/"+this.user.id
     this.$http.get(apiTodosAll).then(response => {
         this.groupTodos = response.body.groupTodos
 				this.groupForAppend.priority = this.groupTodos.length
