@@ -6,6 +6,7 @@ const ExtractPlugin = require('extract-text-webpack-plugin')
 
 const isDev = process.env.NODE_ENV === 'development'
 
+
 const config =  {
 	target: 'web',
 	// 入口配置 也就是目标文件
