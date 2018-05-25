@@ -82,3 +82,12 @@ vertical-align: top;
 text-align: center;
 line-height: 160px;
 ```
+
+设置字体
+```css
+字重 也就是字体粗细 700 是粗体
+font-weight: 400;
+字体大小
+font-size: 12px;
+16px = 1em; 14px = 0.875em; 12px = 0.75em; 10px = 0.625em 
+````

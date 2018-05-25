@@ -464,12 +464,18 @@ export default{
 
 	.topAction{
 		width: 100%;
-		line-height:40px;
+		line-height:42px;
 		display: inline-block;
 		border: 0px solid red;
 		cursor: move;
 		cursor: -webkit-grabbing;
 	}
+
+	.topAction > span{
+		font-size:16px;
+		font-weight:540;
+	}
+
 	.actionArea{
 		float: right;
 		border: 0px solid blue;
@@ -483,6 +489,7 @@ export default{
 		color:#000000;
 		cursor:pointer;
 	}
+
 
 	.bottom {
     margin-top: 13px;
