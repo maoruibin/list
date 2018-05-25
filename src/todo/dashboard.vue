@@ -30,14 +30,6 @@
       if(!this.user){
         return
       }
-      const apiTodosAll = host+"/todos/api/"+api_version+"/todos/list/"+this.user.id
-      this.$http.get(apiTodosAll).then(response => {
-          this.groupTodos = response.body.groupTodos
-          this.groupForAppend.priority = this.groupTodos.length
-          this.groupTodos.push(this.groupForAppend)
-          console.log("len is "+this.groupTodos.length);
-        }, response => {});
-
 		},
     methods: {
 

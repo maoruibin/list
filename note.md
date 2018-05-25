@@ -30,6 +30,8 @@
 * 父子组件通信 v-for and ref
 [vue2\.0父子组件间通信 \- 简书](https://www.jianshu.com/p/6389d424965f)
 
+* [JavaScript 时间与日期处理实战:你肯定被坑过 \- 最骚的就是你 \- 博客园](http://www.cnblogs.com/libin-1/p/6764747.html)
+
 ## 解决跨域问题
 
 delete 一直失败，先设置了 flask 的 response，让所有的请求都支持跨域，具体通过参考
@@ -60,6 +62,13 @@ console.log("result is "+result+" and ---> "+JSON.stringify(item));
 
 // 判断对象是不是 undi
 const result = item === undefined
+```
+
+* 时间格式化
+```javascript
+getLocalTime(nS) {
+  return new Date(nS).toLocaleString().replace(/:\d{1,2}$/,' ');
+}
 ```
 
 css 技巧

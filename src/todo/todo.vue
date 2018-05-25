@@ -329,52 +329,36 @@ export default{
 
 		},
 		moveItem(todo){
-			this.moveDialogVisible = true
+				this.moveDialogVisible = true
 		},
 		onFileItem(todo){
-			const that = this
-			this.onFileItemPure(todo,function(value){
-				if(value>0){
-					that.$message({
-						type: 'success',
-						message: '已归档'
-					});
+				const that = this
+				const todoId = todo.objectId
+				todo.onFile = !todo.onFile
+				if(todo.onFile){
+					todo.onFileAt = new Date()
 				}else{
-					that.$message({
-						type: 'success',
-						message: '已还原'
-					});
+					todo.onFileAt = 0
 				}
-			})
-		},
-		onFileItemPure(todo,callback){
-			var todoId = todo.objectId
-			const api = host+"/todos/api/"+api_version+"/todos/onFile/"+todoId
-			const config = {
-					headers : {
-							'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
-					}
-			}
-			var formData = new FormData();
-			formData.append('onFile', !todo.onFile);
-			//未归档的项目才需要记录归档时间
-			if(!todo.onFile){
-				formData.append('onFileAt', new Date().getTime());
-			}
-
-			this.$http.put(api, formData, config).then(response => {
-					const result = response.body.entity
+				this.updateTodo(todo,function(result){
 					if(result.onFile){
-						this.todos.splice(this.todos.findIndex(todo => todo.objectId === todoId),1)
-						this.todosOnFileList.push(result)
-						callback(1)
+						that.todos.splice(that.todos.findIndex(todo => todo.objectId === todoId),1)
+						that.todosOnFileList.push(result)
+						that.$message({
+							type: 'success',
+							message: '已归档'
+						});
 					}else{
-						this.todosOnFileList.splice(this.todosOnFileList.findIndex(todo => todo.objectId === todoId),1)
-						this.todos.push(result)
-						callback(-1)
+						that.todosOnFileList.splice(that.todosOnFileList.findIndex(todo => todo.objectId === todoId),1)
+						that.todos.push(result)
+						that.$message({
+							type: 'success',
+							message: '已还原'
+						});
 					}
-				}, response => {});
+				})
 		},
+
 		editItem(todo){
 			const that = this
 			this.updateTodo(todo,function(result){
@@ -395,14 +379,17 @@ export default{
 					}
 			}
 			var formData = new FormData();
-			formData.append('title', todo.title);
-			formData.append('content', todo.content);
-			formData.append('groupId', todo.groupId);
-			formData.append('priority', todo.priority);
-			formData.append('completed', todo.completed);
-			formData.append('completedAt', todo.completedAt);
-			formData.append('onFile', todo.onFile);
-			formData.append('onFileAt', todo.onFileAt);
+
+			this.checkAndAppend(formData,'title',todo.title)
+			this.checkAndAppend(formData,'content',todo.content)
+			this.checkAndAppend(formData,'groupId',todo.groupId)
+			this.checkAndAppend(formData,'priority',todo.priority)
+			this.checkAndAppend(formData,'completed',todo.completed)
+			this.checkAndAppend(formData,'completedAt',todo.completedAt)
+			this.checkAndAppend(formData,'onFile',todo.onFile)
+			this.checkAndAppend(formData,'onFileAt',todo.onFileAt)
+			console.log("todo.onFileAt is "+todo.onFileAt+" type is "+typeof(todo.onFileAt));
+
 
 			this.$http.put(api, formData, config).then(response => {
 					//编辑完的 todo 结果
@@ -413,11 +400,25 @@ export default{
 					callback(editResult)
 				}, response => {});
 		},
+		checkAndAppend(formData,key,value){
+			if(value != undefined){
+				formData.append(key, value)
+			}
+		},
 		// todo 要编辑的 todo
 		toggleCompletedItem(todo){
+			// if(todo.completed){
+			// 	todo.completedAt = new Date().getTime()
+			// }else{
+			// 	todo.completedAt = -1
+			// }
+			//
 			if(todo.completed){
-				todo.completedAt = new Date().getTime()
+				todo.completedAt = new Date()
+			}else{
+				todo.completedAt = 0
 			}
+
 			const that = this
 			this.updateTodo(todo,function(result){
 					if(result.completed){
