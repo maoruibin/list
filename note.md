@@ -28,7 +28,9 @@
 [Vue\.js——vue\-resource全攻略 \- keepfool \- 博客园](http://www.cnblogs.com/keepfool/p/5657065.html)
 
 * 父子组件通信 v-for and ref
-[vue2\.0父子组件间通信 \- 简书](https://www.jianshu.com/p/6389d424965f)
+
+* [vue2\.0父子组件间通信 \- 简书](https://www.jianshu.com/p/6389d424965f)
+* [组件基础 — Vue\.js](https://cn.vuejs.org/v2/guide/components.html#logo)
 
 * [JavaScript 时间与日期处理实战:你肯定被坑过 \- 最骚的就是你 \- 博客园](http://www.cnblogs.com/libin-1/p/6764747.html)
 

@@ -1,7 +1,7 @@
 <template>
 
 	<el-card shadow="hover" body-style="padding:10px" class="cardContainer">
-		<div :class="['item todo-item',todo.completed ? 'completed':'']">
+		<div :class="['item todo-item',todo.completed && showAction ? 'completed':'']">
 			 <el-checkbox
 			 id="checkBox"
 			 class="dragHandleItem"
@@ -10,7 +10,10 @@
 			 v-model="todo.completed">
 		  </el-checkbox>
 
-			 <span id="content">{{todo.title}}</span>
+			<div id="content">
+				<span >{{todo.title}}</span>
+			</div>
+
 
 			 <el-dropdown trigger="click" v-show="showAction" class="dragHandleItem"  @command="handleCommand">
 						 <span class="el-dropdown-link">
@@ -39,14 +42,24 @@
 				type: Object,
 				required: true
 			},
-			showAction:true
+
+			showAction:{
+	      type: Boolean,
+	      default: true
+	    },
+			title:''
 		},
+		// https://cn.vuejs.org/v2/guide/components-props.html
 		data() {
 		 return {
-			 dialogVisible: false
+			 dialogVisible: false,
+			 shadowValue:"always"
 		 };
 	 	},
 		methods: {
+			getShadowValue:function(){
+				return "always"
+			},
 			handleCommand:function(command){
 
 				if(command === 'd'){
@@ -161,6 +174,8 @@
 			font-size: 4px;
 			color: #ccc;
 			margin-top:4px;
+			padding-left:8px;
+			padding-right:8px;
 		}
 		.dragHandleItem{
 			cursor: move;

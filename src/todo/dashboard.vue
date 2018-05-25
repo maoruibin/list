@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="background-color:#f5f5f5;">
     <el-radio-group v-model="tabDay" style="margin-bottom: 20px;margin-top: 15px;">
      <el-radio-button label="today">今天</el-radio-button>
      <el-radio-button label="yesterday">昨天</el-radio-button>
@@ -7,11 +7,13 @@
      <el-radio-button label="lastWeek">一周内</el-radio-button>
    </el-radio-group>
 
-    <el-tabs type="border-card">
+    <el-tabs type="border-card" style="background-color:#f5f5f5;">
       <el-tab-pane label="已完成">
         <Item
           v-for="todo in completedList"
           :todo="todo"
+          title="dashboard"
+          onlyShow="true"
           :showAction="false"
           :key="todo.objectId"
         />

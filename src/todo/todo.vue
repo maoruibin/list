@@ -44,7 +44,6 @@
 				<Item
 					v-for="todo in filterTodos"
 					:todo="todo"
-					:showAction="true"
 					:key="todo.objectId"
 					@delete="deleteItem"
 					@edit="editItem"
