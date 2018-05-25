@@ -5,13 +5,14 @@
 			 <el-checkbox
 			 id="checkBox"
 			 class="dragHandleItem"
+			 v-show="showAction"
 			 v-on:change="toggleCompleted"
 			 v-model="todo.completed">
 		  </el-checkbox>
 
 			 <span id="content">{{todo.title}}</span>
 
-			 <el-dropdown trigger="click" class="dragHandleItem"  @command="handleCommand">
+			 <el-dropdown trigger="click" v-show="showAction" class="dragHandleItem"  @command="handleCommand">
 						 <span class="el-dropdown-link">
 							 <i class="el-icon-more"></i>
 						 </span>
@@ -37,7 +38,8 @@
 			todo: {
 				type: Object,
 				required: true
-			}
+			},
+			showAction:true
 		},
 		data() {
 		 return {
@@ -46,6 +48,7 @@
 	 	},
 		methods: {
 			handleCommand:function(command){
+
 				if(command === 'd'){
 					this.showDeleteDialog()
 				}else if(command === 'e'){
@@ -78,6 +81,7 @@
 				this.$emit('move',this.todo)
 			},
 			showEditDialog(){
+				console.log("showAction is "+this.showAction);
 				this.$prompt('', '编辑', {
 						confirmButtonText: '确定',
 						cancelButtonText: '取消',

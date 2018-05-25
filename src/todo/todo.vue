@@ -44,6 +44,7 @@
 				<Item
 					v-for="todo in filterTodos"
 					:todo="todo"
+					:showAction="true"
 					:key="todo.objectId"
 					@delete="deleteItem"
 					@edit="editItem"
@@ -336,7 +337,7 @@ export default{
 				const todoId = todo.objectId
 				todo.onFile = !todo.onFile
 				if(todo.onFile){
-					todo.onFileAt = new Date()
+					todo.onFileAt = new Date().toUTCString()
 				}else{
 					todo.onFileAt = 0
 				}
@@ -407,14 +408,9 @@ export default{
 		},
 		// todo 要编辑的 todo
 		toggleCompletedItem(todo){
-			// if(todo.completed){
-			// 	todo.completedAt = new Date().getTime()
-			// }else{
-			// 	todo.completedAt = -1
-			// }
-			//
+
 			if(todo.completed){
-				todo.completedAt = new Date()
+				todo.completedAt = new Date().toUTCString()
 			}else{
 				todo.completedAt = 0
 			}
