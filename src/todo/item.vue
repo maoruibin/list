@@ -156,6 +156,8 @@
 
 		}
 		#content{
+			color:#4d4d4d;
+			font-weight: 360;
 			flex-grow: 1;
 			text-align: left;
 			word-break:normal;
