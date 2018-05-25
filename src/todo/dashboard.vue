@@ -20,6 +20,7 @@
         <Item
           v-for="todo in createdList"
           :todo="todo"
+          :showAction="false"
           :key="todo.objectId"
         />
       </el-tab-pane>
@@ -27,6 +28,7 @@
         <Item
           v-for="todo in onFileList"
           :todo="todo"
+          :showAction="false"
           :key="todo.objectId"
         />
       </el-tab-pane>

@@ -49,8 +49,7 @@ import Footer from './todo/footer.vue'
 		},
 		methods:{
 			showDashboard:function(){
-				console.log('显示面板');
-				this.dashboard = true;
+				this.dashboard = !this.dashboard
 			}
 		}
 	}
