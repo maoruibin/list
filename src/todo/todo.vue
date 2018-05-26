@@ -315,6 +315,7 @@ export default{
 			var todoSize = this.todos.length
 			var formData = new FormData();
 			formData.append('title', this.input.trim());
+			formData.append('content', '');
 			formData.append('groupId', this.group.objectId);
 			formData.append('priority', todoSize);
 			formData.append('completed', 'false');
