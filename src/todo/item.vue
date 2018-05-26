@@ -11,7 +11,7 @@
 		  </el-checkbox>
 
 			<div id="content" slot="reference">
-				<span >{{todo.title}}-->{{todo.priority}}</span>
+				<span >{{todo.title}}</span>
 			</div>
 
 
