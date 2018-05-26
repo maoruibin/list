@@ -7,6 +7,7 @@
 			:group="group"
 			ref="editor"
 			:showTodoDetailDialog="showTodoDetailDialog"
+			@hideDialog="hideDialog"
 			:filterTodos="filterTodos"/>
 
 		<div id="cover"/>
@@ -93,6 +94,10 @@ let api_version = process.env.API_VERSION
 				this.$refs.editor.fetchSubTodo(this.group.objectId)
 			},
 
+			hideDialog:function(){
+				this.showTodoDetailDialog = false;
+			},
+			
 			showDashboard:function(){
 				this.dashboard = !this.dashboard
 				if(this.dashboard){

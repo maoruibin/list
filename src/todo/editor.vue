@@ -1,14 +1,15 @@
 <template>
   <el-dialog
     :title="todo.title"
+    @close="dismiss"
     :visible.sync="showTodoDetailDialog"
     width="60%">
 
     <el-row :gutter="20">
 
       <el-col :span="18">
-        <div class="grid-content bg-purple-light">
-          <el-form ref="todo" :model="todo" label-width="80px" label-position="top">
+        <div >
+          <el-form class="grid-content bg-purple-light" ref="todo" :model="todo" label-width="80px" label-position="top">
             <el-form-item label="名称" size="medium">
               <el-input v-model="todo.title"></el-input>
             </el-form-item>
@@ -16,38 +17,44 @@
               <el-input type="textarea" v-model="todo.content"></el-input>
             </el-form-item>
 
-            <el-form-item size="medium">
-
-              <Todo
-          			:group="group"
-          			:user="user"
-          			:asSubTodo=true
-          			ref="childTodo"
-          			@appendGroup="appendGroup"
-          		/>
-
-            </el-form-item>
-
             <el-form-item>
               <el-button type="primary" @click="onSubmit">更新</el-button>
               <el-button @click="onCancel">取消</el-button>
             </el-form-item>
+
           </el-form>
+
+          <el-form v-show="showSubTodo" class="grid-content bg-purple-light" style="margin-top:10px;padding:0px;">
+            <Todo
+              :group="group"
+              :user="user"
+              :asSubTodo=true
+              ref="childTodo"
+              @appendGroup="appendGroup"
+            />
+          </el-form>
+
         </div>
 
       </el-col>
 
       <el-col :span="6">
-        <div class="grid-content bg-purple-light dialogAction">
+        <div class="grid-content bg-purple-light dialogAction" >
           <span>操作</span>
-          <div style="margin-top:10px;">
-               <el-button size="medium" icon="el-icon-plus" type="success" plain>添加子项</el-button>
+          <div>
+            <el-tooltip effect="dark" content="添加子 todo，用于更细粒度的事情规划。" placement="top-end">
+              <el-button class="actionButton" size="medium" icon="el-icon-plus" plain @click="addSubTodo">添加子 Todo</el-button>
+            </el-tooltip>
+
           </div>
-           <div style="margin-top:10px;">
-                <el-button size="medium" icon="el-icon-goods" type="success" plain>归档该项</el-button>
+           <div>
+              <el-tooltip effect="dark" content="从主页列表中移除该事项，但不删除。" placement="bottom-end">
+                <el-button class="actionButton" size="medium" icon="el-icon-goods" plain>归档该 Todo</el-button>
+              </el-tooltip>
            </div>
-           <div style="margin-top:10px;">
-                <el-button size="medium" icon="el-icon-delete" type="danger" plain>永久删除</el-button>
+
+           <div v-show="false">
+                <el-button class="actionButton" size="medium" icon="el-icon-delete" plain>永久删除</el-button>
            </div>
         </div>
 
@@ -68,7 +75,7 @@ let api_version = process.env.API_VERSION
 export default{
   data(){
 		return{
-
+      showSubTodo:false
 		}
 	},
 	props:{
@@ -100,6 +107,27 @@ export default{
   components: {
 		Todo
 	},
+  computed: {
+    subTodoCount(){
+      if(this.group.todos === undefined){
+          return 0;
+      }
+      if(this.group.todos.results === undefined){
+          return 0;
+      }
+      return this.group.todos.results.length;
+    },
+    subTodoCompletedCount(){
+      if(this.group.todos === undefined){
+          return 0;
+      }
+      if(this.group.todos.results === undefined){
+          return 0;
+      }
+
+      return this.group.todos.results.filter(todo => todo.completed).length;
+    }
+  },
   mounted:function(){
 
   },
@@ -107,34 +135,44 @@ export default{
     fetchSubTodo(groupId) {
       const api = host+"/todos/api/"+api_version+"/todos/"+this.user.id+"/"+groupId
 		  this.$http.get(api).then(response => {
-
         this.group.todos.results = response.body.results
+        if(this.group.todos.results.length>0){
+          this.showSubTodo = true;
+        }
         this.$refs.childTodo.updateTodos(this.group.todos.results)
-        console.log("result is "+this.group.todos.results.length);
-				// this.todosOnFileList = response.body.resultsOnFile;
 			}, response => {});
     },
     onSubmit() {
       console.log('submit!');
       const that = this
+
+      // this.todo.subTodoCount = this.subTodoCount
+      // this.todo.subCompletedCount = this.subTodoCompletedCount
+
       this.updateTodo(this.todo,function(){
-        that.showTodoDetailDialog = false;
+        that.$emit('hideDialog')
         that.$message({
           type: 'success',
           message: '更新成功'
         });
       })
     },
+
+    dismiss() {
+      this.$emit('hideDialog')
+      this.showSubTodo = false;
+    },
+    addSubTodo() {
+      this.showSubTodo = !this.showSubTodo;
+    },
     onCancel() {
       console.log('cancel!');
       this.showTodoDetailDialog = false;
     },
-    addSubTodo() {
-      console.log('addSubTodo!');
-    },
 
     updateTodo(todo,callback){
       var todoId = todo.objectId
+
       const api = host+"/todos/api/"+api_version+"/todos/"+todoId
       const config = {
           headers : {
@@ -152,6 +190,10 @@ export default{
       this.checkAndAppend(formData,'onFile',todo.onFile)
       this.checkAndAppend(formData,'onFileAt',todo.onFileAt)
 
+      if(todo.subTodoCount != undefined && todo.subTodoCount>0){
+        formData.append('subTodoCount', todo.subTodoCount)
+        formData.append('subTodoCompletedCount', todo.subCompletedCount)
+      }
 
       this.$http.put(api, formData, config).then(response => {
           //编辑完的 todo 结果
@@ -174,10 +216,10 @@ export default{
 <style lang="stylus" scoped>
 
 		.bg-purple {
-			 background: #d3dce6;
+			 background: #eff1f3;
 		 }
 		 .bg-purple-light {
-			 background: #e5e9f2;
+			 background: #eff1f3;
 		 }
 		 .grid-content {
 			 border-radius: 4px;
@@ -189,7 +231,16 @@ export default{
  			 display: flex;
 			 flex-direction: column;
 			 align-items: flex-start;
+       border:0px solid blue;
  		}
+    .dialogAction >div{
+      margin-top:10px;
+      border:0px solid red;
+      width:100%;
+    }
+    .actionButton{
+      width:100%;
+    }
 		.subTodoItem{
 			display:flex;
 		}

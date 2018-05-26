@@ -479,10 +479,11 @@ export default{
 		padding-right:12px;
 		padding-bottom:12px;
 		margin-right:12px;
+		border: 0px solid blue;
 	}
 
 	.subTodo{
-		width: 100%;
+		width: 96%;
 	}
 
 	.topAction{
