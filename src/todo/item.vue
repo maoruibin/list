@@ -209,12 +209,14 @@
 			flex-grow: 0;
 		}
 		.centerElement{
-			color: #a8a8a8;
+			color: #d9d9d9;
 			margin-top:6px;
+		}
+		.el-icon-document{
+			color: #a8a8a8;
 		}
 		.time{
 			font-size: 4px;
-
 			border: 0px solid blue;
 		}
 		.dragHandleItem{

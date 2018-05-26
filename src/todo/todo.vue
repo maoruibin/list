@@ -1,5 +1,7 @@
 <template>
-	<div class="groupItem">
+
+<!-- subTodo asSubTodo groupItem-->
+	<div :class="['groupItem',asSubTodo?'subTodo':'']">
 
 		<div v-show="!lastGroupAction" class="topAction">
 			<span>{{group.name}}</span>
@@ -7,7 +9,7 @@
 
 				<i :class="['topIconAction', showOnFileList ? 'el-icon-arrow-left' : 'el-icon-plus']" @click="toogleAddOrReturn"></i>
 
-				<el-dropdown trigger="click"  @command="handleCommand">
+				<el-dropdown trigger="click" v-show="!asSubTodo"  @command="handleCommand">
 				      <span class="el-dropdown-link">
 				        <i class="el-icon-more"></i>
 
@@ -81,6 +83,12 @@ export default{
 			type: Object,
 			required: true
 		},
+
+		asSubTodo: {
+			type: Boolean,
+			required: false,
+			default: false
+		},
 	},
 	data(){
 		return{
@@ -142,7 +150,9 @@ export default{
 
 	},
 	methods: {
-
+		updateTodos:function(todos){
+			this.todos = todos;
+		},
 		drag:function(){
 			console.log('drag');
 		},
@@ -155,6 +165,7 @@ export default{
 		},
 		drop:function(e){
 			console.log('同一组内拖动完成');
+
 			this.updateTodosBatch(function(msg){
 					console.log("drop --> "+msg);
 			})
@@ -196,6 +207,8 @@ export default{
 			})
 		},
 		toogleAddOrReturn:function(){
+			console.log("group "+JSON.stringify(this.group));
+
 			if(this.showOnFileList){
 				this.showOnFileList = !this.showOnFileList
 			}else{
@@ -324,7 +337,6 @@ export default{
 
 			// POST /someUrl
 		  this.$http.post(api, formData).then(response => {
-				var flag = response.body.entity.completed
 				this.todos.unshift(response.body.entity)
 				this.input= ''
 		  }, response => {
@@ -467,6 +479,10 @@ export default{
 		padding-right:12px;
 		padding-bottom:12px;
 		margin-right:12px;
+	}
+
+	.subTodo{
+		width: 100%;
 	}
 
 	.topAction{

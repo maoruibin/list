@@ -28,10 +28,15 @@ let host = process.env.API_HOST
 let api_version = process.env.API_VERSION
 
 export default{
+	props:{
+		user:{
+			type: Object,
+			required: true
+		}
+	},
 	data(){
 		return{
       groupTodos:[],
-			user:{},
 			groupForAppend:{
 				'name':'appendGroup',
 				'objectId':'10000001'
@@ -43,7 +48,6 @@ export default{
 		draggable
 	},
 	mounted:function(){
-    this.user = JSON.parse(localStorage.getItem("user"))
     if(!this.user){
       return
     }
