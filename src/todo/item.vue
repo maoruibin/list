@@ -10,9 +10,41 @@
 			 v-model="todo.completed">
 		  </el-checkbox>
 
-			<div id="content" slot="reference">
-				<span >{{todo.title}}</span>
+
+			<!-- <el-popover
+			  placement="bottom"
+			  title="标题"
+			  width="200"
+			  trigger="hover"
+				style="text-align:left;"
+			  content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。"
+				>
+
+			</el-popover> -->
+
+			<div class="itemCenter"  @click="showDetail">
+				<span id="content" >{{todo.title}}</span>
+
+				<div class="centerElement time" v-show="todo.completed">
+	 			 完成于 {{getLocalTime(todo.completedAt)}}
+	 		 </div>
+
+			 <el-popover
+				  placement="bottom-start"
+				  width="180"
+					title="备注信息"
+				  trigger="hover"
+				  :content="todo.content">
+
+					<i class="centerElement el-icon-document" v-show="todo.content != undefined && todo.content.length != 0" slot="reference" ></i>
+				</el-popover>
+
+
+
+
 			</div>
+
+
 
 
 
@@ -21,7 +53,7 @@
 							 <i class="el-icon-more"></i>
 						 </span>
 						 <el-dropdown-menu slot="dropdown" style="margin-top:-8px;">
-							 <el-dropdown-item v-show="!todo.onFile" command="e">编辑条目</el-dropdown-item>
+							 <!-- <el-dropdown-item v-show="!todo.onFile" command="e">编辑条目</el-dropdown-item> -->
 
 							 <!-- <el-dropdown-item  command="move">移动</el-dropdown-item> -->
 							 <el-dropdown-item command="onFile">{{todo.onFile?'还原条目':'归档条目'}}</el-dropdown-item>
@@ -30,9 +62,7 @@
 			 </el-dropdown>
 
 		 </div>
-		 <div class="time" v-show="todo.completed">
-			 完成于 {{getLocalTime(todo.completedAt)}}
-		 </div>
+
 
 	</el-card>
 </template>
@@ -72,6 +102,10 @@
 				}else if(command === 'onFile'){
 					this.$emit('onFile',this.todo)
 				}
+			},
+			// 显示 todo 详情
+			showDetail(){
+				this.$emit('showTodoDetail',this.todo)
 			},
 			getLocalTime(nS) {
 				return new Date(nS).toLocaleString().replace(/:\d{1,2}$/,' ');
@@ -128,7 +162,7 @@
             transition: color 0.4s;
         }
         &.completed{
-            span{
+            #content{
                 color: #d9d9d9;
                 text-decoration: line-through;
             }
@@ -148,41 +182,44 @@
 			border: 0px solid #000000;
 		}
 
-		.item >span{
-      text-align: left;
-    }
-
 		#checkBox{
 			flex-grow: 0;
 
 		}
+		.itemCenter{
+			flex-grow: 1;
+			padding-left:8px;
+			padding-right:8px;
+			border: 0px solid orange;
+		}
 		#content{
+			cursor:pointer;
 			color:#4d4d4d;
 			font-weight: 360;
 			font-size: 14px;
-			flex-grow: 1;
-			text-align: left;
 			word-break:normal;
+			text-align: left;
       width:auto;
       display:block;
       white-space:pre-wrap;
-      word-wrap : break-word ;
+      word-wrap : break-word;
       overflow: hidden ;
-			padding-left:8px;
-			padding-right:8px;
 		}
 		el-dropdown{
 			flex-grow: 0;
 		}
+		.centerElement{
+			color: #a8a8a8;
+			margin-top:6px;
+		}
 		.time{
 			font-size: 4px;
-			color: #ccc;
-			margin-top:4px;
-			padding-left:8px;
-			padding-right:8px;
+
+			border: 0px solid blue;
 		}
 		.dragHandleItem{
 			cursor: move;
   		cursor: -webkit-grabbing;
+			border: 0px solid #f00000;
 		}
 </style>

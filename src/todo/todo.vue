@@ -47,6 +47,7 @@
 					:key="todo.objectId"
 					@delete="deleteItem"
 					@edit="editItem"
+					@showTodoDetail="showTodoDetail"
 					@toggleCompleted="toggleCompletedItem"
 					@move="moveItem"
 					@onFile="onFileItem"
@@ -314,7 +315,6 @@ export default{
 			var todoSize = this.todos.length
 			var formData = new FormData();
 			formData.append('title', this.input.trim());
-			formData.append('content', this.input.trim());
 			formData.append('groupId', this.group.objectId);
 			formData.append('priority', todoSize);
 			formData.append('completed', 'false');
@@ -333,6 +333,9 @@ export default{
 		},
 		moveItem(todo){
 				this.moveDialogVisible = true
+		},
+		showTodoDetail(todo){
+			this.$emit('showTodoDetail',todo,this.filterTodos)
 		},
 		onFileItem(todo){
 				const that = this

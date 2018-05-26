@@ -1,19 +1,22 @@
 <template>
 	<draggable class="dragList" :list="groupTodos" :options="{handle:'.topAction',ghostClass:'ghost',scroll: true,animation: 150,group:{ name:'groupList'}}"  @start="drag" @end="drop" >
 
-		<childTodo
+		<Todo
 			v-for="group in groupTodos"
 			:key="group.objectId"
 			:group="group"
 			:user="user"
 			ref="childTodo"
 			@delete="deleteGroup"
+			@showTodoDetail="showTodoDetail"
 			@edit="showEditGroupDialog"
 			@hideOtherInput="hideOtherInput"
 			@appendGroup="appendGroup"
 		/>
 
 	</draggable>
+
+
 
 </template>
 
@@ -36,7 +39,7 @@ export default{
 		}
 	},
 	components: {
-		childTodo: Todo,
+		Todo,
 		draggable
 	},
 	mounted:function(){
@@ -55,6 +58,9 @@ export default{
   },
 
   methods:{
+		showTodoDetail(todo,filterTodos){
+			this.$emit('showTodoDetail',todo,filterTodos)
+		},
 		drag:function(){
 			console.log('drag');
 		},
