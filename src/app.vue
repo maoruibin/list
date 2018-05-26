@@ -11,7 +11,7 @@
 
 			<el-main >
 				<Container v-show="!dashboard"/>
-				<Dashboard v-show="dashboard"/>
+				<Dashboard v-show="dashboard" ref="dashboard"/>
 		  </el-main>
 
 			<el-footer>
@@ -50,6 +50,11 @@ import Footer from './todo/footer.vue'
 		methods:{
 			showDashboard:function(){
 				this.dashboard = !this.dashboard
+				if(this.dashboard){
+					console.log("刷新数据");
+					this.$refs.dashboard.refresh()
+				}
+
 			}
 		}
 	}

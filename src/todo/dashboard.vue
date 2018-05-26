@@ -57,27 +57,43 @@
     components:{
   		Item
   	},
+    created:function(){
+      console.log("dashboard created");
+    },
+    beforeMount:function(){
+      console.log("dashboard beforeMount");
+    },
+    activated:function(){
+      console.log("dashboard activated");
+    },
+    beforeUpdate:function(){
+      console.log("dashboard beforeUpdate");
+    },
+    updated:function(){
+      console.log("dashboard updated");
+    },
+    destroyed:function(){
+      console.log("dashboard destroyed");
+    },
 
 		mounted:function(){
       console.log("dashboard mount");
-
-      this.user = JSON.parse(localStorage.getItem("user"))
-      if(!this.user){
-        return
-      }
-      const apiTodosAll = host+"/todos/api/"+api_version+"/todos/time/"+this.user.id+"/"+this.tabDay
-      this.$http.get(apiTodosAll).then(response => {
-
-          this.completedList = response.body.todos.completed
-          this.createdList = response.body.todos.created
-          this.onFileList = response.body.todos.onFile
-          console.log("created len is "+response.body.todos.created.length);
-        }, response => {});
-
 		},
     methods: {
 
-      fetchByDay:function(){
+      refresh:function(){
+        this.user = JSON.parse(localStorage.getItem("user"))
+        if(!this.user){
+          return
+        }
+        const apiTodosAll = host+"/todos/api/"+api_version+"/todos/time/"+this.user.id+"/"+this.tabDay
+        this.$http.get(apiTodosAll).then(response => {
+
+            this.completedList = response.body.todos.completed
+            this.createdList = response.body.todos.created
+            this.onFileList = response.body.todos.onFile
+            console.log("amount len is "+response.body.todos.created.length);
+          }, response => {});
 
       },
     }

@@ -10,9 +10,10 @@
 			 v-model="todo.completed">
 		  </el-checkbox>
 
-			<div id="content">
-				<span >{{todo.title}}</span>
+			<div id="content" slot="reference">
+				<span >{{todo.title}}-->{{todo.priority}}</span>
 			</div>
+
 
 
 			 <el-dropdown trigger="click" v-show="showAction" class="dragHandleItem"  @command="handleCommand">

@@ -113,8 +113,10 @@ export default{
 	},
 
 	mounted:function(){
-		this.todos = this.group.todos.results;
-		this.todosOnFileList = this.group.todos.resultsOnFile;
+		if(!this.lastGroupAction){
+			this.todos = this.group.todos.results;
+			this.todosOnFileList = this.group.todos.resultsOnFile;
+		}
   },
 	computed: {
 		filterTodos(){
@@ -162,8 +164,9 @@ export default{
 			//优先级最低 0 最高为 size-1
 			var updateList = []
 			this.todos.forEach(function(todo, index, array){
-					todo.priority = String(len-index-1)
+					todo.priority = len-index-1
 					todo.groupId = that.group.objectId
+
 					var updateItem = {objectId:todo.objectId,groupId:todo.groupId,priority:todo.priority}
 					updateList.push(updateItem)
 			})
