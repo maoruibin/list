@@ -15,18 +15,27 @@
 
 				      </span>
 				      <el-dropdown-menu slot="dropdown">
-				        <el-dropdown-item command="edit"  v-show="!showOnFileList">编辑分组</el-dropdown-item>
-								<el-dropdown-item command="onFileBatch" v-show="hasCompletedTodo" >归档已完成 Todo</el-dropdown-item>
-								<el-dropdown-item command="onFile">{{this.showOnFileList?'Todo 列表':'查看已归档 Todo'}}</el-dropdown-item>
+				        <el-dropdown-item command="edit"  v-show="!showOnFileList">编辑分组名称</el-dropdown-item>
+								<el-dropdown-item command="onFile">{{this.showOnFileList?'返回Todo列表':'查看已归档列表'}}</el-dropdown-item>
+								<el-dropdown-item command="onFileBatch" v-show="hasCompletedTodo" >归档所有已完成事项</el-dropdown-item>
 
-								<el-dropdown-item divided command="delete"   v-show="!showOnFileList" >删除该分组</el-dropdown-item>
-								<el-dropdown-item divided command="deleteAll" v-show="showOnFileList & todosOnFileList.length != 0">清空已归档</el-dropdown-item>
+								<el-dropdown-item divided command="delete"   v-show="!showOnFileList" >彻底删除分组</el-dropdown-item>
+								<el-dropdown-item divided command="deleteAll" v-show="showOnFileList & todosOnFileList.length != 0">删除清空已归档任务</el-dropdown-item>
 				      </el-dropdown-menu>
 				</el-dropdown>
 			</div>
 		</div>
 
-		<el-card shadow="always" v-show="showInput" style="margin-bottom:12px;">
+		<AddTodo
+			@hideAddForm="hideAddForm"
+			@appendTodo="appendTodo"
+			:length="todos.length"
+			:group="group"
+			:user="user"
+			v-show="showInput" />
+
+
+		<!-- <el-card shadow="always" v-show="showInput" style="margin-bottom:12px;">
 		      <el-input
 					v-model="input"
 					clearable = true
@@ -38,7 +47,7 @@
            <el-button type="primary" size="small" plain @click="addTodo">确定</el-button>
 					 <i class="el-icon-close" style="margin-left:12px;" @click="hideAddForm"></i>
         </div>
-		</el-card>
+		</el-card> -->
 
 		<!-- dragHandleItem 指定拖动区域 -->
 		<draggable class="dragList" :list="filterTodos" :options="{handle:'.dragHandleItem',ghostClass:'ghost',scroll: true,disabled:showOnFileList,animation: 150,group:{ name:'todoList'}}" @add="moveTo" @start="drag" @end="drop" >
@@ -68,6 +77,7 @@
 <script>
 import Item from './item.vue'
 import Tabs from './tabs.vue'
+import AddTodo from './addTodo.vue'
 import draggable from 'vuedraggable'
 
 let host = process.env.API_HOST
@@ -100,7 +110,6 @@ export default{
 			todosOnFileList:[],
 			// 过滤器
 			filter:'all',
-			input: '',
 			// 显示添加 todo 的输入框
 			showInput:false,
 			// 是否展示已完成列表
@@ -114,6 +123,7 @@ export default{
 	components:{
 		Item,
 		Tabs,
+		AddTodo,
 		draggable
 	},
 
@@ -150,6 +160,13 @@ export default{
 
 	},
 	methods: {
+		appendTodo:function(todo,appendEnd){
+			if(appendEnd){
+				this.todos.push(todo)
+			}else{
+				this.todos.unshift(todo)
+			}
+		},
 		updateTodos:function(todos){
 			this.todos = todos;
 		},
@@ -218,11 +235,11 @@ export default{
 		},
 		hideAddForm:function(){
 			this.showInput = false
-
 		},
+
 		checkAndHideGroupInputForm:function(triggleGroupId){
 			if(this.group.objectId != triggleGroupId){
-					this.showInput = false
+					this.hideAddForm()
 			}
 		},
 		handleCommand:function(command){
@@ -241,14 +258,17 @@ export default{
 		// 提示将会归档所有已完成项目
 		showOnFileBatchDialog(){
 			const that = this
-			this.$confirm('此操作将归档所有已完成 Todo，归档后你可以在已归档列表中找到他们, 是否继续?', '提示', {
-								confirmButtonText: '归档已完成 Todo',
+			this.$confirm('此操作将归档该分组下所有已完成 Todo 项，归档后你可以在已归档列表中找到他们, 是否继续?', '提示', {
+								confirmButtonText: '批量归档',
 								cancelButtonText: '取消',
 								type: 'warning'
 							}).then(() => {
-								that.todos.forEach(function(todo, index, array){
-									if(todo.completed){
-											that.onFileItemPure(todo,function(value){})
+								console.log("that.todos "+that.todos.length);
+								that.todos.forEach(function(item){
+
+									if(item.completed){
+										console.log("归档已完成 "+item.title);
+										that.onFileItemCallback(item,function(){})
 									}
 								})
 								that.$message({
@@ -313,44 +333,31 @@ export default{
 			          });
 			        });
 		},
-		// 添加一个 todo
-		addTodo(){
-			if(this.input.length == 0){
-				this.$message({
-					type: 'info',
-					message: '输入不能为空'
-				});
-				return
-			}
-		  const api = host+"/todos/api/"+api_version+"/todos"
-			var that = this
-			//新增 todo 的排序 index 就是当前 todo 的大小
-			var todoSize = this.todos.length
-			var formData = new FormData();
-			formData.append('title', this.input.trim());
-			formData.append('content', '');
-			formData.append('groupId', this.group.objectId);
-			formData.append('priority', todoSize);
-			formData.append('completed', 'false');
-			formData.append('onFile', 'false');
-			formData.append('userId', this.user.id);
 
-			// POST /someUrl
-		  this.$http.post(api, formData).then(response => {
-				this.todos.unshift(response.body.entity)
-				this.input= ''
-		  }, response => {
-
-		  });
-
-		},
 		moveItem(todo){
 				this.moveDialogVisible = true
 		},
 		showTodoDetail(todo){
 			this.$emit('showTodoDetail',todo,this.filterTodos)
 		},
+
 		onFileItem(todo){
+			const that = this
+			this.onFileItemCallback(todo,function(res){
+					if(res>0){
+						that.$message({
+							type: 'success',
+							message: '已归档'
+						});
+					}else{
+						that.$message({
+							type: 'success',
+							message: '已还原'
+						});
+					}
+			})
+		},
+		onFileItemCallback(todo,callback){
 				const that = this
 				const todoId = todo.objectId
 				todo.onFile = !todo.onFile
@@ -363,17 +370,11 @@ export default{
 					if(result.onFile){
 						that.todos.splice(that.todos.findIndex(todo => todo.objectId === todoId),1)
 						that.todosOnFileList.push(result)
-						that.$message({
-							type: 'success',
-							message: '已归档'
-						});
+						callback(1)
 					}else{
 						that.todosOnFileList.splice(that.todosOnFileList.findIndex(todo => todo.objectId === todoId),1)
 						that.todos.push(result)
-						that.$message({
-							type: 'success',
-							message: '已还原'
-						});
+						callback(0)
 					}
 				})
 		},
@@ -513,27 +514,6 @@ export default{
 		color:#000000;
 		cursor:pointer;
 	}
-
-
-	.bottom {
-    margin-top: 13px;
-    line-height: 12px;
-  }
-
-  .button {
-    padding: 0;
-    float: right;
-  }
-
-	.clearfix:before,
-  .clearfix:after {
-      display: table;
-      content: "";
-  }
-
-  .clearfix:after {
-      clear: both
-  }
 
 	.dragList{
      min-height: 10px;

@@ -10,18 +10,6 @@
 			 v-model="todo.completed">
 		  </el-checkbox>
 
-
-			<!-- <el-popover
-			  placement="bottom"
-			  title="标题"
-			  width="200"
-			  trigger="hover"
-				style="text-align:left;"
-			  content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。"
-				>
-
-			</el-popover> -->
-
 			<div class="itemCenter"  @click="showDetail">
 				<span id="content" >{{todo.title}}</span>
 
@@ -56,8 +44,19 @@
 							 <!-- <el-dropdown-item v-show="!todo.onFile" command="e">编辑条目</el-dropdown-item> -->
 
 							 <!-- <el-dropdown-item  command="move">移动</el-dropdown-item> -->
-							 <el-dropdown-item command="onFile">{{todo.onFile?'还原条目':'归档条目'}}</el-dropdown-item>
-							 <el-dropdown-item divided v-show="todo.onFile" command="d">彻底删除</el-dropdown-item>
+							 <el-popover
+							  placement="bottom"
+							  width="160"
+							  v-model="onFilePoint">
+							  <p>归档后，todo 将从列表中被移除，并不会被直接删除，是否继续归档？</p>
+							  <div style="text-align: right; margin: 0;margin-right:12px;">
+							    <el-button size="mini" type="text" @click="showDeleteDialog">直接删除</el-button>
+							    <el-button type="primary" size="mini" @click="onFileItem">归档</el-button>							  </div>
+
+								<el-dropdown-item slot="reference" v-show="!todo.onFile">归档条目</el-dropdown-item>
+							</el-popover>
+
+							 <el-dropdown-item v-show="todo.onFile" command="d">删除条目</el-dropdown-item>
 						 </el-dropdown-menu>
 			 </el-dropdown>
 
@@ -84,6 +83,7 @@
 		data() {
 		 return {
 			 dialogVisible: false,
+			 onFilePoint: false,
 			 shadowValue:"always"
 		 };
 	 	},
@@ -103,6 +103,9 @@
 					this.$emit('onFile',this.todo)
 				}
 			},
+			onFileItem(){
+				this.$emit('onFile',this.todo)
+			},
 			// 显示 todo 详情
 			showDetail(){
 				this.$emit('showTodoDetail',this.todo)
@@ -112,6 +115,7 @@
 			},
 
 			showDeleteDialog(){
+
 				this.$confirm('此操作将永久删除该 Todo, 是否继续?', '提示', {
 									confirmButtonText: '删除',
 									cancelButtonText: '取消',
