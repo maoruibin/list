@@ -51,13 +51,24 @@ export default{
     if(!this.user){
       return
     }
+		const loading = this.$loading({
+          lock: true,
+          text: '加载数据中,请稍等',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
     const apiTodosAll = host+"/todos/api/"+api_version+"/todos/list/"+this.user.id
     this.$http.get(apiTodosAll).then(response => {
         this.groupTodos = response.body.groupTodos
 				this.groupForAppend.priority = this.groupTodos.length
 				this.groupTodos.push(this.groupForAppend)
         console.log("len is "+this.groupTodos.length);
-      }, response => {});
+				loading.close();
+      }, response => {
+				loading.close();
+				this.$message.error('加载数据出了点问题，请重试。('+response.status+"-"+response.statusText+")");
+			});
 
   },
 

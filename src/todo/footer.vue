@@ -2,11 +2,12 @@
   <div class="footer"style="margin-top:10px;">
     <span >
       Design by <a href="http://gudong.name/" target="_blank">咕咚</a>
-
-      &nbsp;&nbsp;Thanks <a href="https://www.imooc.com/t/3083408" target="_blank">Jokcy</a>
     </span>
     <div>
-      <a href="https://github.com/maoruibin/TodayTodo" target="_blank">source</a>
+      Thanks <a href="https://www.imooc.com/t/3083408" target="_blank">Jokcy</a>
+    </div>
+    <div>
+      <a href="https://leancloud.cn/" target="_blank">leancloud</a> &nbsp;&nbsp;<a href="http://element.eleme.io/#/" target="_blank">element</a> &nbsp;&nbsp;<a href="https://cn.vuejs.org/v2/guide/syntax.html" target="_blank">vue</a>
     </div>
   </div>
 

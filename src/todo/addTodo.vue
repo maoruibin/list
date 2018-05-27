@@ -8,14 +8,17 @@
 				placeholder="请输入要做的事">
 			</el-input>
 			<div class="bottom">
-				 <el-button type="primary" size="small" plain @click="addTodo">确定</el-button>
+				 <el-button type="primary" size="small" plain @click="addTodo" :disabled="inRequest">确定</el-button>
 				 <i class="el-icon-close" style="margin-left:12px;" @click="hideAddForm"></i>
 				 <i :class="['more', showMoreAction?'el-icon-arrow-up':'el-icon-arrow-down']"  @click="showMore"></i>
 			</div>
 			<div class="bottom" style="margin-top:16px;" v-show="showMoreAction">
-				<!-- `checked` 为 true 或 false -->
-  			<el-checkbox v-model="insertEnd" style="font-size:6px;">追加到末尾</el-checkbox>
-
+				<el-tooltip
+					content="新增的 todo 会默认添加到列表头部"
+					effect="dark"
+				 	placement="bottom" >
+							<el-checkbox v-model="insertEnd" style="font-size:6px;">追加 todo 到列表末尾</el-checkbox>
+				</el-tooltip>
 			</div>
 	</el-card>
 </template>
@@ -49,6 +52,7 @@ let api_version = process.env.API_VERSION
 				input: '',
 				showMoreAction: false,
 				insertEnd: false,
+				inRequest: false,
 				states:['all','active','completed']
 			}
 		},
@@ -85,13 +89,14 @@ let api_version = process.env.API_VERSION
 				formData.append('completed', 'false');
 				formData.append('onFile', 'false');
 				formData.append('userId', this.user.id);
-
+				this.inRequest = true
 				// POST /someUrl
 				this.$http.post(api, formData).then(response => {
 					this.$emit('appendTodo',response.body.entity,this.insertEnd)
 					this.input= ''
+					this.inRequest = false
 				}, response => {
-
+					this.inRequest = false
 				});
 
 			}

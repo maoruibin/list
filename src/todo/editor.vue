@@ -17,21 +17,27 @@
               <el-input type="textarea" v-model="todo.content"></el-input>
             </el-form-item>
 
-            <el-form-item>
-              <el-button type="primary" @click="onSubmit">更新</el-button>
-              <el-button @click="onCancel">取消</el-button>
-            </el-form-item>
 
           </el-form>
 
-          <el-form v-show="showSubTodo" class="grid-content bg-purple-light" style="margin-top:10px;padding:0px;">
+          <el-form
+            v-show="showSubTodo"
+            class="grid-content bg-purple-light" style="margin-top:10px;padding:0px;">
+            <div
+              class="normalLoading"
+              v-show="loadingSubTodo">
+              <i class="el-icon-loading"></i>
+              <span>加载中</span>
+            </div>
+
             <Todo
+              v-show="!loadingSubTodo"
               :group="group"
               :user="user"
               :asSubTodo=true
               ref="childTodo"
-              @appendGroup="appendGroup"
             />
+
           </el-form>
 
         </div>
@@ -40,15 +46,15 @@
 
       <el-col :span="6">
         <div class="grid-content bg-purple-light dialogAction" >
-          <span>操作</span>
+          <span style="margin-top:10px;">操作</span>
           <div>
-            <el-tooltip effect="dark" content="添加子 todo，用于更细粒度的事情规划。" placement="top-end">
+            <el-tooltip effect="dark" open-delay="300" content="添加子 todo，用于更细粒度的事情规划。" placement="top-end">
               <el-button class="actionButton" size="medium" icon="el-icon-plus" plain @click="addSubTodo">添加子 Todo</el-button>
             </el-tooltip>
 
           </div>
            <div>
-              <el-tooltip effect="dark" content="从主页列表中移除该事项，但不删除。" placement="bottom-end">
+              <el-tooltip effect="dark" open-delay="300" content="从主页列表中移除该事项，但不删除。" placement="bottom-end">
                 <el-button class="actionButton" size="medium" icon="el-icon-goods" plain>归档该 Todo</el-button>
               </el-tooltip>
            </div>
@@ -61,6 +67,10 @@
       </el-col>
 
     </el-row>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="onCancel">取 消</el-button>
+      <el-button type="primary"@click="onSubmit">更 新</el-button>
+    </span>
   </el-dialog>
 
 </template>
@@ -75,7 +85,8 @@ let api_version = process.env.API_VERSION
 export default{
   data(){
 		return{
-      showSubTodo:false
+      showSubTodo:false,
+      loadingSubTodo: false
 		}
 	},
 	props:{
@@ -108,46 +119,47 @@ export default{
 		Todo
 	},
   computed: {
-    subTodoCount(){
-      if(this.group.todos === undefined){
-          return 0;
-      }
-      if(this.group.todos.results === undefined){
-          return 0;
-      }
-      return this.group.todos.results.length;
-    },
-    subTodoCompletedCount(){
-      if(this.group.todos === undefined){
-          return 0;
-      }
-      if(this.group.todos.results === undefined){
-          return 0;
-      }
 
-      return this.group.todos.results.filter(todo => todo.completed).length;
-    }
   },
   mounted:function(){
 
   },
 	methods:{
+    getSubCount(){
+      if(this.group.todos != undefined && this.group.todos.results != undefined){
+        return this.group.todos.results.length;
+      }
+      return 0;
+    },
+    getSubCompletedCount(){
+      if(this.group.todos != undefined && this.group.todos.results != undefined){
+        return this.group.todos.results.filter(todo => todo.completed).length;
+      }
+      return 0;
+    },
     fetchSubTodo(groupId) {
       const api = host+"/todos/api/"+api_version+"/todos/"+this.user.id+"/"+groupId
+      this.loadingSubTodo = true
 		  this.$http.get(api).then(response => {
+        this.loadingSubTodo = true
         this.group.todos.results = response.body.results
         if(this.group.todos.results.length>0){
           this.showSubTodo = true;
         }
         this.$refs.childTodo.updateTodos(this.group.todos.results)
-			}, response => {});
+			}, response => {
+        this.loadingSubTodo = false
+      });
     },
     onSubmit() {
       console.log('submit!');
       const that = this
 
-      // this.todo.subTodoCount = this.subTodoCount
-      // this.todo.subCompletedCount = this.subTodoCompletedCount
+      if(this.getSubCount()>0){
+        this.todo.subTodoCount = this.getSubCount()
+        this.todo.subCompletedCount =this.getSubCompletedCount()
+      }
+
 
       this.updateTodo(this.todo,function(){
         that.$emit('hideDialog')
@@ -164,6 +176,9 @@ export default{
     },
     addSubTodo() {
       this.showSubTodo = !this.showSubTodo;
+      if(this.showSubTodo){
+        this.$refs.childTodo.showAddForm()
+      }
     },
     onCancel() {
       console.log('cancel!');
@@ -224,7 +239,9 @@ export default{
 		 .grid-content {
 			 border-radius: 4px;
 			 min-height: 36px;
-			 padding:10px;
+			 padding-left:10px;
+			 padding-right:10px;
+			 padding-bottom:10px;
 		 }
 
 		 .dialogAction{
@@ -244,4 +261,15 @@ export default{
 		.subTodoItem{
 			display:flex;
 		}
+    .normalLoading{
+      text-align:center;
+      line-height:100px;
+      border:0px solid red;
+    }
+    .normalLoading >i{
+      text-align:center;
+    }
+    .normalLoading >span{
+      text-align:center;
+    }
 </style>

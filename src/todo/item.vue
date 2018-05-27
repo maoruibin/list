@@ -13,7 +13,7 @@
 			<div class="itemCenter"  @click="showDetail">
 				<span id="content" >{{todo.title}}</span>
 
-				<div class="centerElement time" v-show="todo.completed">
+				<div class="centerElement smallInfo" v-show="todo.completed">
 	 			 完成于 {{getLocalTime(todo.completedAt)}}
 	 		 </div>
 
@@ -24,11 +24,13 @@
 				  trigger="hover"
 				  :content="todo.content">
 
-					<i class="centerElement el-icon-document" v-show="todo.content != undefined && todo.content.length != 0" slot="reference" ></i>
+					<i class="statusIcon el-icon-document" v-show="todo.content != undefined && todo.content.length != 0" slot="reference" ></i>
 				</el-popover>
 
 
+				<i :class="['statusIcon el-icon-circle-check-outline',todo.hasCompletedSubTodo?'statusCompleted':'']" style="margin-left:6px;" v-show="todo.hasSubTodo" ></i>
 
+				<span :class="['statusIcon smallInfo',todo.hasCompletedSubTodo?'statusCompleted':'']" v-show="todo.hasSubTodo">{{todo.subTodoCompletedCount}}/{{todo.subTodoCount}}</span>
 
 			</div>
 
@@ -41,7 +43,7 @@
 							 <i class="el-icon-more"></i>
 						 </span>
 						 <el-dropdown-menu slot="dropdown" style="margin-top:-8px;">
-							 <!-- <el-dropdown-item v-show="!todo.onFile" command="e">编辑条目</el-dropdown-item> -->
+							 <el-dropdown-item v-show="asSubTodo" command="e">编辑名称</el-dropdown-item>
 
 							 <!-- <el-dropdown-item  command="move">移动</el-dropdown-item> -->
 							 <el-popover
@@ -53,10 +55,10 @@
 							    <el-button size="mini" type="text" @click="showDeleteDialog">直接删除</el-button>
 							    <el-button type="primary" size="mini" @click="onFileItem">归档</el-button>							  </div>
 
-								<el-dropdown-item slot="reference" v-show="!todo.onFile">归档条目</el-dropdown-item>
+								<el-dropdown-item slot="reference" v-show="!todo.onFile && !asSubTodo">归档条目</el-dropdown-item>
 							</el-popover>
 
-							 <el-dropdown-item v-show="todo.onFile" command="d">删除条目</el-dropdown-item>
+							 <el-dropdown-item v-show="todo.onFile || asSubTodo" command="d">删除条目</el-dropdown-item>
 						 </el-dropdown-menu>
 			 </el-dropdown>
 
@@ -77,6 +79,11 @@
 	      type: Boolean,
 	      default: true
 	    },
+			asSubTodo: {
+				type: Boolean,
+				required: false,
+				default: false
+			},
 			title:''
 		},
 		// https://cn.vuejs.org/v2/guide/components-props.html
@@ -216,11 +223,18 @@
 			color: #d9d9d9;
 			margin-top:6px;
 		}
-		.el-icon-document{
+		.statusIcon{
+			margin-top:6px;
 			color: #a8a8a8;
 		}
-		.time{
+
+		.statusCompleted{
+			color: #67C23A;
+		}
+
+		.smallInfo{
 			font-size: 4px;
+			font-weight:320;
 			border: 0px solid blue;
 		}
 		.dragHandleItem{

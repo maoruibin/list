@@ -34,21 +34,6 @@
 			:user="user"
 			v-show="showInput" />
 
-
-		<!-- <el-card shadow="always" v-show="showInput" style="margin-bottom:12px;">
-		      <el-input
-					v-model="input"
-					clearable = true
-					autofocus = true
-					@keyup.enter.native="addTodo"
-					placeholder="请输入要做的事">
-				</el-input>
-				<div class="bottom clearfix">
-           <el-button type="primary" size="small" plain @click="addTodo">确定</el-button>
-					 <i class="el-icon-close" style="margin-left:12px;" @click="hideAddForm"></i>
-        </div>
-		</el-card> -->
-
 		<!-- dragHandleItem 指定拖动区域 -->
 		<draggable class="dragList" :list="filterTodos" :options="{handle:'.dragHandleItem',ghostClass:'ghost',scroll: true,disabled:showOnFileList,animation: 150,group:{ name:'todoList'}}" @add="moveTo" @start="drag" @end="drop" >
 
@@ -56,6 +41,7 @@
 					v-for="todo in filterTodos"
 					:todo="todo"
 					:key="todo.objectId"
+					:asSubTodo="asSubTodo"
 					@delete="deleteItem"
 					@edit="editItem"
 					@showTodoDetail="showTodoDetail"
@@ -233,8 +219,13 @@ export default{
 				this.$emit('hideOtherInput',this.group)
 			}
 		},
+
 		hideAddForm:function(){
 			this.showInput = false
+		},
+
+		showAddForm:function(){
+			this.showInput = true
 		},
 
 		checkAndHideGroupInputForm:function(triggleGroupId){

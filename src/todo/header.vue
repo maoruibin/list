@@ -2,7 +2,7 @@
 	<el-row :gutter="10">
 		<el-col :span="6">
 			<div class="grid-content left_top">
-				<span style="font-family: Georgia, serif;font-size:large;">TodayTodo</span><span style="font-size:x-small;">-Beta</span>
+				<span style="font-family: Tahoma;font-size:large;">TodayTodo</span><span style="font-size:x-small;">-Beta</span>
 			</div>
 		</el-col>
 		<el-col :span="12">
