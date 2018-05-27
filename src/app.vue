@@ -90,7 +90,7 @@ let api_version = process.env.API_VERSION
 				this.showTodoDetailDialog = true;
 				// user id 5afdb50f67f356003864b9cb group id 5afe3b7a9f54543b319f4908
 				// 5afdb50f67f356003864b9cb   5afe3b7a9f54543b319f4908
-				console.log("user id "+this.user.id+" group id "+this.group.objectId);
+				console.log("user id "+this.user.id+" group id "+this.group.objectId+" todo id "+this.todo.objectId);
 				if(todo.hasSubTodo){
 					this.$refs.editor.fetchSubTodo(this.group.objectId)
 				}

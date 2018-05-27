@@ -54,9 +54,21 @@
 
           </div>
            <div>
-              <el-tooltip effect="dark" open-delay="300" content="从主页列表中移除该事项，但不删除。" placement="bottom-end">
-                <el-button class="actionButton" size="medium" icon="el-icon-goods" plain>归档该 Todo</el-button>
-              </el-tooltip>
+
+             <el-popover
+              placement="bottom"
+              width="160"
+              v-model="onFilePoint">
+              <p>归档后，todo 将从列表中被移除，并不会被直接删除，是否继续归档？</p>
+              <div style="text-align: right; margin: 0;margin-right:12px;">
+                <el-button size="mini" type="text" @click="showDeleteDialog">直接删除</el-button>
+                <el-button type="primary" size="mini" @click="onFileItem">归档</el-button>
+              </div>
+              <el-button slot="reference" class="actionButton" size="medium" icon="el-icon-goods" plain>归档该 Todo</el-button>
+            </el-popover>
+
+
+
            </div>
 
            <div v-show="false">
@@ -69,7 +81,7 @@
     </el-row>
     <span slot="footer" class="dialog-footer">
       <el-button @click="onCancel">取 消</el-button>
-      <el-button type="primary"@click="onSubmit">更 新</el-button>
+      <el-button type="primary"@click="onSubmit" :disabled="updatingData">更 新</el-button>
     </span>
   </el-dialog>
 
@@ -86,6 +98,9 @@ export default{
   data(){
 		return{
       showSubTodo:false,
+      onFilePoint:false,
+      // 正在更新数据
+      updatingData:false,
       loadingSubTodo: false
 		}
 	},
@@ -125,6 +140,73 @@ export default{
 
   },
 	methods:{
+    onFileItem(){
+      const todo = this.todo
+      const that = this
+      this.onFileItemCallback(todo,function(res){
+          that.dismiss()
+          if(res>0){
+            that.$message({
+              type: 'success',
+              message: '已归档 '+that.todo.title
+            });
+          }
+      })
+    },
+    onFileItemCallback(todo,callback){
+				const that = this
+				const todoId = todo.objectId
+				todo.onFile = !todo.onFile
+				todo.onFileAt = new Date().toUTCString()
+				this.updateTodo(todo,function(result){
+					that.filterTodos.splice(that.filterTodos.findIndex(todo => todo.objectId === todoId),1)
+          callback(1)
+				})
+		},
+
+    showDeleteDialog(){
+      const that = this
+      this.$confirm('此操作将永久删除该 Todo, 是否继续?', '提示', {
+                confirmButtonText: '删除',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).then(() => {
+                that.deleteTodoCallback(this.todo,function(result){
+                  that.dismiss()
+                  if(result){
+                    that.filterTodos.splice(that.filterTodos.findIndex(item => item.objectId === that.todo.objectId),1)
+            				that.$message({
+            					type: 'success',
+            					message: '已删除 '+that.todo.title
+            				});
+                  }else{
+                    that.$message({
+            					type: 'warn',
+            					message: '删除失败!'
+            				});
+                  }
+                })
+              }).catch(() => {
+
+      });
+    },
+
+    deleteTodoCallback(todo,callback){
+      const objectId = todo.objectId
+      const api = host+"/todos/api/"+api_version+"/todos/"+objectId
+      const config =
+        {
+            headers : {
+                'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+            }
+        }
+      this.$http.delete(api,config).then(response => {
+            callback(todo)
+      }, response => {
+        callback()
+      });
+    },
+
     getSubCount(){
       if(this.group.todos != undefined && this.group.todos.results != undefined){
         return this.group.todos.results.length;
@@ -141,8 +223,9 @@ export default{
       const api = host+"/todos/api/"+api_version+"/todos/"+this.user.id+"/"+groupId
       this.loadingSubTodo = true
 		  this.$http.get(api).then(response => {
-        this.loadingSubTodo = true
+        this.loadingSubTodo = false
         this.group.todos.results = response.body.results
+        console.log("subTodo size "+this.group.todos.results.length);
         if(this.group.todos.results.length>0){
           this.showSubTodo = true;
         }
@@ -154,25 +237,35 @@ export default{
     onSubmit() {
       console.log('submit!');
       const that = this
-
-      if(this.getSubCount()>0){
-        this.todo.subTodoCount = this.getSubCount()
-        this.todo.subCompletedCount =this.getSubCompletedCount()
+      var subCount = this.getSubCount()
+      var subCompletedCount = this.getSubCompletedCount()
+      if(subCount >0 && subCompletedCount!= undefined){
+        this.todo.subTodoCount = subCount
+        this.todo.subCompletedCount = subCompletedCount
       }
 
-
-      this.updateTodo(this.todo,function(){
+      this.updatingData = true;
+      this.updateTodo(this.todo,function(result,response){
         that.$emit('hideDialog')
-        that.$message({
-          type: 'success',
-          message: '更新成功'
-        });
+        that.updatingData = false;
+        if(response === undefined){
+          that.$message({
+            type: 'success',
+            message: '更新成功'
+          });
+        }else{
+          that.$message({
+            type: 'warn',
+            message: '更新失败 '+response.statusText
+          });
+        }
       })
     },
 
     dismiss() {
       this.$emit('hideDialog')
       this.showSubTodo = false;
+      this.onFilePoint = false;
     },
     addSubTodo() {
       this.showSubTodo = !this.showSubTodo;
@@ -217,7 +310,9 @@ export default{
           this.filterTodos.splice(this.filterTodos.findIndex(todo => todo.objectId === todoId),1,editResult)
           // 将编辑完的结果回调回去
           callback(editResult)
-        }, response => {});
+        }, response => {
+          callback(null,response)
+        });
     },
     checkAndAppend(formData,key,value){
       if(value != undefined){
