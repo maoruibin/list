@@ -238,11 +238,11 @@ export default{
       console.log('submit!');
       const that = this
       var subCount = this.getSubCount()
-      var subCompletedCount = this.getSubCompletedCount()
-      if(subCount >0 && subCompletedCount!= undefined){
-        this.todo.subTodoCount = subCount
-        this.todo.subCompletedCount = subCompletedCount
-      }
+      this.todo.subTodoCount = subCount
+      this.todo.subCompletedCount = this.getSubCompletedCount()
+      console.log("sub all "+this.todo.subTodoCount);
+      console.log("sub completed all "+this.todo.subCompletedCount);
+
 
       this.updatingData = true;
       this.updateTodo(this.todo,function(result,response){
@@ -297,11 +297,8 @@ export default{
       this.checkAndAppend(formData,'completedAt',todo.completedAt)
       this.checkAndAppend(formData,'onFile',todo.onFile)
       this.checkAndAppend(formData,'onFileAt',todo.onFileAt)
-
-      if(todo.subTodoCount != undefined && todo.subTodoCount>0){
-        formData.append('subTodoCount', todo.subTodoCount)
-        formData.append('subTodoCompletedCount', todo.subCompletedCount)
-      }
+      this.checkAndAppend(formData,'subTodoCount',todo.subTodoCount)
+      this.checkAndAppend(formData,'subTodoCompletedCount',todo.subCompletedCount)
 
       this.$http.put(api, formData, config).then(response => {
           //编辑完的 todo 结果
