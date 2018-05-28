@@ -47,13 +47,18 @@
   export default {
 		data(){
 			return{
-				user:{},
         tabDay: 'today',
         completedList:[],
         createdList:[],
         onFileList:[]
 			}
 		},
+    props:{
+      user:{
+  			type: Object,
+  			required: true
+  		}
+    },
     components:{
   		Item
   	},
@@ -82,7 +87,7 @@
     methods: {
 
       refresh:function(){
-        this.user = JSON.parse(localStorage.getItem("user"))
+
         if(!this.user){
           return
         }

@@ -53,7 +53,7 @@ export default{
     }
 		const loading = this.$loading({
           lock: true,
-          text: '加载数据中,请稍等',
+          text: '加载中,请稍等...',
           spinner: 'el-icon-loading',
           background: 'rgba(0, 0, 0, 0.7)'
         });

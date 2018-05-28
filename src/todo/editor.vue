@@ -80,7 +80,7 @@
 
     </el-row>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="onCancel">取 消</el-button>
+      <el-button @click="dismiss">取 消</el-button>
       <el-button type="primary"@click="onSubmit" :disabled="updatingData">更 新</el-button>
     </span>
   </el-dialog>
@@ -266,16 +266,15 @@ export default{
       this.$emit('hideDialog')
       this.showSubTodo = false;
       this.onFilePoint = false;
+      this.filterTodos = [];
+      this.showTodoDetailDialog = false;
+      this.$refs.childTodo.clearTodos()
     },
     addSubTodo() {
       this.showSubTodo = !this.showSubTodo;
       if(this.showSubTodo){
         this.$refs.childTodo.showAddForm()
       }
-    },
-    onCancel() {
-      console.log('cancel!');
-      this.showTodoDetailDialog = false;
     },
 
     updateTodo(todo,callback){

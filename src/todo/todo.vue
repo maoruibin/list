@@ -156,6 +156,10 @@ export default{
 		updateTodos:function(todos){
 			this.todos = todos;
 		},
+		// 清空所有已存在的 todo 
+		clearTodos:function(todos){
+			this.todos = [];
+		},
 		drag:function(){
 			console.log('drag');
 		},

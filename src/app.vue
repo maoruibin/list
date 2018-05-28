@@ -27,6 +27,7 @@
 
 		<Dashboard
 			v-show="dashboard"
+			:user="user"
 			ref="dashboard"/>
 </el-main>
 
