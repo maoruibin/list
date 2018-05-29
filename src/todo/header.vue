@@ -2,16 +2,35 @@
 	<el-row :gutter="10">
 		<el-col :span="6">
 			<div class="grid-content left_top">
-				<span style="font-family: Tahoma;font-size:large;">TodayTodo</span><span style="font-size:x-small;">-Beta</span>
+
+				<el-dropdown class="titleItem" show-timeout=100 @command="selectProject">
+					<span class="el-dropdown-link" style="color:#ffffff;">
+						选择项目<i class="el-icon-arrow-down el-icon--right"></i>
+					</span>
+
+					<el-dropdown-menu slot="dropdown">
+						<el-dropdown-item
+							v-for="project in projectList"
+							:command="project.objectId"
+							:key="project.objectId">
+							{{project.name}}
+						</el-dropdown-item>
+					</el-dropdown-menu>
+
+				</el-dropdown>
+
 			</div>
 		</el-col>
 		<el-col :span="12">
 			<div class="grid-content center_title">
-				<span>那些要做的以及想做的事情、计划</span>
+				<span style="font-family: Tahoma;font-size:small;">TodayTodo</span><span style="font-size:x-small;">-Beta</span>
+				<span>&nbsp;&nbsp;那些要做的以及想做的事情、计划</span>
 			</div>
 		</el-col>
 		<el-col :span="6">
 			<div class="grid-content right_top">
+
+					<i class="el-icon-plus" @click="addProject" style="margin-right:10px;"></i>
 
 					<el-dropdown class="titleItem" @command="handleCommand" show-timeout=100>
 						<span class="el-dropdown-link" style="color:#ffffff;">
@@ -33,7 +52,8 @@
   export default {
 		data(){
 			return{
-				user:{}
+				user:{},
+				projectList:[]
 			}
 		},
 		mounted:function(){
@@ -44,6 +64,36 @@
 		},
 
     methods: {
+      updateProjectList(projectList) {
+				this.projectList = projectList
+			},
+      appendProject(project) {
+				console.log("add to list "+project.name);
+				this.projectList.push(project)
+			},
+      addProject() {
+				var last = this.projectList[this.projectList.length-1]
+				var priority = 0
+				if(last != undefined){
+					priority = last.priority+1
+				}
+
+				console.log('priority '+priority);
+				const project = {
+					'priority':priority
+				}
+
+				this.$emit('addProject',project)
+			},
+      selectProject(id) {
+				console.log('command is '+id);
+				var project = this.projectList.find(function(item){
+					return item.objectId === id
+				})
+				this.$emit('selectProject',project)
+
+
+			},
       handleCommand(command) {
 				if(command === 'logout'){
 					this.showLogoutDialog()
