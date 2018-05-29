@@ -220,7 +220,7 @@ export default{
       return 0;
     },
     fetchSubTodo(groupId) {
-      const api = host+"/todos/api/"+api_version+"/todos/"+this.user.id+"/"+groupId
+      const api = host+"/todos/api/"+api_version+"/todos/"+this.user.objectId+"/"+groupId
       this.loadingSubTodo = true
 		  this.$http.get(api).then(response => {
         this.loadingSubTodo = false

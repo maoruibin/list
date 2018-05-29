@@ -68,7 +68,7 @@ export default{
 	          background: 'rgba(0, 0, 0, 0.7)'
 	        });
 
-	    const apiTodosAll = host+"/todos/api/"+api_version+"/todos/list/"+this.user.id+"/"+this.project.objectId
+	    const apiTodosAll = host+"/todos/api/"+api_version+"/todos/list/"+this.user.objectId+"/"+this.project.objectId
 			console.log("select project is "+project.name);
 			console.log("host "+apiTodosAll);
 			//http://0.0.0.0:3000/todos/api/v1.0/todos/list/5ae33e0d9f5454003f0e1ced/5b0c10cc2f301e00381bda9f
@@ -140,7 +140,7 @@ export default{
 						'name':value,
 						'projectId':this.project.objectId,
 						'priority':this.groupForAppend.priority,
-						'userId':this.user.id
+						'userId':this.user.objectId
 					}
 
 					this.addNewGroup(group)

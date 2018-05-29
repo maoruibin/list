@@ -88,7 +88,7 @@ let api_version = process.env.API_VERSION
 				formData.append('priority', priority);
 				formData.append('completed', 'false');
 				formData.append('onFile', 'false');
-				formData.append('userId', this.user.id);
+				formData.append('userId', this.user.objectId);
 				this.inRequest = true
 				// POST /someUrl
 				this.$http.post(api, formData).then(response => {
