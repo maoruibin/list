@@ -15,7 +15,7 @@
 
 				      </span>
 				      <el-dropdown-menu slot="dropdown">
-				        <el-dropdown-item command="edit"  v-show="!showOnFileList">编辑分组名称</el-dropdown-item>
+				        <el-dropdown-item command="editGroup"  v-show="!showOnFileList">编辑分组名称</el-dropdown-item>
 								<el-dropdown-item command="onFile">{{this.showOnFileList?'返回Todo列表':'查看已归档列表'}}</el-dropdown-item>
 								<el-dropdown-item command="onFileBatch" v-show="hasCompletedTodo" >归档所有已完成事项</el-dropdown-item>
 
@@ -240,8 +240,9 @@ export default{
 		handleCommand:function(command){
 			if(command === 'delete'){
 				this.showDeleteDialog()
-			}else if(command === 'edit'){
-				this.$emit('edit',this.group)
+			}else if(command === 'editGroup'){
+				console.log("this.group ---> "+this.group.projectId);
+				this.$emit('editGroup',this.group)
 			}else if(command === 'onFile'){
 				this.showOnFileList = !this.showOnFileList
 			}else if(command === 'deleteAll'){
@@ -394,17 +395,12 @@ export default{
 					}
 			}
 			var formData = new FormData();
-
-			this.checkAndAppend(formData,'title',todo.title)
-			this.checkAndAppend(formData,'content',todo.content)
-			this.checkAndAppend(formData,'groupId',todo.groupId)
-			this.checkAndAppend(formData,'priority',todo.priority)
-			this.checkAndAppend(formData,'completed',todo.completed)
-			this.checkAndAppend(formData,'completedAt',todo.completedAt)
-			this.checkAndAppend(formData,'onFile',todo.onFile)
-			this.checkAndAppend(formData,'onFileAt',todo.onFileAt)
-			console.log("todo.onFileAt is "+todo.onFileAt+" type is "+typeof(todo.onFileAt));
-
+			for(var key in todo) {
+				if(!(todo[key] instanceof Object) && todo[key] != undefined){
+					console.log("update "+key+" to "+todo[key]);
+					formData.append(key, todo[key]);
+				}
+			}
 
 			this.$http.put(api, formData, config).then(response => {
 					//编辑完的 todo 结果
@@ -478,7 +474,7 @@ export default{
 		border: 0px solid blue;
 	}
 
-	@media screen and (max-width:600px){
+	@media only screen and (max-width: 479px){
 		.groupItem {
 			width: 80%;
 			height:auto;

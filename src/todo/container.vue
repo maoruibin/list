@@ -9,7 +9,7 @@
 			ref="childTodo"
 			@delete="deleteGroup"
 			@showTodoDetail="showTodoDetail"
-			@edit="showEditGroupDialog"
+			@editGroup="showEditGroupDialog"
 			@hideOtherInput="hideOtherInput"
 			@appendGroup="appendGroup"
 		/>
@@ -59,7 +59,7 @@ export default{
   methods:{
 		//加载项目数据
 		fetchProjectTodos(project,callback){
-			console.log("current project "+project.name);
+
 			this.project = project
 			const loading = this.$loading({
 	          lock: true,
@@ -69,6 +69,9 @@ export default{
 	        });
 
 	    const apiTodosAll = host+"/todos/api/"+api_version+"/todos/list/"+this.user.id+"/"+this.project.objectId
+			console.log("select project is "+project.name);
+			console.log("host "+apiTodosAll);
+			//http://0.0.0.0:3000/todos/api/v1.0/todos/list/5ae33e0d9f5454003f0e1ced/5b0c10cc2f301e00381bda9f
 	    this.$http.get(apiTodosAll).then(response => {
 	        this.groupTodos = response.body.groupTodos
 					this.groupForAppend.priority = this.groupTodos.length
@@ -190,9 +193,13 @@ export default{
 		updateGroup(group,callback){
 			const api = host+"/todos/api/"+api_version+"/group/edit"
 			var formData = new FormData();
-			formData.append('name', group.name);
-			formData.append('objectId', group.objectId);
-			formData.append('priority', group.priority);
+
+			for(var key in group) {
+				if(!(group[key] instanceof Object)){
+					console.log("update "+key+" to "+group[key]);
+					formData.append(key, group[key]);
+				}
+			}
 
 		  this.$http.post(api, formData).then(response => {
 				this.groupTodos.splice(this.groupTodos.findIndex(item => item.objectId === group.objectId),1,response.body.entity)

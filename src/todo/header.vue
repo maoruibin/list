@@ -11,8 +11,9 @@
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item
 							v-for="project in projectList"
+							:key="project.objectId"
 							:command="project.objectId"
-							:key="project.objectId">
+							>
 							{{project.name}}
 						</el-dropdown-item>
 					</el-dropdown-menu>
@@ -63,6 +64,10 @@
 				type: Object,
 				required: true
 			},
+			user: {
+				type: Object,
+				required: true
+			},
 			isSuperUser: {
 				type: Boolean,
 				required: true,
@@ -71,15 +76,11 @@
 		},
 		data(){
 			return{
-				user:{},
 				projectList:[]
 			}
 		},
 		mounted:function(){
-	    this.user = JSON.parse(localStorage.getItem("user"))
-	    if(!this.user){
-	      return
-	    }
+
 		},
 
     methods: {
@@ -88,6 +89,7 @@
 				this.$emit('aboutAction')
 			},
       updateProjectList(projectList) {
+				console.log("updateProjectList size is "+projectList.length);
 				this.projectList = projectList
 			},
       appendProject(project) {
@@ -110,12 +112,13 @@
 			},
       selectProject(id) {
 				console.log('command is '+id);
+				const that = this
 				var project = this.projectList.find(function(item){
 					return item.objectId === id
 				})
 				this.$emit('selectProject',project,function(result){
 					if(result){
-						this.project = result
+						that.project = result
 					}
 				})
 			},
@@ -134,6 +137,7 @@
           type: 'warning'
         }).then(() => {
 					localStorage.removeItem('user');
+					localStorage.removeItem('setting');
 					location.reload();
 
           this.$message({

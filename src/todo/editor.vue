@@ -1,4 +1,4 @@
-<template>
+subTodoCompletedCount<template>
   <el-dialog
     :title="todo.title"
     @close="dismiss"
@@ -239,9 +239,9 @@ export default{
       const that = this
       var subCount = this.getSubCount()
       this.todo.subTodoCount = subCount
-      this.todo.subCompletedCount = this.getSubCompletedCount()
+      this.todo.subTodoCompletedCount = this.getSubCompletedCount()
       console.log("sub all "+this.todo.subTodoCount);
-      console.log("sub completed all "+this.todo.subCompletedCount);
+      console.log("sub completed all "+this.todo.subTodoCompletedCount);
 
 
       this.updatingData = true;
@@ -288,16 +288,12 @@ export default{
       }
       var formData = new FormData();
 
-      this.checkAndAppend(formData,'title',todo.title)
-      this.checkAndAppend(formData,'content',todo.content)
-      this.checkAndAppend(formData,'groupId',todo.groupId)
-      this.checkAndAppend(formData,'priority',todo.priority)
-      this.checkAndAppend(formData,'completed',todo.completed)
-      this.checkAndAppend(formData,'completedAt',todo.completedAt)
-      this.checkAndAppend(formData,'onFile',todo.onFile)
-      this.checkAndAppend(formData,'onFileAt',todo.onFileAt)
-      this.checkAndAppend(formData,'subTodoCount',todo.subTodoCount)
-      this.checkAndAppend(formData,'subTodoCompletedCount',todo.subCompletedCount)
+      for(var key in todo) {
+        if(!(todo[key] instanceof Object) && todo[key] != undefined){
+          console.log("update "+key+" to "+todo[key]);
+          formData.append(key, todo[key]);
+        }
+      }
 
       this.$http.put(api, formData, config).then(response => {
           //编辑完的 todo 结果

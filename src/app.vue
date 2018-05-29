@@ -24,6 +24,7 @@
 					<Header
 					ref="header"
 					:project="currentProject"
+					:user="user"
 					:isSuperUser="isSuperUser"
 					@addProject="showAddProjectDialog"
 					@selectProject="selectProject"
@@ -79,6 +80,7 @@ let api_version = process.env.API_VERSION
 				group:{
 					"name":"添加子列表",
 					"objectId":"",
+					"projectId":"",
 					"todos":{
 						"results":[],
 						"resultsOnFile":[]
@@ -90,7 +92,7 @@ let api_version = process.env.API_VERSION
 				isShowAboutDialog: false,
 			}
 		},
-		created:function(){
+		mounted:function(){
 			this.user = JSON.parse(localStorage.getItem("user"))
 			this.isSuperUser = this.user.id === '5ae33e0d9f5454003f0e1ced'
 
@@ -104,6 +106,7 @@ let api_version = process.env.API_VERSION
 					}
 				}
 			}
+			console.log("mounted  current apge is "+this.setting.currentProject.name);
 
 			const apiProjectAll = host+"/todos/api/"+api_version+"/project/"+this.user.id
 			this.$http.get(apiProjectAll).then(response => {
@@ -115,7 +118,7 @@ let api_version = process.env.API_VERSION
 					}
 					this.currentProject = this.setting.currentProject
 					this.$refs.header.updateProjectList(this.projectList)
-					this.$refs.container.fetchProjectTodos(this.setting.currentProject,function(res){
+					this.$refs.container.fetchProjectTodos(this.currentProject,function(res){
 
 					})
 				}, response => {
