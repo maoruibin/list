@@ -1,10 +1,16 @@
 <template>
   <el-dialog
-  title="关于 TodayTodo"
+  title="TodayTodo"
   @close="dismiss"
   :visible.sync="showAboutDialog"
   width="50%">
   <div class="footer"style="text-align:center">
+    <div >
+      <span >
+        那些要做的以及想做的事情、计划
+      </span>
+    </div>
+
     <span >
       Design by <a href="http://gudong.name/" target="_blank">咕咚</a>
     </span>

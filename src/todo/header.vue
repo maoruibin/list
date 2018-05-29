@@ -24,7 +24,6 @@
 		<el-col :span="12">
 			<div class="grid-content center_title">
 				<span style="font-family: Tahoma;font-size:small;">TodayTodo</span><span style="font-size:x-small;">-Beta</span>
-				<span>&nbsp;&nbsp;那些要做的以及想做的事情、计划</span>
 			</div>
 		</el-col>
 		<el-col :span="6">

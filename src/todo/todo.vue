@@ -156,7 +156,7 @@ export default{
 		updateTodos:function(todos){
 			this.todos = todos;
 		},
-		// 清空所有已存在的 todo 
+		// 清空所有已存在的 todo
 		clearTodos:function(todos){
 			this.todos = [];
 		},
@@ -476,6 +476,24 @@ export default{
 		padding-bottom:12px;
 		margin-right:12px;
 		border: 0px solid blue;
+	}
+
+	@media screen and (max-width:600px){
+		.groupItem {
+			width: 80%;
+			height:auto;
+			max-height: 500px;
+			background-color: #eff1f3;
+			border-radius:6px;
+			display: inline-block;
+			vertical-align: top;
+			overflow:scroll;
+			padding-left:12px;
+			padding-right:12px;
+			padding-bottom:12px;
+			margin-right:12px;
+			border: 0px solid blue;
+		}
 	}
 
 	.subTodo{
