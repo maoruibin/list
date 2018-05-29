@@ -10,6 +10,11 @@
 			@hideDialog="hideDialog"
 			:filterTodos="filterTodos"/>
 
+		<About
+			v-show="isShowAboutDialog"
+			@hideAboutDialog="hideAboutDialog"
+			:showAboutDialog="isShowAboutDialog"/>
+
 		<div id="cover"/>
 
 		<Login />
@@ -22,26 +27,25 @@
 					:isSuperUser="isSuperUser"
 					@addProject="showAddProjectDialog"
 					@selectProject="selectProject"
+					@aboutAction="showAbout"
 					@dashboard="showDashboard"/>
 			</el-header>
 
-<el-main >
-		<Container
-			v-show="!dashboard"
-			:user="user"
-			:setting="setting"
-			ref="container"
-			@showTodoDetail="showTodoDetail"/>
+			<el-main >
+					<Container
+						v-show="!dashboard"
+						:user="user"
+						:setting="setting"
+						ref="container"
+						@showTodoDetail="showTodoDetail"/>
 
-		<Dashboard
-			v-show="dashboard"
-			:user="user"
-			ref="dashboard"/>
-</el-main>
+					<Dashboard
+						v-show="dashboard"
+						:user="user"
+						ref="dashboard"/>
+			</el-main>
 
-			<el-footer height="80px">
-					<Footer/>
-			</el-footer>
+
 		</el-container>
 
 
@@ -55,6 +59,7 @@ import Header from './todo/header.vue'
 import Login from './todo/login.vue'
 
 import Editor from './todo/editor.vue'
+import About from './todo/about.vue'
 import Dashboard from './todo/dashboard.vue'
 import Container from './todo/container.vue'
 import Footer from './todo/footer.vue'
@@ -81,7 +86,8 @@ let api_version = process.env.API_VERSION
 				},
 				filterTodos:[],
 				projectList:[],
-				showTodoDetailDialog: false
+				showTodoDetailDialog: false,
+				isShowAboutDialog: false,
 			}
 		},
 		created:function(){
@@ -109,7 +115,9 @@ let api_version = process.env.API_VERSION
 					}
 					this.currentProject = this.setting.currentProject
 					this.$refs.header.updateProjectList(this.projectList)
-					this.$refs.container.fetchProjectTodos(this.setting.currentProject)
+					this.$refs.container.fetchProjectTodos(this.setting.currentProject,function(res){
+
+					})
 				}, response => {
 					this.$message.error('加载数据出了点问题，请重试。('+response.status+"-"+response.statusText+")");
 				});
@@ -123,11 +131,14 @@ let api_version = process.env.API_VERSION
 			Header,
 			Footer,
 			Editor,
+			About,
 			Dashboard,
 			Container
 		},
 		methods:{
-
+			showAbout(){
+				this.isShowAboutDialog = true
+			},
 			selectProject(project,callback){
 				// 设置成功后才保存
 				const that = this
@@ -203,6 +214,9 @@ let api_version = process.env.API_VERSION
 
 			hideDialog:function(){
 				this.showTodoDetailDialog = false;
+			},
+			hideAboutDialog:function(){
+				this.isShowAboutDialog = false;
 			},
 
 			showDashboard:function(){

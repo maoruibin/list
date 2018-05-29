@@ -31,6 +31,11 @@
 			<div class="grid-content right_top">
 
 					<i
+					class="el-icon-info"
+					@click="showAboutApp"
+					style="margin-right:10px;"/>
+
+					<i
 					v-show="isSuperUser"
 					class="el-icon-plus"
 					@click="addProject"
@@ -79,6 +84,10 @@
 		},
 
     methods: {
+      showAboutApp() {
+				console.log("showAbout")
+				this.$emit('aboutAction')
+			},
       updateProjectList(projectList) {
 				this.projectList = projectList
 			},
