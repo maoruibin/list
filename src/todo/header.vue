@@ -3,9 +3,9 @@
 		<el-col :span="6">
 			<div class="grid-content left_top">
 
-				<el-dropdown class="titleItem" show-timeout=100 @command="selectProject">
+				<el-dropdown class="titleItem" v-show="isSuperUser" show-timeout=100 @command="selectProject">
 					<span class="el-dropdown-link" style="color:#ffffff;">
-						选择项目<i class="el-icon-arrow-down el-icon--right"></i>
+						{{project.name}}<i class="el-icon-arrow-down el-icon--right"></i>
 					</span>
 
 					<el-dropdown-menu slot="dropdown">
@@ -30,7 +30,11 @@
 		<el-col :span="6">
 			<div class="grid-content right_top">
 
-					<i class="el-icon-plus" @click="addProject" style="margin-right:10px;"></i>
+					<i
+					v-show="isSuperUser"
+					class="el-icon-plus"
+					@click="addProject"
+					style="margin-right:10px;"/>
 
 					<el-dropdown class="titleItem" @command="handleCommand" show-timeout=100>
 						<span class="el-dropdown-link" style="color:#ffffff;">
@@ -50,6 +54,17 @@
 </template>
 <script>
   export default {
+		props:{
+			project: {
+				type: Object,
+				required: true
+			},
+			isSuperUser: {
+				type: Boolean,
+				required: true,
+				default:false
+			}
+		},
 		data(){
 			return{
 				user:{},
@@ -90,9 +105,11 @@
 				var project = this.projectList.find(function(item){
 					return item.objectId === id
 				})
-				this.$emit('selectProject',project)
-
-
+				this.$emit('selectProject',project,function(result){
+					if(result){
+						this.project = result
+					}
+				})
 			},
       handleCommand(command) {
 				if(command === 'logout'){

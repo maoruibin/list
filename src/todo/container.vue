@@ -58,8 +58,8 @@ export default{
 
   methods:{
 		//加载项目数据
-		fetchProjectTodos(project){
-			console.log("project "+project.name);
+		fetchProjectTodos(project,callback){
+			console.log("current project "+project.name);
 			this.project = project
 			const loading = this.$loading({
 	          lock: true,
@@ -75,9 +75,11 @@ export default{
 					this.groupTodos.push(this.groupForAppend)
 	        console.log("len is "+this.groupTodos.length);
 					loading.close();
+					callback(1)
 	      }, response => {
 					loading.close();
 					this.$message.error('加载数据出了点问题，请重试。('+response.status+"-"+response.statusText+")");
+					callback(0)
 				});
 
 		},

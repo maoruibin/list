@@ -18,6 +18,8 @@
 			<el-header>
 					<Header
 					ref="header"
+					:project="currentProject"
+					:isSuperUser="isSuperUser"
 					@addProject="showAddProjectDialog"
 					@selectProject="selectProject"
 					@dashboard="showDashboard"/>
@@ -64,8 +66,10 @@ let api_version = process.env.API_VERSION
 		data(){
 			return{
 				user:{},
+				currentProject:{},
 				setting:{},
 				dashboard:false,
+				isSuperUser:false,
 				todo:{},
 				group:{
 					"name":"添加子列表",
@@ -82,6 +86,8 @@ let api_version = process.env.API_VERSION
 		},
 		created:function(){
 			this.user = JSON.parse(localStorage.getItem("user"))
+			this.isSuperUser = this.user.id === '5ae33e0d9f5454003f0e1ced'
+
 			this.setting = JSON.parse(localStorage.getItem("setting"))
 			if(this.setting === null || this.setting.currentProject === undefined){
 				this.setting = {
@@ -101,11 +107,9 @@ let api_version = process.env.API_VERSION
 						this.setting.currentProject = this.projectList[0];
 						localStorage.setItem("setting",JSON.stringify(this.setting));
 					}
-
+					this.currentProject = this.setting.currentProject
 					this.$refs.header.updateProjectList(this.projectList)
 					this.$refs.container.fetchProjectTodos(this.setting.currentProject)
-
-					console.log("共有 "+this.projectList.length+" 个project");
 				}, response => {
 					this.$message.error('加载数据出了点问题，请重试。('+response.status+"-"+response.statusText+")");
 				});
@@ -124,10 +128,19 @@ let api_version = process.env.API_VERSION
 		},
 		methods:{
 
-			selectProject(project){
-				this.setting.currentProject = project
-				localStorage.setItem("setting",JSON.stringify(this.setting));
-				this.$refs.container.fetchProjectTodos(project)
+			selectProject(project,callback){
+				// 设置成功后才保存
+				const that = this
+				this.$refs.container.fetchProjectTodos(project,function(res){
+					if(res>0){
+						that.currentProject = project
+						callback(project)
+						that.setting.currentProject = project
+						localStorage.setItem("setting",JSON.stringify(that.setting));
+					}else{
+						callback(null)
+					}
+				})
 			},
 			showAddProjectDialog(project){
 				let that = this
