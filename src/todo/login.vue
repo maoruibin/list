@@ -95,6 +95,7 @@
           }, (response) => {
               // error callback
               this.msg = response.body.error
+              this.$message.error('登录出了点问题，请重试。('+response.status+"-"+response.statusText+")");
           });
       },
       submitRegister(event){
@@ -127,11 +128,12 @@
         }
         this.$http.post(api, formData).then((response) => {
               this.msg = response.body.msg
-              localStorage.setItem("user",JSON.stringify(this.user))
+              localStorage.setItem("user",JSON.stringify(response.body.user))
               this.hasLogin = true
               location.reload()
           }, (response) => {
               this.msg = response.body.error
+              this.$message.error('注册出了点问题，请重试。('+response.status+"-"+response.statusText+")");
           });
       }
     }

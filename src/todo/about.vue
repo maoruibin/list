@@ -1,14 +1,12 @@
 <template>
   <el-dialog
-  title="TodayTodo"
+  title="TodayTodo - 那些要做的以及想做的事情、计划"
   @close="dismiss"
   :visible.sync="showAboutDialog"
   width="50%">
   <div class="footer"style="text-align:center">
     <div >
-      <span >
-        那些要做的以及想做的事情、计划
-      </span>
+
     </div>
 
     <span >
@@ -66,6 +64,6 @@ let api_version = process.env.API_VERSION
   }
   .footer a{
     text-decoration none;
-    color: #636363;
+    color: #409EFF;
   }
 </style>

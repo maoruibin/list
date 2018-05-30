@@ -94,7 +94,7 @@ let api_version = process.env.API_VERSION
 		},
 		mounted:function(){
 			this.user = JSON.parse(localStorage.getItem("user"))
-			this.isSuperUser = this.user.id === '5ae33e0d9f5454003f0e1ced'
+			this.isSuperUser = this.user.objectId === '5ae33e0d9f5454003f0e1ced'
 
 			this.setting = JSON.parse(localStorage.getItem("setting"))
 			if(this.setting === null || this.setting.currentProject === undefined){
@@ -108,7 +108,7 @@ let api_version = process.env.API_VERSION
 			}
 			console.log("mounted  current apge is "+this.setting.currentProject.name);
 
-			const apiProjectAll = host+"/todos/api/"+api_version+"/project/"+this.user.id
+			const apiProjectAll = host+"/todos/api/"+api_version+"/project/"+this.user.objectId
 			this.$http.get(apiProjectAll).then(response => {
 					this.projectList = response.body.results
 
@@ -187,7 +187,7 @@ let api_version = process.env.API_VERSION
 
 				this.checkAndAppend(formData,'name',project.name)
 				this.checkAndAppend(formData,'priority',project.priority)
-				this.checkAndAppend(formData,'userId',this.user.id)
+				this.checkAndAppend(formData,'userId',this.user.objectId)
 
 				this.$http.post(apiHost, formData, config).then(response => {
 						callback(response.body.entity)
@@ -209,7 +209,7 @@ let api_version = process.env.API_VERSION
 				this.showTodoDetailDialog = true;
 				// user id 5afdb50f67f356003864b9cb group id 5afe3b7a9f54543b319f4908
 				// 5afdb50f67f356003864b9cb   5afe3b7a9f54543b319f4908
-				console.log("user id "+this.user.id+" group id "+this.group.objectId+" todo id "+this.todo.objectId);
+				console.log("user id "+this.user.objectId+" group id "+this.group.objectId+" todo id "+this.todo.objectId);
 				if(todo.hasSubTodo){
 					this.$refs.editor.fetchSubTodo(this.group.objectId)
 				}

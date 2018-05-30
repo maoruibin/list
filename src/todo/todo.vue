@@ -53,7 +53,7 @@
 	   </draggable>
 
 
-		<el-card shadow="never" style="margin-top:12px;" v-show="lastGroupAction">
+		<el-card shadow="never" style="margin-top:12px;text-align:center;" v-show="lastGroupAction">
     		<el-button  @click="addGroup" icon="el-icon-plus" plain>添加新分组</el-button>
     </el-card>
 
@@ -98,6 +98,7 @@ export default{
 			filter:'all',
 			// 显示添加 todo 的输入框
 			showInput:false,
+			showFirstTip:true,
 			// 是否展示已完成列表
 			showOnFileList:false,
 

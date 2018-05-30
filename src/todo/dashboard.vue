@@ -91,7 +91,7 @@
         if(!this.user){
           return
         }
-        const apiTodosAll = host+"/todos/api/"+api_version+"/todos/time/"+this.user.id+"/"+this.tabDay
+        const apiTodosAll = host+"/todos/api/"+api_version+"/todos/time/"+this.user.objectId+"/"+this.tabDay
         this.$http.get(apiTodosAll).then(response => {
 
             this.completedList = response.body.todos.completed
