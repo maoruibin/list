@@ -82,7 +82,7 @@
         }
         const api = host+"/users/api/"+api_version+"/login"
         // var formData = JSON.stringify(this.user);
-        var formData = new FormData(this.user);
+        var formData = new FormData();
         for (var key in this.user) {
           formData.append(key,this.user[key]);
         }
@@ -121,7 +121,7 @@
       　}
         this.user.username = this.user.email
         const api = host+"/users/api/"+api_version+"/users"
-        var formData = new FormData(this.user);
+        var formData = new FormData();
         for (var key in this.user) {
           formData.append(key,this.user[key]);
         }
