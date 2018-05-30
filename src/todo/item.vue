@@ -11,7 +11,7 @@
 		  </el-checkbox>
 
 			<div class="itemCenter"  @click="showDetail">
-				<span id="content" >{{todo.title}}-{{index}}</span>
+				<span id="content" >{{todo.title}}</span>
 
 				<div class="centerElement smallInfo" v-show="todo.completed">
 	 			 完成于 {{getLocalTime(todo.completedAt)}}
