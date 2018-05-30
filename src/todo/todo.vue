@@ -62,7 +62,7 @@
 
 
 		<div class="emptyInfo" v-show="isGroupEmpty" style="text-align:center;display:flex;flex-direction:column;line-height:60px;padding-bottom:12px;border:0px solid red;">
-			<span class="textDesc">{{this.showOnFileList?'还没归档任何事项':'该分组还没有任何事项，点击右上角添加。'}}</span>
+			<span class="textDesc">{{this.showOnFileList?'还没归档任何事项':'还没有任何事项，点击右上角添加。'}}</span>
 		</div>
 	</div>
 
