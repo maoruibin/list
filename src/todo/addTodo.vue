@@ -2,14 +2,16 @@
 	<el-card shadow="always" style="margin-bottom:12px;">
 				<el-input
 				v-model="input"
+				ref="inputForm"
 				clearable = true
 				autofocus = true
 				@keyup.enter.native="addTodo"
+				@keyup.esc.native="escInput"
 				placeholder="请输入要做的事">
 			</el-input>
 			<div class="bottom">
 				 <el-button type="primary" size="small" plain @click="addTodo" :disabled="inRequest">确定</el-button>
-				 <i class="el-icon-close" style="margin-left:12px;" @click="hideAddForm"></i>
+				 <i class="el-icon-close" style="margin-left:12px;color: #a8a8a8;" @click="hideAddForm"></i>
 				 <i :class="['more', showMoreAction?'el-icon-arrow-up':'el-icon-arrow-down']"  @click="showMore"></i>
 			</div>
 			<div class="bottom" style="margin-top:16px;" v-show="showMoreAction">
@@ -60,8 +62,14 @@ let api_version = process.env.API_VERSION
 			hideAddForm:function(){
 				this.$emit('hideAddForm')
 			},
+			escInput:function(){
+				this.$emit('hideAddForm')
+			},
 			showMore:function(){
 				this.showMoreAction = !this.showMoreAction
+			},
+			focus:function(){
+				this.$refs.inputForm.focus()
 			},
 			// 添加一个 todo
 			addTodo(){
@@ -94,6 +102,7 @@ let api_version = process.env.API_VERSION
 				this.$http.post(api, formData).then(response => {
 					this.$emit('appendTodo',response.body.entity,this.insertEnd)
 					this.input= ''
+					this.focus()
 					this.inRequest = false
 				}, response => {
 					this.inRequest = false

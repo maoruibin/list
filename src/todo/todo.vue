@@ -3,7 +3,7 @@
 <!-- subTodo asSubTodo groupItem-->
 	<div :class="['groupItem',asSubTodo?'subTodo':'']">
 
-		<div v-show="!lastGroupAction" class="topAction">
+		<div v-show="!isLastIndex" class="topAction" style="border:0px solid red;">
 			<span>{{group.name}}</span>
 			<div class="actionArea">
 
@@ -32,14 +32,17 @@
 			:length="todos.length"
 			:group="group"
 			:user="user"
+			ref="addForm"
 			v-show="showInput" />
 
 		<!-- dragHandleItem 指定拖动区域 -->
 		<draggable class="dragList" :list="filterTodos" :options="{handle:'.dragHandleItem',ghostClass:'ghost',scroll: true,disabled:showOnFileList,animation: 150,group:{ name:'todoList'}}" @add="moveTo" @start="drag" @end="drop" >
 
 				<Item
-					v-for="todo in filterTodos"
+					v-for="(todo, index) in filterTodos"
 					:todo="todo"
+					:index="index"
+					:isLastIndex="index == filterTodos.length -1"
 					:key="todo.objectId"
 					:asSubTodo="asSubTodo"
 					@delete="deleteItem"
@@ -53,10 +56,14 @@
 	   </draggable>
 
 
-		<el-card shadow="never" style="margin-top:12px;text-align:center;" v-show="lastGroupAction">
-    		<el-button  @click="addGroup" icon="el-icon-plus" plain>添加新分组</el-button>
-    </el-card>
+		<div class="addGroup"  style="text-align:center;line-height:60px;" v-show="isLastIndex">
+			<el-button  @click="addGroup" icon="el-icon-plus" plain>添加新分组</el-button>
+		</div>
 
+
+		<div class="emptyInfo" v-show="isGroupEmpty" style="text-align:center;display:flex;flex-direction:column;line-height:60px;border:0px solid red;">
+			<span class="textDesc">{{this.showOnFileList?'该分组还没归档任何事项':'该分组还没有任何事项，点击右上角添加。'}}</span>
+		</div>
 	</div>
 
 </template>
@@ -79,7 +86,14 @@ export default{
 			type: Object,
 			required: true
 		},
-
+		index:{
+			type: Number,
+			default: true
+		},
+		isLastIndex:{
+			type: Boolean,
+			default: false
+		},
 		asSubTodo: {
 			type: Boolean,
 			required: false,
@@ -101,8 +115,6 @@ export default{
 			showFirstTip:true,
 			// 是否展示已完成列表
 			showOnFileList:false,
-
-			lastGroupAction:this.group.name === 'appendGroup',
 			moveDialogVisible: false
 		}
 	},
@@ -119,12 +131,23 @@ export default{
 	},
 
 	mounted:function(){
-		if(!this.lastGroupAction){
+		if(!this.isLastIndex){
 			this.todos = this.group.todos.results;
+
 			this.todosOnFileList = this.group.todos.resultsOnFile;
 		}
   },
 	computed: {
+		// 分组中包含的 item 是否为空
+		isGroupEmpty(){
+			if(this.isLastIndex){
+				return false;
+			}
+			if(this.showInput){
+				return false
+			}
+			return this.filterTodos.length == 0;
+		},
 		filterTodos(){
 			if(this.showOnFileList){
 				return this.todosOnFileList
@@ -166,14 +189,12 @@ export default{
 		},
 		// 移动到另一个 group 触发
 		moveTo:function(e){
-			console.log('拖动到另一组完成');
+
 			this.updateTodosBatch(function(msg){
 					console.log("move --> "+msg);
 			})
 		},
 		drop:function(e){
-			console.log('同一组内拖动完成');
-
 			this.updateTodosBatch(function(msg){
 					console.log("drop --> "+msg);
 			})
@@ -215,13 +236,16 @@ export default{
 			})
 		},
 		toogleAddOrReturn:function(){
-			console.log("group "+JSON.stringify(this.group));
 
 			if(this.showOnFileList){
 				this.showOnFileList = !this.showOnFileList
 			}else{
 				this.showInput = !this.showInput
 				this.$emit('hideOtherInput',this.group)
+				// 自动聚焦
+				if(this.showInput){
+					this.$refs.addForm.focus()
+				}
 			}
 		},
 

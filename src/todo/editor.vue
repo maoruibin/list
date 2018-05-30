@@ -21,7 +21,6 @@ subTodoCompletedCount<template>
           </el-form>
 
           <el-form
-            v-show="showSubTodo"
             class="grid-content bg-purple-light" style="margin-top:10px;padding:0px;">
             <div
               class="normalLoading"
@@ -47,12 +46,11 @@ subTodoCompletedCount<template>
       <el-col :span="6">
         <div class="grid-content bg-purple-light dialogAction" >
           <span style="margin-top:10px;">操作</span>
-          <div>
+          <!-- <div>
             <el-tooltip effect="dark" open-delay="300" content="添加子 todo，用于更细粒度的事情规划。" placement="top-end">
               <el-button class="actionButton" size="medium" icon="el-icon-plus" plain @click="addSubTodo">添加子 Todo</el-button>
             </el-tooltip>
-
-          </div>
+          </div> -->
            <div>
 
              <el-popover
@@ -97,7 +95,7 @@ let api_version = process.env.API_VERSION
 export default{
   data(){
 		return{
-      showSubTodo:false,
+      hasSubTodo:false,
       onFilePoint:false,
       // 正在更新数据
       updatingData:false,
@@ -227,7 +225,7 @@ export default{
         this.group.todos.results = response.body.results
         console.log("subTodo size "+this.group.todos.results.length);
         if(this.group.todos.results.length>0){
-          this.showSubTodo = true;
+          this.hasSubTodo = true;
         }
         this.$refs.childTodo.updateTodos(this.group.todos.results)
 			}, response => {
@@ -264,17 +262,11 @@ export default{
 
     dismiss() {
       this.$emit('hideDialog')
-      this.showSubTodo = false;
+      this.hasSubTodo = false;
       this.onFilePoint = false;
       this.filterTodos = [];
       this.showTodoDetailDialog = false;
       this.$refs.childTodo.clearTodos()
-    },
-    addSubTodo() {
-      this.showSubTodo = !this.showSubTodo;
-      if(this.showSubTodo){
-        this.$refs.childTodo.showAddForm()
-      }
     },
 
     updateTodo(todo,callback){

@@ -89,5 +89,13 @@ line-height: 160px;
 font-weight: 400;
 字体大小
 font-size: 12px;
-16px = 1em; 14px = 0.875em; 12px = 0.75em; 10px = 0.625em 
+16px = 1em; 14px = 0.875em; 12px = 0.75em; 10px = 0.625em
 ````
+
+## 布局参数
+group padding 为 12dp
+item bottom padding 为 8dp
+
+## 样式
+灰白字体颜色
+color:#a8a8a8;

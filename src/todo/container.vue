@@ -2,8 +2,10 @@
 	<draggable class="dragList" :list="groupTodos" :options="{handle:'.topAction',ghostClass:'ghost',scroll: true,animation: 150,group:{ name:'groupList'}}"  @start="drag" @end="drop" >
 
 		<Todo
-			v-for="group in groupTodos"
+			v-for="(group,index) in groupTodos"
 			:key="group.objectId"
+			:index="index"
+			:isLastIndex="index == groupTodos.length -1"
 			:group="group"
 			:user="user"
 			ref="childTodo"
@@ -38,10 +40,7 @@ export default{
 		return{
       groupTodos:[],
       project:{},
-			groupForAppend:{
-				'name':'appendGroup',
-				'objectId':'10000001'
-			}
+			groupForAppend:{}
 		}
 	},
 	components: {

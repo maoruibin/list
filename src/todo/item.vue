@@ -1,6 +1,6 @@
 <template>
 
-	<el-card shadow="hover" body-style="padding:10px" class="cardContainer">
+	<el-card shadow="hover" body-style="padding:10px" :class="['cardContainer',isLastIndex?'lastItemContainer':'']">
 		<div :class="['item todo-item',todo.completed && showAction ? 'completed':'']">
 			 <el-checkbox
 			 id="checkBox"
@@ -11,7 +11,7 @@
 		  </el-checkbox>
 
 			<div class="itemCenter"  @click="showDetail">
-				<span id="content" >{{todo.title}}</span>
+				<span id="content" >{{todo.title}}-{{index}}</span>
 
 				<div class="centerElement smallInfo" v-show="todo.completed">
 	 			 完成于 {{getLocalTime(todo.completedAt)}}
@@ -74,7 +74,14 @@
 				type: Object,
 				required: true
 			},
-
+			index:{
+	      type: Number,
+	      default: true
+	    },
+			isLastIndex:{
+	      type: Boolean,
+	      default: false
+	    },
 			showAction:{
 	      type: Boolean,
 	      default: true
@@ -183,6 +190,10 @@
 		.cardContainer{
 			margin-bottom:8px;
 			border: 0px solid #000777;
+		}
+		/* 如果是最后一行则去掉 bottom padding */
+		.lastItemContainer{
+			margin-bottom:0px;
 		}
 
 		.item {
