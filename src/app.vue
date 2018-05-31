@@ -1,5 +1,11 @@
 <template>
 	<div id="app">
+
+		<LoginForm
+			v-show="isShowLoginDialog"
+			@loginCallback="loginCallback"
+			:showLoginDialog="isShowLoginDialog"/>
+
 		<Editor
 			v-show="showTodoDetailDialog"
 			:todo="todo"
@@ -15,9 +21,6 @@
 			@hideAboutDialog="hideAboutDialog"
 			:showAboutDialog="isShowAboutDialog"/>
 
-		<div id="cover"/>
-
-		<Login />
 
 		<el-container>
 			<el-header>
@@ -57,7 +60,7 @@
 
 <script >
 import Header from './todo/header.vue'
-import Login from './todo/login.vue'
+import LoginForm from './todo/loginForm.vue'
 
 import Editor from './todo/editor.vue'
 import About from './todo/about.vue'
@@ -90,47 +93,22 @@ let api_version = process.env.API_VERSION
 				projectList:[],
 				showTodoDetailDialog: false,
 				isShowAboutDialog: false,
+				isShowLoginDialog: false,
 			}
 		},
 		mounted:function(){
 			this.user = JSON.parse(localStorage.getItem("user"))
-			this.isSuperUser = this.user.objectId === '5ae33e0d9f5454003f0e1ced'
-
-			this.setting = JSON.parse(localStorage.getItem("setting"))
-			if(this.setting === null || this.setting.currentProject === undefined){
-				this.setting = {
-					'currentProject':{
-						"name":'',
-						"objectId":'',
-						"priority":-1
-					}
-				}
+			if(this.user == null){
+				this.isShowLoginDialog = true
+				return;
 			}
-			console.log("mounted  current apge is "+this.setting.currentProject.name);
-
-			const apiProjectAll = host+"/todos/api/"+api_version+"/project/"+this.user.objectId
-			this.$http.get(apiProjectAll).then(response => {
-					this.projectList = response.body.results
-
-					if(this.setting.currentProject.objectId === ''){
-						this.setting.currentProject = this.projectList[0];
-						localStorage.setItem("setting",JSON.stringify(this.setting));
-					}
-					this.currentProject = this.setting.currentProject
-					this.$refs.header.updateProjectList(this.projectList)
-					this.$refs.container.fetchProjectTodos(this.currentProject,function(res){
-
-					})
-				}, response => {
-					this.$message.error('加载数据出了点问题，请重试。('+response.status+"-"+response.statusText+")");
-				});
-
+			this.fetchUserTodos(this.user)
 		},
 
 
 
 		components: {
-			Login,
+			LoginForm,
 			Header,
 			Footer,
 			Editor,
@@ -139,6 +117,51 @@ let api_version = process.env.API_VERSION
 			Container
 		},
 		methods:{
+			fetchUserTodos(user){
+				this.isSuperUser = user.objectId === '5ae33e0d9f5454003f0e1ced'
+				this.setting = JSON.parse(localStorage.getItem("setting"))
+				if(this.setting === null || this.setting.currentProject === undefined){
+					this.setting = {
+						'currentProject':{
+							"name":'',
+							"objectId":'',
+							"priority":-1
+						}
+					}
+				}
+
+				const apiProjectAll = host+"/todos/api/"+api_version+"/project/"+user.objectId
+				this.$http.get(apiProjectAll).then(response => {
+						this.projectList = response.body.results
+
+						if(this.setting.currentProject.objectId === ''){
+							this.setting.currentProject = this.projectList[0];
+							localStorage.setItem("setting",JSON.stringify(this.setting));
+						}
+						this.currentProject = this.setting.currentProject
+						this.$refs.header.updateProjectList(this.projectList)
+						this.$refs.container.fetchProjectTodos(this.currentProject,function(res){
+
+						})
+					}, response => {
+						this.$message.error('加载数据出了点问题，请重试。('+response.status+"-"+response.statusText+")");
+					});
+
+			},
+			loginCallback(user,msg){
+				if(user != null){
+					this.user = user;
+					this.fetchUserTodos(user)
+					localStorage.setItem("user",JSON.stringify(user))
+					this.isShowLoginDialog = false;
+					this.$message({
+						type: 'success',
+						message: msg
+					});
+				}else{
+					this.$message.error(msg);
+				}
+			},
 			showAbout(){
 				this.isShowAboutDialog = true
 			},

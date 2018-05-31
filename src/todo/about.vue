@@ -5,9 +5,7 @@
   :visible.sync="showAboutDialog"
   width="50%">
   <div class="footer"style="text-align:center">
-    <div >
-
-    </div>
+    
 
     <span >
       Design by <a href="http://gudong.name/" target="_blank">咕咚</a>
