@@ -1,20 +1,30 @@
 <template>
 	<div id="app">
 
-		<LoginForm
+		<Login
 			v-show="isShowLoginDialog"
+			:showLogin="isShowLoginDialog"
 			@loginCallback="loginCallback"
-			:showLoginDialog="isShowLoginDialog"/>
+			@showRegister="showRegister"
+			@hideLoginDialog="hideLogin"/>
+
+		<Register
+			v-show="isShowRegisterDialog"
+			:showRegister="isShowRegisterDialog"
+			@loginCallback="loginCallback"
+			@showLogin="showLogin"
+			@hideRegisterDialog="hideRegister"/>
 
 		<Editor
-			v-show="showTodoDetailDialog"
+			v-show="isShowEditorDialog"
 			:todo="todo"
 			:user="user"
 			:group="group"
 			ref="editor"
-			:showTodoDetailDialog="showTodoDetailDialog"
-			@hideDialog="hideDialog"
-			:filterTodos="filterTodos"/>
+			:showTodoDetailDialog="isShowEditorDialog"
+			:todos="filterTodos"
+			@on-todos-change="onTodosChange"
+			@hideEditor="hideEditor"/>
 
 		<About
 			v-show="isShowAboutDialog"
@@ -29,13 +39,14 @@
 					:project="currentProject"
 					:user="user"
 					:isSuperUser="isSuperUser"
+					@logout="logout"
 					@addProject="showAddProjectDialog"
 					@selectProject="selectProject"
 					@aboutAction="showAbout"
 					@dashboard="showDashboard"/>
 			</el-header>
 
-			<el-main >
+			<el-main v-show="!isShowLoginDialog && !isShowRegisterDialog">
 					<Container
 						v-show="!dashboard"
 						:user="user"
@@ -60,7 +71,8 @@
 
 <script >
 import Header from './todo/header.vue'
-import LoginForm from './todo/loginForm.vue'
+import Login from './todo/login.vue'
+import Register from './todo/register.vue'
 
 import Editor from './todo/editor.vue'
 import About from './todo/about.vue'
@@ -91,9 +103,10 @@ let api_version = process.env.API_VERSION
 				},
 				filterTodos:[],
 				projectList:[],
-				showTodoDetailDialog: false,
+				isShowEditorDialog: false,
 				isShowAboutDialog: false,
 				isShowLoginDialog: false,
+				isShowRegisterDialog: false,
 			}
 		},
 		mounted:function(){
@@ -105,10 +118,9 @@ let api_version = process.env.API_VERSION
 			this.fetchUserTodos(this.user)
 		},
 
-
-
 		components: {
-			LoginForm,
+			Login,
+			Register,
 			Header,
 			Footer,
 			Editor,
@@ -117,6 +129,36 @@ let api_version = process.env.API_VERSION
 			Container
 		},
 		methods:{
+			onTodosChange(val){
+				console.log("todo 发生了变化");
+				this.filterTodos=val;
+			},
+			logout(){
+				localStorage.removeItem('user');
+				localStorage.removeItem('setting');
+				this.user = null
+				this.setting = null
+				this.isShowLoginDialog = true
+
+				this.$message({
+					type: 'success',
+					message: '注销成功!'
+				});
+
+			},
+			hideLogin(){
+				this.isShowLoginDialog = false
+			},
+			hideRegister(){
+				this.isShowRegisterDialog = false
+			},
+			showRegister(){
+				this.isShowRegisterDialog = true
+			},
+			showLogin(){
+				this.isShowLoginDialog = true
+				this.hideRegister();
+			},
 			fetchUserTodos(user){
 				this.isSuperUser = user.objectId === '5ae33e0d9f5454003f0e1ced'
 				this.setting = JSON.parse(localStorage.getItem("setting"))
@@ -148,12 +190,17 @@ let api_version = process.env.API_VERSION
 					});
 
 			},
+			registCallback(user,msg){
+				this.loginCallback(user,msg)
+			},
+
 			loginCallback(user,msg){
 				if(user != null){
 					this.user = user;
 					this.fetchUserTodos(user)
 					localStorage.setItem("user",JSON.stringify(user))
 					this.isShowLoginDialog = false;
+					this.isShowRegisterDialog = false;
 					this.$message({
 						type: 'success',
 						message: msg
@@ -162,6 +209,7 @@ let api_version = process.env.API_VERSION
 					this.$message.error(msg);
 				}
 			},
+
 			showAbout(){
 				this.isShowAboutDialog = true
 			},
@@ -229,17 +277,15 @@ let api_version = process.env.API_VERSION
 				this.todo = todo;
 				this.group.objectId = this.todo.objectId
 				this.filterTodos = filterTodos;
-				this.showTodoDetailDialog = true;
-				// user id 5afdb50f67f356003864b9cb group id 5afe3b7a9f54543b319f4908
-				// 5afdb50f67f356003864b9cb   5afe3b7a9f54543b319f4908
+				this.isShowEditorDialog = true;
 				console.log("user id "+this.user.objectId+" group id "+this.group.objectId+" todo id "+this.todo.objectId);
 				if(todo.hasSubTodo){
 					this.$refs.editor.fetchSubTodo(this.group.objectId)
 				}
 			},
 
-			hideDialog:function(){
-				this.showTodoDetailDialog = false;
+			hideEditor:function(){
+				this.isShowEditorDialog = false;
 			},
 			hideAboutDialog:function(){
 				this.isShowAboutDialog = false;

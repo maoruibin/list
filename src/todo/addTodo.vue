@@ -100,7 +100,7 @@ let api_version = process.env.API_VERSION
 				this.inRequest = true
 				// POST /someUrl
 				this.$http.post(api, formData).then(response => {
-					this.$emit('appendTodo',response.body.entity,this.insertEnd)
+					this.$emit('addTodo',response.body.entity,this.insertEnd)
 					this.input= ''
 					this.focus()
 					this.inRequest = false

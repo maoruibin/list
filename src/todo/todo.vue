@@ -7,11 +7,11 @@
 			<span>{{group.name}}</span>
 			<div class="actionArea">
 
-				<i :class="['topIconAction', showOnFileList ? 'el-icon-arrow-left' : 'el-icon-plus']" @click="toogleAddOrReturn"></i>
+				<i :class="['topIconAction icon_normal ', showOnFileList ? 'el-icon-arrow-left' : 'el-icon-plus']" @click="toogleAddOrReturn"></i>
 
 				<el-dropdown trigger="click" v-show="!asSubTodo"  @command="handleCommand">
 				      <span class="el-dropdown-link">
-				        <i class="el-icon-more"></i>
+				        <i class="el-icon-more icon_normal"></i>
 
 				      </span>
 				      <el-dropdown-menu slot="dropdown">
@@ -28,7 +28,7 @@
 
 		<AddTodo
 			@hideAddForm="hideAddForm"
-			@appendTodo="appendTodo"
+			@addTodo="addTodo"
 			:length="todos.length"
 			:group="group"
 			:user="user"
@@ -88,7 +88,8 @@ export default{
 		},
 		index:{
 			type: Number,
-			default: true
+			required: false,
+			default: 0
 		},
 		isLastIndex:{
 			type: Boolean,
@@ -170,12 +171,19 @@ export default{
 
 	},
 	methods: {
-		appendTodo:function(todo,appendEnd){
+		addTodo:function(todo,appendEnd){
 			if(appendEnd){
 				this.todos.push(todo)
 			}else{
 				this.todos.unshift(todo)
 			}
+			this.$emit('todoChange','add')
+		},
+		getCount(){
+			return this.todos.length;
+		},
+		getCompletedCount(){
+			return this.todos.filter(todo => todo.completed).length;
 		},
 		updateTodos:function(todos){
 			this.todos = todos;
@@ -189,7 +197,6 @@ export default{
 		},
 		// 移动到另一个 group 触发
 		moveTo:function(e){
-
 			this.updateTodosBatch(function(msg){
 					console.log("move --> "+msg);
 			})
@@ -236,7 +243,6 @@ export default{
 			})
 		},
 		toogleAddOrReturn:function(){
-
 			if(this.showOnFileList){
 				this.showOnFileList = !this.showOnFileList
 			}else{
@@ -452,6 +458,7 @@ export default{
 
 			const that = this
 			this.updateTodo(todo,function(result){
+					that.$emit('todoChange','toggle')
 					if(result.completed){
 						that.$message({
 							type: 'success',
@@ -468,6 +475,7 @@ export default{
 					type: 'success',
 					message: '删除成功!'
 				});
+				that.$emit('todoChange','delete')
 			})
 		},
 

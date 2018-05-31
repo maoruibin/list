@@ -136,14 +136,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-					localStorage.removeItem('user');
-					localStorage.removeItem('setting');
-					location.reload();
-
-          this.$message({
-            type: 'success',
-            message: '注销成功!'
-          });
+					this.$emit('logout')
         }).catch(() => {
           this.$message({
             type: 'info',

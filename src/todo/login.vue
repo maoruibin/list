@@ -1,11 +1,13 @@
 <template>
   <el-dialog
   title="登录"
-  @close="dismiss"
-  :visible.sync="showLoginDialog"
+  :visible.sync="showLogin"
+  :show-close="false"
+  :close-on-click-modal="false"
+  :close-on-press-escape="false"
   width="50%">
 
-  <el-form ref="ruleForm" :model="user" :rules="rules"  label-width="80px">
+  <el-form ref="ruleForm" :model="user" :rules="rules"  label-width="120px">
     <el-form-item label="用户名" prop="username">
       <el-input v-model="user.username"></el-input>
     </el-form-item>
@@ -14,11 +16,13 @@
     </el-form-item>
     <el-form-item>
      <el-button type="primary" @click="submitFrom('ruleForm')">确定</el-button>
-     <el-button @click="cancel">取消</el-button>
+
    </el-form-item>
     <el-form-item>
-      <el-button type="text" @click="guestVisitor">访客模式登录</el-button>
+      <el-button  type="text" @click="gotoRegister">注册</el-button>
+      <el-button type="text" @click="guestVisitor" style="margin-left:16px;">访客模式登录</el-button>
    </el-form-item>
+
   </el-form>
 
 </el-dialog>
@@ -34,11 +38,10 @@ let api_version = process.env.API_VERSION
 
 	export default{
 		props:{
-      showLoginDialog:{
+      showLogin:{
         type: Boolean,
         required: true
-      },
-
+      }
 		},
 		computed:{
 
@@ -62,6 +65,10 @@ let api_version = process.env.API_VERSION
 			}
 		},
 		methods:{
+      gotoRegister(){
+        this.$emit('showRegister')
+        this.dismiss()
+      },
       guestVisitor(){
         this.user.username = 'guest@163.com'
         this.user.password = '666999'
@@ -95,11 +102,7 @@ let api_version = process.env.API_VERSION
       },
       cancel(){
         this.dismiss();
-      },
-      dismiss() {
-        // this.$emit('hideLoginDialog')
-        this.showLoginDialog = false;
-      },
+      }
 		}
 	}
 </script>

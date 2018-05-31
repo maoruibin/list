@@ -7,7 +7,7 @@
       Thanks <a href="https://www.imooc.com/t/3083408" target="_blank">Jokcy</a>
     </div>
     <div>
-      <a href="https://leancloud.cn/" target="_blank">leancloud</a> &nbsp;&nbsp;<a href="http://element.eleme.io/#/" target="_blank">element</a> &nbsp;&nbsp;<a href="https://cn.vuejs.org/v2/guide/syntax.html" target="_blank">vue</a>
+      <a href="https://leancloud.cn/" target="_blank">leancloud</a> &nbsp;&nbsp;<a href="http://element.eleme.io/#/" target="_blank">element</a> &nbsp;&nbsp;<a href="https://cn.vuejs.org" target="_blank">vue</a>
     </div>
   </div>
 

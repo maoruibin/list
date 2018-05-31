@@ -1,7 +1,8 @@
-subTodoCompletedCount<template>
+<template>
   <el-dialog
     :title="todo.title"
     @close="dismiss"
+    :close-on-press-escape="false"
     :visible.sync="showTodoDetailDialog"
     width="60%">
 
@@ -9,7 +10,12 @@ subTodoCompletedCount<template>
 
       <el-col :span="18">
         <div >
-          <el-form class="grid-content bg-purple-light" ref="todo" :model="todo" label-width="80px" label-position="top">
+          <el-form class="grid-content bg-purple-light"
+           ref="todo"
+           :model="todo"
+           @submit.native.prevent
+           label-width="80px"
+           label-position="top">
             <el-form-item label="名称" size="medium">
               <el-input v-model="todo.title"></el-input>
             </el-form-item>
@@ -17,11 +23,18 @@ subTodoCompletedCount<template>
               <el-input type="textarea" v-model="todo.content"></el-input>
             </el-form-item>
 
+            <el-form-item size="medium" style="margin-bottom:4px;" >
+              <el-button style="float:right;border:0px solid red;"
+               @click="onSubmit(false)"
+               :disabled="updatingData">保 存</el-button>
+            </el-form-item>
 
           </el-form>
 
           <el-form
-            class="grid-content bg-purple-light" style="margin-top:10px;padding:0px;">
+            class="grid-content bg-purple-light"
+            @submit.native.prevent
+            style="margin-top:10px;padding:0px;">
             <div
               class="normalLoading"
               v-show="loadingSubTodo">
@@ -34,6 +47,7 @@ subTodoCompletedCount<template>
               :group="group"
               :user="user"
               :asSubTodo=true
+              @todoChange="todoChange"
               ref="childTodo"
             />
 
@@ -46,41 +60,31 @@ subTodoCompletedCount<template>
       <el-col :span="6">
         <div class="grid-content bg-purple-light dialogAction" >
           <span style="margin-top:10px;">操作</span>
-          <!-- <div>
-            <el-tooltip effect="dark" open-delay="300" content="添加子 todo，用于更细粒度的事情规划。" placement="top-end">
-              <el-button class="actionButton" size="medium" icon="el-icon-plus" plain @click="addSubTodo">添加子 Todo</el-button>
-            </el-tooltip>
-          </div> -->
-           <div>
+           <div style="margin-bottom:10px;">
 
              <el-popover
               placement="bottom"
               width="160"
               v-model="onFilePoint">
               <p>归档后，todo 将从列表中被移除，并不会被直接删除，是否继续归档？</p>
-              <div style="text-align: right; margin: 0;margin-right:12px;">
+              <div style="text-align: right; margin: 0;margin-right:6px;">
                 <el-button size="mini" type="text" @click="showDeleteDialog">直接删除</el-button>
-                <el-button type="primary" size="mini" @click="onFileItem">归档</el-button>
+                <el-button type="primary" size="mini"  @click="onFileItem">归档</el-button>
               </div>
               <el-button slot="reference" class="actionButton" size="medium" icon="el-icon-goods" plain>归档该 Todo</el-button>
             </el-popover>
-
-
 
            </div>
 
            <div v-show="false">
                 <el-button class="actionButton" size="medium" icon="el-icon-delete" plain>永久删除</el-button>
            </div>
-        </div>
 
+        </div>
       </el-col>
 
     </el-row>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="dismiss">取 消</el-button>
-      <el-button type="primary"@click="onSubmit" :disabled="updatingData">更 新</el-button>
-    </span>
+
   </el-dialog>
 
 </template>
@@ -95,6 +99,7 @@ let api_version = process.env.API_VERSION
 export default{
   data(){
 		return{
+      subTodos:this.todos,
       hasSubTodo:false,
       onFilePoint:false,
       // 正在更新数据
@@ -117,7 +122,7 @@ export default{
 			required: true
 		},
 
-		filterTodos:{
+		todos:{
 			type: Array,
 			required: true
 		},
@@ -137,11 +142,27 @@ export default{
   mounted:function(){
 
   },
+  watch: {
+    todos(val) {
+      console.log("filter change ");
+      this.subTodos = val;//新增result的watch，监听变更并同步到myResult上
+    },
+    subTodos(val){
+        //xxcanghai 小小沧海 博客园
+        this.$emit("on-todos-change",val);//③组件内对myResult变更后向外部发送事件通知
+    }
+  },
 	methods:{
-    onFileItem(){
-      const todo = this.todo
+    //status todo 发生的更改类型
+    todoChange(status){
       const that = this
-      this.onFileItemCallback(todo,function(res){
+      setTimeout(function(){
+        that.onSubmit(true);
+      },100)
+    },
+    onFileItem(){
+      const that = this
+      this.onFileItemCallback(that.todo,function(res){
           that.dismiss()
           if(res>0){
             that.$message({
@@ -157,7 +178,7 @@ export default{
 				todo.onFile = !todo.onFile
 				todo.onFileAt = new Date().toUTCString()
 				this.updateTodo(todo,function(result){
-					that.filterTodos.splice(that.filterTodos.findIndex(todo => todo.objectId === todoId),1)
+					that.subTodos.splice(that.subTodos.findIndex(todo => todo.objectId === todoId),1)
           callback(1)
 				})
 		},
@@ -172,7 +193,7 @@ export default{
                 that.deleteTodoCallback(this.todo,function(result){
                   that.dismiss()
                   if(result){
-                    that.filterTodos.splice(that.filterTodos.findIndex(item => item.objectId === that.todo.objectId),1)
+                    that.subTodos.splice(that.subTodos.findIndex(item => item.objectId === that.todo.objectId),1)
             				that.$message({
             					type: 'success',
             					message: '已删除 '+that.todo.title
@@ -205,18 +226,7 @@ export default{
       });
     },
 
-    getSubCount(){
-      if(this.group.todos != undefined && this.group.todos.results != undefined){
-        return this.group.todos.results.length;
-      }
-      return 0;
-    },
-    getSubCompletedCount(){
-      if(this.group.todos != undefined && this.group.todos.results != undefined){
-        return this.group.todos.results.filter(todo => todo.completed).length;
-      }
-      return 0;
-    },
+
     fetchSubTodo(groupId) {
       const api = host+"/todos/api/"+api_version+"/todos/"+this.user.objectId+"/"+groupId
       this.loadingSubTodo = true
@@ -232,20 +242,23 @@ export default{
         this.loadingSubTodo = false
       });
     },
-    onSubmit() {
-      console.log('submit!');
+    //更新 todo 信息
+    //quite 是否显示回调结果
+    onSubmit(quite) {
+      console.log("quite -> "+quite);
       const that = this
-      var subCount = this.getSubCount()
-      this.todo.subTodoCount = subCount
-      this.todo.subTodoCompletedCount = this.getSubCompletedCount()
-      console.log("sub all "+this.todo.subTodoCount);
-      console.log("sub completed all "+this.todo.subTodoCompletedCount);
-
-
-      this.updatingData = true;
+      this.todo.subTodoCount = that.$refs.childTodo.getCount();
+      this.todo.subTodoCompletedCount = that.$refs.childTodo.getCompletedCount();
+      if(!quite){
+        this.updatingData = true;
+      }
       this.updateTodo(this.todo,function(result,response){
-        that.$emit('hideDialog')
         that.updatingData = false;
+        if(quite){
+          return;
+        }
+
+        that.$emit('hideEditor')
         if(response === undefined){
           that.$message({
             type: 'success',
@@ -259,13 +272,10 @@ export default{
         }
       })
     },
-
     dismiss() {
-      this.$emit('hideDialog')
+      this.$emit('hideEditor')
       this.hasSubTodo = false;
       this.onFilePoint = false;
-      this.filterTodos = [];
-      this.showTodoDetailDialog = false;
       this.$refs.childTodo.clearTodos()
     },
 
@@ -291,7 +301,7 @@ export default{
           //编辑完的 todo 结果
           const editResult = response.body.entity;
           //更新当前的 todo
-          this.filterTodos.splice(this.filterTodos.findIndex(todo => todo.objectId === todoId),1,editResult)
+          this.subTodos.splice(this.subTodos.findIndex(todo => todo.objectId === todoId),1,editResult)
           // 将编辑完的结果回调回去
           callback(editResult)
         }, response => {

@@ -10,12 +10,15 @@
 			 v-model="todo.completed">
 		  </el-checkbox>
 
-			<div class="itemCenter"  @click="showDetail">
-				<span id="content" >{{todo.title}}</span>
+			<div class="itemCenter">
+				<span id="content" @click="showDetail">{{todo.title}}</span>
 
-				<div class="centerElement smallInfo" v-show="todo.completed">
-	 			 完成于 {{getLocalTime(todo.completedAt)}}
-	 		 </div>
+				<transition name="el-fade-in">
+					<div class="centerElement smallInfo" v-show="todo.completed">
+		 			 完成于 {{getLocalTime(todo.completedAt)}}
+		 		 </div>
+       </transition>
+
 
 			 <el-popover
 				  placement="bottom-start"
@@ -34,13 +37,9 @@
 
 			</div>
 
-
-
-
-
 			 <el-dropdown trigger="click" v-show="showAction" class="dragHandleItem"  @command="handleCommand">
 						 <span class="el-dropdown-link">
-							 <i class="el-icon-more"></i>
+							 <i class="el-icon-more icon_normal"></i>
 						 </span>
 						 <el-dropdown-menu slot="dropdown" style="margin-top:-8px;">
 							 <el-dropdown-item v-show="asSubTodo" command="e">编辑名称</el-dropdown-item>
