@@ -4,17 +4,22 @@
 		<Login
 			v-show="isShowLoginDialog"
 			:showLogin="isShowLoginDialog"
-			@loginCallback="loginCallback"
+			@callback="loginCallback"
 			@showRegister="showRegister"
 			@hideLoginDialog="hideLogin"/>
 
 		<Register
 			v-show="isShowRegisterDialog"
 			:showRegister="isShowRegisterDialog"
-			@loginCallback="loginCallback"
+			@callback="registCallback"
 			@showLogin="showLogin"
 			@hideRegisterDialog="hideRegister"/>
 
+		<Profile
+			v-show="isShowProfileDialog"
+			:showProfile="isShowProfileDialog"
+			:user="user"
+			/>
 		<Editor
 			v-show="isShowEditorDialog"
 			:todo="todo"
@@ -43,6 +48,7 @@
 					@addProject="showAddProjectDialog"
 					@selectProject="selectProject"
 					@aboutAction="showAbout"
+					@profile="showProfileDialog"
 					@dashboard="showDashboard"/>
 			</el-header>
 
@@ -79,6 +85,7 @@ import About from './todo/about.vue'
 import Dashboard from './todo/dashboard.vue'
 import Container from './todo/container.vue'
 import Footer from './todo/footer.vue'
+import Profile from './todo/profile.vue'
 
 let host = process.env.API_HOST
 let api_version = process.env.API_VERSION
@@ -107,6 +114,7 @@ let api_version = process.env.API_VERSION
 				isShowAboutDialog: false,
 				isShowLoginDialog: false,
 				isShowRegisterDialog: false,
+				isShowProfileDialog: false,
 			}
 		},
 		mounted:function(){
@@ -122,6 +130,7 @@ let api_version = process.env.API_VERSION
 			Login,
 			Register,
 			Header,
+			Profile,
 			Footer,
 			Editor,
 			About,
@@ -191,14 +200,28 @@ let api_version = process.env.API_VERSION
 
 			},
 			registCallback(user,msg){
-				this.loginCallback(user,msg)
+				const that = this
+				this.callback(user,msg,function(res){
+					if(res<0){
+						that.isShowRegisterDialog = true;
+					}
+				})
 			},
 
 			loginCallback(user,msg){
+				const that = this
+				this.callback(user,msg,function(res){
+					if(res<0){
+							that.isShowLoginDialog = true;
+					}
+				})
+			},
+			callback(user,msg,callback){
 				if(user != null){
 					this.user = user;
 					this.fetchUserTodos(user)
 					localStorage.setItem("user",JSON.stringify(user))
+					callback(1)
 					this.isShowLoginDialog = false;
 					this.isShowRegisterDialog = false;
 					this.$message({
@@ -206,12 +229,19 @@ let api_version = process.env.API_VERSION
 						message: msg
 					});
 				}else{
-					this.$message.error(msg);
+					this.$message({
+						type: 'warning',
+						message: msg
+					});
+					callback(-1)
 				}
 			},
 
 			showAbout(){
 				this.isShowAboutDialog = true
+			},
+			showProfileDialog(){
+				this.isShowProfileDialog = true
 			},
 			selectProject(project,callback){
 				// 设置成功后才保存

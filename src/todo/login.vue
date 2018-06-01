@@ -79,8 +79,8 @@ let api_version = process.env.API_VERSION
         this.$refs[formName].validate((valid) => {
           if (valid) {
             that.loginByNet(function(user,msg){
-              that.$emit('loginCallback',user,msg)
-              that.dismiss()
+              console.log("msg is "+msg);
+              that.$emit('callback',user,msg)
             })
           } else {
             console.log('表单验证失败');
@@ -99,6 +99,9 @@ let api_version = process.env.API_VERSION
           }, (response) => {
               callback(null,response.body.msg)
           });
+      },
+      dismiss(){
+        this.showLogin = false;
       },
       cancel(){
         this.dismiss();

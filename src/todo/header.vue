@@ -58,7 +58,7 @@
 							{{this.user.nickname}}<i class="el-icon-arrow-down el-icon--right"></i>
 						</span>
 						<el-dropdown-menu v-show="this.user != null" slot="dropdown">
-							<el-dropdown-item v-show="isSuperUser" command="info">个人信息</el-dropdown-item>
+							<el-dropdown-item command="profile">个人信息</el-dropdown-item>
 							<el-dropdown-item command="dashboard">数据面板</el-dropdown-item>
 							<el-dropdown-item command="logout">注销</el-dropdown-item>
 						</el-dropdown-menu>
@@ -143,6 +143,9 @@
 				}
 				if(command === 'dashboard'){
 					this.$emit('dashboard')
+				}
+				if(command === 'profile'){
+					this.$emit('profile')
 				}
       },
 			showLogoutDialog(){

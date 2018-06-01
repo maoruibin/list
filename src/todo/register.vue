@@ -109,7 +109,7 @@ let api_version = process.env.API_VERSION
           if (valid) {
             console.log('表单验证成功');
             that.registerByNet(function(user,msg){
-              that.$emit('loginCallback',user,msg)
+              that.$emit('callback',user,msg)
               that.dismiss()
             })
           } else {
