@@ -30,10 +30,22 @@
 		<el-col :span="6">
 			<div class="grid-content right_top">
 
+
 					<i
-					class="el-icon-info"
+					class="el-icon-more-outline"
 					@click="showAboutApp"
 					style="margin-right:10px;"/>
+
+					<el-tooltip effect="dark" content="欢迎大家来这里交流意见" placement="bottom">
+						<i
+						class="el-icon-message"
+						@click="gotoOpinion"
+						style="margin-right:10px;"/>
+
+					</el-tooltip>
+
+
+
 
 					<i
 					v-show="isSuperUser"
@@ -46,7 +58,7 @@
 							{{this.user.nickname}}<i class="el-icon-arrow-down el-icon--right"></i>
 						</span>
 						<el-dropdown-menu v-show="this.user != null" slot="dropdown">
-							<el-dropdown-item command="info">个人信息</el-dropdown-item>
+							<el-dropdown-item v-show="isSuperUser" command="info">个人信息</el-dropdown-item>
 							<el-dropdown-item command="dashboard">数据面板</el-dropdown-item>
 							<el-dropdown-item command="logout">注销</el-dropdown-item>
 						</el-dropdown-menu>
@@ -87,6 +99,9 @@
       showAboutApp() {
 				console.log("showAbout")
 				this.$emit('aboutAction')
+			},
+      gotoOpinion() {
+				window.open('http://support.qq.com/products/30228');
 			},
       updateProjectList(projectList) {
 				console.log("updateProjectList size is "+projectList.length);
