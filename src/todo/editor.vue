@@ -350,11 +350,7 @@ export default{
 		.subTodoItem{
 			display:flex;
 		}
-    .normalLoading{
-      text-align:center;
-      line-height:100px;
-      border:0px solid red;
-    }
+    
     .normalLoading >i{
       text-align:center;
     }

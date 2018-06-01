@@ -75,7 +75,8 @@
 			},
 			index:{
 	      type: Number,
-	      default: true
+	      default: 0,
+				required: false,
 	    },
 			isLastIndex:{
 	      type: Boolean,
