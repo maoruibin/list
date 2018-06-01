@@ -293,6 +293,9 @@ export default{
 								console.log("that.todos "+that.todos.length);
 								that.todos.forEach(function(item){
 
+									item.onFileAt = Number(new Date())
+									item.onFile = true
+									
 									if(item.completed){
 										console.log("归档已完成 "+item.title);
 										that.onFileItemCallback(item,function(){})
@@ -387,12 +390,6 @@ export default{
 		onFileItemCallback(todo,callback){
 				const that = this
 				const todoId = todo.objectId
-				todo.onFile = !todo.onFile
-				if(todo.onFile){
-					todo.onFileAt = new Date().toUTCString()
-				}else{
-					todo.onFileAt = 0
-				}
 				this.updateTodo(todo,function(result){
 					if(result.onFile){
 						that.todos.splice(that.todos.findIndex(todo => todo.objectId === todoId),1)
@@ -451,7 +448,8 @@ export default{
 		toggleCompletedItem(todo){
 
 			if(todo.completed){
-				todo.completedAt = new Date().toUTCString()
+				// new Date().toUTCString()
+				todo.completedAt = Number(new Date())
 			}else{
 				todo.completedAt = 0
 			}

@@ -118,6 +118,8 @@
 				}
 			},
 			onFileItem(){
+				this.todo.onFileAt = Number(new Date())
+				this.todo.onFile = true;
 				this.$emit('onFile',this.todo)
 			},
 			// 显示 todo 详情

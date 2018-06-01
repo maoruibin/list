@@ -176,7 +176,7 @@ export default{
 				const that = this
 				const todoId = todo.objectId
 				todo.onFile = !todo.onFile
-				todo.onFileAt = new Date().toUTCString()
+				todo.onFileAt = Number(new Date())
 				this.updateTodo(todo,function(result){
 					that.subTodos.splice(that.subTodos.findIndex(todo => todo.objectId === todoId),1)
           callback(1)
@@ -350,7 +350,7 @@ export default{
 		.subTodoItem{
 			display:flex;
 		}
-    
+
     .normalLoading >i{
       text-align:center;
     }
