@@ -34,6 +34,8 @@
 
 * [JavaScript 时间与日期处理实战:你肯定被坑过 \- 最骚的就是你 \- 博客园](http://www.cnblogs.com/libin-1/p/6764747.html)
 
+* https://www.cnblogs.com/xxcanghai/p/6124699.html  组件双向绑定
+https://github.com/Zegendary/blog/issues/1
 ## 解决跨域问题
 
 delete 一直失败，先设置了 flask 的 response，让所有的请求都支持跨域，具体通过参考
@@ -41,6 +43,7 @@ delete 一直失败，先设置了 flask 的 response，让所有的请求都支
 好文啊
 但是还是提示删除失败，然后找 Vue 的原因，找到了。
 * [javascript \- Request header field Access\-Control\-Allow\-Headers is not allowed by Access\-Control\-Allow\-Headers \- Stack Overflow](https://stackoverflow.com/questions/25727306/request-header-field-access-control-allow-headers-is-not-allowed-by-access-contr)
+
 
 ## 技巧
 
