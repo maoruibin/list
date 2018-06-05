@@ -19,6 +19,8 @@
 			v-show="isShowProfileDialog"
 			:showProfile="isShowProfileDialog"
 			:user="user"
+			@settingChange="settingChange"
+			@close="isShowProfileDialog = false"
 			:settingLean="settingLean"
 			/>
 		<Editor
@@ -142,6 +144,9 @@ let api_version = process.env.API_VERSION
 			Container
 		},
 		methods:{
+			settingChange(setting){
+				this.settingLean = setting
+			},
 			onTodosChange(val){
 				console.log("todo 发生了变化");
 				this.filterTodos=val;
@@ -149,6 +154,7 @@ let api_version = process.env.API_VERSION
 			logout(){
 				localStorage.removeItem('user');
 				localStorage.removeItem('setting');
+				localStorage.removeItem('settingLean');
 				this.user = null
 				this.setting = null
 				this.isShowLoginDialog = true

@@ -2,11 +2,12 @@
   <el-dialog
   title="个人信息"
   :visible.sync="showProfile"
+  :before-close="handleClose"
   :close-on-click-modal="false"
   :close-on-press-escape="false"
   width="50%">
 
-  <el-form ref="ruleForm" :model="user" label-width="60px">
+  <el-form ref="ruleForm" :model="user" label-width="120px">
     <el-form-item label="昵称" prop="nickname">
     <el-col :span="16" :gutter="20" style="border:0px solid red;">
       <el-input v-model="user.nickname" disabled></el-input>
@@ -26,6 +27,13 @@
       </el-col>
 
     </el-form-item>
+
+    <el-form-item label="每日情况汇报">
+      <el-tooltip effect="dark" content="开启后，每晚9点将会发送今日完成情况到注册邮箱" placement="bottom">
+          <el-switch v-model="settingLean.emailEveryDayEnable" @change="emailEveryDay"></el-switch>
+      </el-tooltip>
+
+   </el-form-item>
 
 
   </el-form>
@@ -77,6 +85,40 @@ let api_version = process.env.API_VERSION
 			}
 		},
 		methods:{
+      handleClose(){
+        this.$emit("close");
+      },
+      emailEveryDay(value){
+        const that = this
+        this.updateSettingByNet(function(setting,msg){
+          if(setting != null){
+            localStorage.setItem("settingLean",JSON.stringify(setting));
+            that.$emit("settingChange",setting);
+            that.$message({
+              type: 'success',
+              message: value?'已开启通知':'已关闭通知'
+            });
+          }else{
+            that.$message({
+              type: 'warning',
+              message: '设置失败 '+msg
+            });
+          }
+        })
+
+      },
+      updateSettingByNet(callback){
+        const api = host+"/users/api/"+api_version+"/setting"
+        var formData = new FormData();
+        for (var key in this.settingLean) {
+          formData.append(key,this.settingLean[key]);
+        }
+        this.$http.post(api, formData).then((response) => {
+              callback(response.body.setting,response.body.msg)
+          }, (response) => {
+              callback(null,response.body.msg)
+          });
+      },
       showEditNick(){
         this.$message({
           type: 'warning',
