@@ -68,7 +68,7 @@ const config =  {
 			}
 		}),
 		new HTMLPlugin({
-			title:'TodayTodo',
+			title:'柳叶清单',
 			favicon:'./src/assets/images/favicon.ico'
 		})
 	]

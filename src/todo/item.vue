@@ -106,15 +106,12 @@
 				return "always"
 			},
 			handleCommand:function(command){
-
 				if(command === 'd'){
 					this.showDeleteDialog()
 				}else if(command === 'e'){
 					this.showEditDialog()
 				}else if(command === 'move'){
 					this.showMoveDialog()
-				}else if(command === 'onFile'){
-					this.$emit('onFile',this.todo)
 				}
 			},
 			onFileItem(){

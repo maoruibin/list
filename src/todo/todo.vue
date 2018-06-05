@@ -295,7 +295,7 @@ export default{
 
 									item.onFileAt = Number(new Date())
 									item.onFile = true
-									
+
 									if(item.completed){
 										console.log("归档已完成 "+item.title);
 										that.onFileItemCallback(item,function(){})
@@ -373,35 +373,26 @@ export default{
 
 		onFileItem(todo){
 			const that = this
-			this.onFileItemCallback(todo,function(res){
-					if(res>0){
-						that.$message({
-							type: 'success',
-							message: '已归档'
-						});
-					}else{
-						that.$message({
-							type: 'success',
-							message: '已还原'
-						});
-					}
+			this.updateTodo(todo,function(result){
+				var todoId = result.objectId;
+				if(result.onFile){
+					that.todos.splice(that.todos.findIndex(todo => todo.objectId === todoId),1)
+					that.todosOnFileList.push(result)
+					that.$message({
+						type: 'success',
+						message: '已归档'
+					});
+				}else{
+					that.todosOnFileList.splice(that.todosOnFileList.findIndex(todo => todo.objectId === todoId),1)
+					that.todos.push(result)
+					that.$message({
+						type: 'success',
+						message: '已还原'
+					});
+				}
 			})
 		},
-		onFileItemCallback(todo,callback){
-				const that = this
-				const todoId = todo.objectId
-				this.updateTodo(todo,function(result){
-					if(result.onFile){
-						that.todos.splice(that.todos.findIndex(todo => todo.objectId === todoId),1)
-						that.todosOnFileList.push(result)
-						callback(1)
-					}else{
-						that.todosOnFileList.splice(that.todosOnFileList.findIndex(todo => todo.objectId === todoId),1)
-						that.todos.push(result)
-						callback(0)
-					}
-				})
-		},
+
 
 		editItem(todo){
 			const that = this
@@ -431,12 +422,10 @@ export default{
 			}
 
 			this.$http.put(api, formData, config).then(response => {
-					//编辑完的 todo 结果
-					const editResult = response.body.entity;
 					//更新当前的 todo
-					this.filterTodos.splice(this.filterTodos.findIndex(todo => todo.objectId === todoId),1,editResult)
+					this.filterTodos.splice(this.filterTodos.findIndex(todo => todo.objectId === todoId),1,response.body.entity)
 					// 将编辑完的结果回调回去
-					callback(editResult)
+					callback(response.body.entity)
 				}, response => {});
 		},
 		checkAndAppend(formData,key,value){

@@ -44,6 +44,8 @@ delete 一直失败，先设置了 flask 的 response，让所有的请求都支
 但是还是提示删除失败，然后找 Vue 的原因，找到了。
 * [javascript \- Request header field Access\-Control\-Allow\-Headers is not allowed by Access\-Control\-Allow\-Headers \- Stack Overflow](https://stackoverflow.com/questions/25727306/request-header-field-access-control-allow-headers-is-not-allowed-by-access-contr)
 
+自定义 icon  https://blog.skl9.com/archives/312
+https://blog.csdn.net/b376924098/article/details/78286880
 
 ## 技巧
 

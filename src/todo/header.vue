@@ -32,15 +32,15 @@
 
 
 					<i
-					class="el-icon-more-outline"
+					class="el-icon-about"
 					@click="showAboutApp"
-					style="margin-right:10px;"/>
+					style="margin-right:10px;font-size:18px;"/>
 
 					<el-tooltip effect="dark" content="欢迎大家来这里交流意见" placement="bottom">
 						<i
-						class="el-icon-message"
+						class="el-icon-fankuiyijian"
 						@click="gotoOpinion"
-						style="margin-right:10px;"/>
+						style="margin-right:10px;font-size: 18px;"/>
 
 					</el-tooltip>
 
