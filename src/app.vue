@@ -19,6 +19,7 @@
 			v-show="isShowProfileDialog"
 			:showProfile="isShowProfileDialog"
 			:user="user"
+			:settingLean="settingLean"
 			/>
 		<Editor
 			v-show="isShowEditorDialog"
@@ -43,6 +44,7 @@
 					ref="header"
 					:project="currentProject"
 					:user="user"
+					:settingLean="settingLean"
 					:isSuperUser="isSuperUser"
 					@logout="logout"
 					@addProject="showAddProjectDialog"
@@ -96,6 +98,7 @@ let api_version = process.env.API_VERSION
 				user:{},
 				currentProject:{},
 				setting:{},
+				settingLean:{},
 				dashboard:false,
 				isSuperUser:false,
 				todo:{},
@@ -123,6 +126,7 @@ let api_version = process.env.API_VERSION
 				this.isShowLoginDialog = true
 				return;
 			}
+			this.settingLean = JSON.parse(localStorage.getItem("settingLean"))
 			this.fetchUserTodos(this.user)
 		},
 
@@ -208,19 +212,20 @@ let api_version = process.env.API_VERSION
 				})
 			},
 
-			loginCallback(user,msg){
+			loginCallback(user,setting,msg){
 				const that = this
-				this.callback(user,msg,function(res){
+				this.callback(user,setting,msg,function(res){
 					if(res<0){
 							that.isShowLoginDialog = true;
 					}
 				})
 			},
-			callback(user,msg,callback){
+			callback(user,setting,msg,callback){
 				if(user != null){
 					this.user = user;
 					this.fetchUserTodos(user)
 					localStorage.setItem("user",JSON.stringify(user))
+					localStorage.setItem("settingLean",JSON.stringify(setting))
 					callback(1)
 					this.isShowLoginDialog = false;
 					this.isShowRegisterDialog = false;

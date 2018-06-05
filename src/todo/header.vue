@@ -80,6 +80,10 @@
 				type: Object,
 				required: true
 			},
+			settingLean: {
+				type: Object,
+				required: true
+			},
 			isSuperUser: {
 				type: Boolean,
 				required: true,

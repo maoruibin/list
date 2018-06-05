@@ -25,7 +25,6 @@
         <el-button style="border:0px solid red;float:right" @click="showEditNick" >{{user.emailVerified?'修改':'去邮箱查看'}}</el-button>
       </el-col>
 
-
     </el-form-item>
 
 
@@ -48,6 +47,10 @@ let api_version = process.env.API_VERSION
         required: true
       },
 			user:{
+				type: Object,
+				required: true
+			},
+      settingLean: {
 				type: Object,
 				required: true
 			},
