@@ -24,7 +24,7 @@
 		</el-col>
 		<el-col :span="12">
 			<div class="grid-content center_title">
-				<span style="font-family: Tahoma;font-size:small;">TodayTodo</span><span style="font-size:x-small;">-Beta</span>
+				<span style="font-family: Tahoma;font-size:small;">柳叶清单</span><span style="font-size:x-small;">-Beta</span>
 			</div>
 		</el-col>
 		<el-col :span="6">

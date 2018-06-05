@@ -1,11 +1,11 @@
 <template>
   <el-dialog
-  title="TodayTodo - 那些要做的以及想做的事情、计划"
+  title="柳叶清单 - 那些要做的以及想做的事情、计划"
   @close="dismiss"
   :visible.sync="showAboutDialog"
   width="50%">
   <div class="footer"style="text-align:center">
-    
+
 
     <span >
       Design by <a href="http://gudong.name/" target="_blank">咕咚</a>
