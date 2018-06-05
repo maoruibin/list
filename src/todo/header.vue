@@ -32,26 +32,20 @@
 
 
 					<i
-					class="el-icon-about"
-					@click="showAboutApp"
-					style="margin-right:10px;font-size:18px;"/>
+					class="headIcon el-icon-about"
+					@click="showAboutApp"/>
 
 					<el-tooltip effect="dark" content="欢迎大家来这里交流意见" placement="bottom">
 						<i
-						class="el-icon-fankuiyijian"
-						@click="gotoOpinion"
-						style="margin-right:10px;font-size: 18px;"/>
+						class="headIcon el-icon-fankuiyijian"
+						@click="gotoOpinion"/>
 
 					</el-tooltip>
 
-
-
-
 					<i
-					v-show="isSuperUser"
-					class="el-icon-plus"
-					@click="addProject"
-					style="margin-right:10px;"/>
+						v-show="isSuperUser"
+						class="headIcon el-icon-plus"
+						@click="addProject"/>
 
 					<el-dropdown class="titleItem" @command="handleCommand" show-timeout=100>
 						<span class="el-dropdown-link" style="color:#ffffff;">
@@ -202,6 +196,11 @@
 
 .el-row{
 	border: 0px solid #000;
+}
+
+.headIcon{
+	margin-right:10px;
+	font-size:18px;
 }
 
 </style>

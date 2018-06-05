@@ -126,6 +126,9 @@ let api_version = process.env.API_VERSION
 			this.user = JSON.parse(localStorage.getItem("user"))
 			if(this.user == null){
 				this.isShowLoginDialog = true
+				this.user = {
+					'nickname':''
+				}
 				return;
 			}
 			this.settingLean = JSON.parse(localStorage.getItem("settingLean"))

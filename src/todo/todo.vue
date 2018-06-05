@@ -297,8 +297,7 @@ export default{
 									item.onFile = true
 
 									if(item.completed){
-										console.log("归档已完成 "+item.title);
-										that.onFileItemCallback(item,function(){})
+										that.fileItem(item,false)
 									}
 								})
 								that.$message({
@@ -372,23 +371,31 @@ export default{
 		},
 
 		onFileItem(todo){
+			this.fileItem(todo,true)
+		},
+		fileItem(todo,showToast){
 			const that = this
 			this.updateTodo(todo,function(result){
 				var todoId = result.objectId;
 				if(result.onFile){
 					that.todos.splice(that.todos.findIndex(todo => todo.objectId === todoId),1)
 					that.todosOnFileList.push(result)
-					that.$message({
-						type: 'success',
-						message: '已归档'
-					});
+					if(showToast){
+						that.$message({
+							type: 'success',
+							message: '已归档'
+						});
+					}
+
 				}else{
 					that.todosOnFileList.splice(that.todosOnFileList.findIndex(todo => todo.objectId === todoId),1)
 					that.todos.push(result)
-					that.$message({
-						type: 'success',
-						message: '已还原'
-					});
+					if(showToast){
+						that.$message({
+							type: 'success',
+							message: '已还原'
+						});
+					}
 				}
 			})
 		},

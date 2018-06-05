@@ -51,7 +51,7 @@
 							  v-model="onFilePoint">
 							  <p>归档后，todo 将从列表中被移除，并不会被直接删除，是否继续归档？</p>
 							  <div style="text-align: right; margin: 0;margin-right:12px;">
-							    <el-button size="mini" type="text" @click="showDeleteDialog">直接删除</el-button>
+							    <el-button size="mini" type="text" @click="deleteDirect">直接删除</el-button>
 							    <el-button type="primary" size="mini" @click="onFileItem">归档</el-button>							  </div>
 
 								<el-dropdown-item slot="reference" v-show="!todo.onFile && !asSubTodo">归档条目</el-dropdown-item>
@@ -62,7 +62,6 @@
 			 </el-dropdown>
 
 		 </div>
-
 
 	</el-card>
 </template>
@@ -102,8 +101,9 @@
 		 };
 	 	},
 		methods: {
-			getShadowValue:function(){
-				return "always"
+			// 直接删除
+			deleteDirect:function(){
+				this.$emit('delete',this.todo)
 			},
 			handleCommand:function(command){
 				if(command === 'd'){

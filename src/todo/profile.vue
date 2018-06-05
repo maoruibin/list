@@ -52,15 +52,19 @@ let api_version = process.env.API_VERSION
 		props:{
       showProfile:{
         type: Boolean,
-        required: true
+        required: false
       },
 			user:{
 				type: Object,
-				required: true
+				required: false,
+        default:{
+          'nickname':''
+        }
 			},
       settingLean: {
 				type: Object,
-				required: true
+				required: false,
+        default:{}
 			},
 		},
 		computed:{
