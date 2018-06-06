@@ -18,13 +18,13 @@
 * Restful API 设计
 [使用 Python 和 Flask 设计 RESTful API — Designing a RESTful API with Python and Flask 1\.0 documentation](http://www.pythondoc.com/flask-restful/first.html)
 
-* Flask 教程
-[欢迎进入Flask大型教程项目！ — flask mega\-tutorial 1\.1 documentation](http://www.pythondoc.com/flask-mega-tutorial/index.html)
+## Flask 教程
+* [欢迎进入Flask大型教程项目！ — flask mega\-tutorial 1\.1documentation](http://www.pythondoc.com/flask-mega-tutorial/index.html)
+* [欢迎使用 Flask — Flask 0\.10\.1 documentation](http://www.pythondoc.com/flask/index.html)
+* [Flask进阶系列\(七\)–应用最佳实践 – 思诚之道](http://www.bjhee.com/flask-ad7.html)
 
-[欢迎使用 Flask — Flask 0\.10\.1 documentation](http://www.pythondoc.com/flask/index.html)
 
 * 使用 Vue-Resource 进行网络请求
-
 [Vue\.js——vue\-resource全攻略 \- keepfool \- 博客园](http://www.cnblogs.com/keepfool/p/5657065.html)
 
 * 父子组件通信 v-for and ref
