@@ -5,13 +5,18 @@ import App from './app.vue'
 import Resource from 'vue-resource'
 Vue.use(Resource)
 
+// 自定义主题
+// 参考 http://element.eleme.io/#/zh-CN/component/custom-theme
+import './assets/theme/index.css'
 import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
+// 默认主题地址
+// import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.use(ElementUI);
 
 import './assets/styles/global.styl'
 import './assets/icon/iconfont.css'
+
 
 const root = document.createElement('div')
 document.body.appendChild(root)
