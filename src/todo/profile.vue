@@ -23,7 +23,7 @@
       </el-col>
 
       <el-col :span="8">
-        <el-button style="border:0px solid red;float:right" @click="showEditNick" >{{user.emailVerified?'修改':'去邮箱查看'}}</el-button>
+        <el-button style="border:0px solid red;float:right" @click="showEmailAction" >{{user.emailVerified?'修改':'重新发送激活邮件'}}</el-button>
       </el-col>
 
     </el-form-item>
@@ -81,7 +81,8 @@ let api_version = process.env.API_VERSION
         }else{
           return this.user.email+"(尚未激活)"
         }
-      }
+      },
+
 		},
 		data(){
 			return{
@@ -91,6 +92,35 @@ let api_version = process.env.API_VERSION
 		methods:{
       handleClose(){
         this.$emit("close");
+      },
+      showEmailAction(){
+        const that = this
+        if(this.user.emailVerified){
+          this.$message({
+            type: 'warning',
+            message: '还在开发中...'
+          });
+        }else{
+          //发送验证邮件
+          const api = host+"/users/api/"+api_version+"/requestEmailVerify"
+          var formData = new FormData();
+          for (var key in this.user) {
+            formData.append(key,this.user[key]);
+          }
+          this.$http.post(api, formData).then((response) => {
+            this.$message({
+              type: 'success',
+              message: '已发送，请前往邮箱验证'
+            });
+            this.handleClose()
+            }, (response) => {
+              this.$message({
+                type: 'warning',
+                message: '发送邮箱验证失败，请检查你的邮箱地址是否正确。'
+              });
+              this.handleClose()
+            });
+        }
       },
       emailEveryDay(value){
         const that = this

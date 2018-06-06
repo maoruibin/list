@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-  title="柳叶清单 - 那些要做的以及想做的事情、计划"
+  title="柳叶清单 - 有条有理每一天"
   @close="dismiss"
   :visible.sync="showAboutDialog"
   width="50%">

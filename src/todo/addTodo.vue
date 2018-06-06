@@ -80,6 +80,14 @@ let api_version = process.env.API_VERSION
 					});
 					return
 				}
+				// 检查邮件是否已验证
+				if(!this.user.emailVerified){
+					this.$message({
+						type: 'warning',
+						message: '请及时激活你的邮箱。'
+					})
+				}
+
 				const api = host+"/todos/api/"+api_version+"/todos"
 				var that = this
 				//insertEnd

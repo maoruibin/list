@@ -133,6 +133,7 @@ let api_version = process.env.API_VERSION
 			}
 			this.settingLean = JSON.parse(localStorage.getItem("settingLean"))
 			this.fetchUserTodos(this.user)
+			this.checkEmailVertify(this.user);
 		},
 
 		components: {
@@ -147,6 +148,18 @@ let api_version = process.env.API_VERSION
 			Container
 		},
 		methods:{
+			checkEmailVertify(user){
+				if(user.emailVerified){
+					return
+				}
+				this.$notify({
+					title: '激活提示',
+					type: 'warning',
+					message: '您的注册邮箱('+user.email+')尚未激活，请前往验证。',
+					position: 'bottom-right',
+					duration: 0
+				});
+			},
 			settingChange(setting){
 				this.settingLean = setting
 			},
@@ -212,13 +225,18 @@ let api_version = process.env.API_VERSION
 					});
 
 			},
-			registCallback(user,msg){
+			registCallback(user,setting,msg){
 				const that = this
-				this.callback(user,msg,function(res){
+				this.callback(user,setting,msg,function(res){
 					if(res<0){
 						that.isShowRegisterDialog = true;
 					}
 				})
+				this.$message({
+					type: 'success',
+					duration: 6000,
+					message: '注册成功，请前往邮箱激活邮件。',
+				});
 			},
 
 			loginCallback(user,setting,msg){
