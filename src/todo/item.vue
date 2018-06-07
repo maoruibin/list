@@ -10,7 +10,7 @@
 			 v-model="todo.completed">
 		  </el-checkbox>
 
-			<div class="itemCenter">
+			<div class="dragHandleItem itemCenter">
 				<span id="content" @click="showDetail">{{todo.title}}</span>
 
 				<transition name="el-fade-in">

@@ -386,8 +386,4 @@ let api_version = process.env.API_VERSION
         opacity 0.0
         z-index -1
     }
-
-
-
-
 </style>

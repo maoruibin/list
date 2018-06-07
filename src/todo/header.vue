@@ -1,5 +1,5 @@
 <template>
-	<el-row :gutter="10" style="border:1px solid red;">
+	<el-row style="border:0px solid red;margin-top:6px;">
 		<el-col :span="6">
 			<div class="grid-content left_top" >
 
@@ -27,10 +27,8 @@
 				<span style="font-family: Tahoma;font-size:20px;">柳叶清单</span><span style="font-size:12px;">-Beta</span>
 			</div>
 		</el-col>
-		<el-col :span="6">
-			<div class="grid-content right_top">
-
-
+		<el-col :span="6"  >
+			<div class="grid-content right_top" >
 					<i
 					class="headIcon el-icon-about"
 					@click="showAboutApp"/>
@@ -44,7 +42,7 @@
 
 					<i
 						v-show="isSuperUser"
-						class="headIcon el-icon-plus"
+						class="headIcon el-icon-add"
 						@click="addProject"/>
 
 					<el-dropdown class="titleItem" @command="handleCommand" show-timeout=100>
@@ -53,7 +51,7 @@
 						</span>
 						<el-dropdown-menu v-show="this.user != null" slot="dropdown">
 							<el-dropdown-item command="profile">个人信息</el-dropdown-item>
-							<el-dropdown-item command="dashboard">数据面板</el-dropdown-item>
+							<el-dropdown-item command="dashboard" v-show="isSuperUser">数据面板</el-dropdown-item>
 							<el-dropdown-item command="logout">注销</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
@@ -180,12 +178,13 @@
 
 .right_top {
 	text-align: right;
-	padding-right: 12px;
+	border:0px solid blue;
+	display:flex;
+	align-items:center;
+	justify-content:flex-end;
 }
 .grid-content {
 	border-radius: 0px;
-	min-height: 56px;
-	line-height: 56px;
 }
 
 .titleItem{
@@ -193,14 +192,10 @@
 	display: inline-block;
 }
 
-
-.el-row{
-	border: 0px solid #000;
-}
-
 .headIcon{
 	margin-right:10px;
 	font-size:18px;
+	border: 0px solid #000;
 }
 
 </style>
