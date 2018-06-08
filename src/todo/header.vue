@@ -1,7 +1,7 @@
 <template>
 	<el-row style="border:0px solid red;margin-top:6px;">
 		<el-col :span="6">
-			<div class="grid-content left_top" >
+			<div class="grid-content left_top" style="border:0px solid black;">
 
 				<el-dropdown class="titleItem" v-show="isSuperUser" show-timeout=100 @command="selectProject">
 					<span class="el-dropdown-link" style="color:#ffffff;">
@@ -23,7 +23,7 @@
 			</div>
 		</el-col>
 		<el-col :span="12">
-			<div class="grid-content center_title">
+			<div class="grid-content center_title" style="border:0px solid black;">
 				<span style="font-family: Tahoma;font-size:20px;">柳叶清单</span><span style="font-size:12px;">-Beta</span>
 			</div>
 		</el-col>

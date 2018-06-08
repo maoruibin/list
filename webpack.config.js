@@ -60,10 +60,11 @@ const config =  {
 	},
 	plugins:[
 		// 设置正式环境与测试环境下不同的 url
+		// http://0.0.0.0:3000
 		new webpack.DefinePlugin({
 			'process.env' : {
 				NODE_ENV:isDev? '"development"' : '"production"',
-				API_HOST:isDev? '"http://0.0.0.0:3000"' : '"http://waishuo.leanapp.cn"',
+				API_HOST:isDev? '"http://waishuo.leanapp.cn"' : '"http://waishuo.leanapp.cn"',
 				API_VERSION:'"v1.0"'
 			}
 		}),

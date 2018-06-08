@@ -78,9 +78,9 @@ let api_version = process.env.API_VERSION
         const that = this;
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            that.loginByNet(function(user,msg){
+            that.loginByNet(function(user,setting,msg){
               console.log("msg is "+msg);
-              that.$emit('callback',user,msg)
+              that.$emit('callback',user,setting,msg)
             })
           } else {
             console.log('表单验证失败');
@@ -94,9 +94,11 @@ let api_version = process.env.API_VERSION
         for (var key in this.user) {
           formData.append(key,this.user[key]);
         }
+        alert(JSON.stringify(this.user))
         this.$http.post(api, formData).then((response) => {
               callback(response.body.user,response.body.setting,response.body.msg)
           }, (response) => {
+              alert(response.body.msg)
               callback(null,null,response.body.msg)
           });
       },

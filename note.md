@@ -47,6 +47,8 @@ delete 一直失败，先设置了 flask 的 response，让所有的请求都支
 自定义 icon  https://blog.skl9.com/archives/312
 https://blog.csdn.net/b376924098/article/details/78286880
 
+[如何在同一局域网下，让手机连接pc开启的服务器的localhost \- CSDN博客](https://blog.csdn.net/wangxiaojingo/article/details/45078037)
+
 ## 技巧
 
 filter 用法
@@ -104,3 +106,6 @@ item bottom padding 为 8dp
 ## 样式
 灰白字体颜色
 color:#a8a8a8;
+
+
+https://blog.csdn.net/ws379374000/article/details/78686101

@@ -21,6 +21,10 @@ import './assets/icon/iconfont.css'
 const root = document.createElement('div')
 document.body.appendChild(root)
 
+var meta = document.createElement('meta');
+meta.httpEquiv = "viewport";
+meta.content = "initial-scale=1";
+document.getElementsByTagName('head')[0].appendChild(meta);
 
 new Vue({
 	render:(h) => h(App)

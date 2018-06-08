@@ -533,7 +533,7 @@ export default{
 	}
 
 	.topAction > span{
-		font-size:16px;
+		font-size:1.2em;
 		font-weight:540;
 	}
 
