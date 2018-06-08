@@ -94,11 +94,10 @@ let api_version = process.env.API_VERSION
         for (var key in this.user) {
           formData.append(key,this.user[key]);
         }
-        alert(JSON.stringify(this.user))
+
         this.$http.post(api, formData).then((response) => {
               callback(response.body.user,response.body.setting,response.body.msg)
           }, (response) => {
-              alert(response.body.msg)
               callback(null,null,response.body.msg)
           });
       },
