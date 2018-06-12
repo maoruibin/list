@@ -64,12 +64,12 @@ const config =  {
 		new webpack.DefinePlugin({
 			'process.env' : {
 				NODE_ENV:isDev? '"development"' : '"production"',
-				API_HOST:isDev? '"http://waishuo.leanapp.cn"' : '"http://waishuo.leanapp.cn"',
+				API_HOST:isDev? '"http://0.0.0.0:3000"' : '"http://waishuo.leanapp.cn"',
 				API_VERSION:'"v1.0"'
 			}
 		}),
 		new HTMLPlugin({
-			title:'柳叶清单',
+			title:'柳叶-条理每一天',
 			favicon:'./src/assets/images/favicon.ico'
 		})
 	]

@@ -14,13 +14,40 @@
 				 <i class="el-icon-close" style="margin-left:12px;color: #a8a8a8;" @click="hideAddForm"></i>
 				 <i :class="['more', showMoreAction?'el-icon-arrow-up':'el-icon-arrow-down']"  @click="showMore"></i>
 			</div>
-			<div class="bottom" style="margin-top:16px;" v-show="showMoreAction">
-				<el-tooltip
-					content="新增的 todo 会默认添加到列表头部"
-					effect="dark"
-				 	placement="bottom" >
-							<el-checkbox v-model="insertEnd" style="font-size:6px;">追加 todo 到列表末尾</el-checkbox>
-				</el-tooltip>
+			<div class="bottom" style="margin-top:24px;" v-show="showMoreAction">
+
+				<div class="timeRegin">
+					<el-time-select
+						placeholder="开始"
+						v-model="expectedStartTime"
+						size="mini"
+						editable=false
+						style="width:50%;"
+						:picker-options="{
+							start: '08:30',
+							step: '00:15',
+							end: '23:30'
+						}">
+					</el-time-select>
+					<el-time-select
+						placeholder="结束"
+						v-model="expectedEndTime"
+						size="mini"
+						editable=false
+						style="width:50%;"
+						:picker-options="{
+							start: '08:30',
+							step: '00:15',
+							end: '23:30',
+							minTime: expectedStartTime
+						}">
+					</el-time-select>
+				</div>
+				<el-checkbox
+					v-model="insertEnd"
+					style="margin-top:12px;font-size:0.5em;font-weight:360;color:#636363">
+					追加 todo 到列表末尾
+				</el-checkbox>
 			</div>
 	</el-card>
 </template>
@@ -55,7 +82,8 @@ let api_version = process.env.API_VERSION
 				showMoreAction: false,
 				insertEnd: false,
 				inRequest: false,
-				states:['all','active','completed']
+				expectedStartTime: '',
+        expectedEndTime: '',
 			}
 		},
 		methods:{
@@ -105,6 +133,8 @@ let api_version = process.env.API_VERSION
 				formData.append('completed', 'false');
 				formData.append('onFile', 'false');
 				formData.append('userId', this.user.objectId);
+				formData.append('expectedStartTime', this.expectedStartTime);
+				formData.append('expectedEndTime', this.expectedEndTime);
 				this.inRequest = true
 				// POST /someUrl
 				this.$http.post(api, formData).then(response => {

@@ -24,7 +24,7 @@
 		</el-col>
 		<el-col :span="12">
 			<div class="grid-content center_title" style="border:0px solid black;">
-				<span style="font-family: Tahoma;font-size:20px;">柳叶清单</span><span style="font-size:12px;">-Beta</span>
+				<span style="font-family: Tahoma;font-size:20px;">柳叶</span><span style="font-size:12px;">-Beta</span>
 			</div>
 		</el-col>
 		<el-col :span="6"  >

@@ -14,10 +14,15 @@
 				<span id="content" @click="showDetail">{{todo.title}}</span>
 
 				<transition name="el-fade-in">
-					<div class="centerElement smallInfo" v-show="todo.completed">
+					<!-- todo.completed -->
+					<div class="centerElement smallInfo" v-show="false">
 		 			 完成于 {{getLocalTime(todo.completedAt)}}
 		 		 </div>
        </transition>
+
+			 <div class="centerElement smallInfo primaryInfo" v-show="todo.expectedEndTime">
+				{{todo.expectedStartTime}}-{{todo.expectedEndTime}}
+			</div>
 
 
 			 <el-popover
@@ -216,8 +221,8 @@
 		#content{
 			cursor:pointer;
 			color:#4d4d4d;
-			font-weight: 360;
-			font-size: 14px;
+			font-weight: 380;
+			font-size: 1.0em;
 			word-break:normal;
 			text-align: left;
       width:auto;
@@ -243,9 +248,12 @@
 		}
 
 		.smallInfo{
-			font-size: 4px;
-			font-weight:320;
+			font-size: 0.4em;
+			font-weight:350;
 			border: 0px solid blue;
+		}
+		.primaryInfo{
+			color:#4e947c;
 		}
 		.dragHandleItem{
 			cursor: move;
