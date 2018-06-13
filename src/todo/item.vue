@@ -11,7 +11,7 @@
 		  </el-checkbox>
 
 			<div class="dragHandleItem itemCenter">
-				<span id="content" @click="showDetail">{{todo.title}}</span>
+				<span class="content" @click="showDetail">{{todo.title}}</span>
 
 				<transition name="el-fade-in">
 					<!-- todo.completed -->
@@ -20,9 +20,9 @@
 		 		 </div>
        </transition>
 
-			 <div class="centerElement smallInfo primaryInfo" v-show="todo.expectedStartTime && todo.expectedEndTime">
+			 <span class="centerElement smallInfo primaryInfo" v-show="todo.expectedStartTime && todo.expectedEndTime">
 				{{todo.expectedStartTime}}-{{todo.expectedEndTime}}
-			</div>
+			</span>
 
 
 			 <el-popover
@@ -184,10 +184,14 @@
             transition: color 0.4s;
         }
         &.completed{
-            #content{
+            .content{
                 color: #d9d9d9;
                 text-decoration: line-through;
             }
+						.centerElement{
+							color: #d9d9d9;
+							text-decoration: line-through;
+						}
         }
     }
 
@@ -218,19 +222,7 @@
 			padding-right:8px;
 			border: 0px solid orange;
 		}
-		#content{
-			cursor:pointer;
-			color:#4d4d4d;
-			font-weight: 380;
-			font-size: 1.0em;
-			word-break:normal;
-			text-align: left;
-      width:auto;
-      display:block;
-      white-space:pre-wrap;
-      word-wrap : break-word;
-      overflow: hidden ;
-		}
+
 		el-dropdown{
 			flex-grow: 0;
 		}
@@ -247,14 +239,10 @@
 			color: #67C23A;
 		}
 
-		.smallInfo{
-			font-size: 0.4em;
-			font-weight:350;
-			border: 0px solid blue;
-		}
 		.primaryInfo{
-			color:#4e947c;
+		  color:#4e947c;
 		}
+		
 		.dragHandleItem{
 			cursor: move;
   		cursor: -webkit-grabbing;
