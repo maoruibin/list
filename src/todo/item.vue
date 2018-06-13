@@ -20,7 +20,7 @@
 		 		 </div>
        </transition>
 
-			 <div class="centerElement smallInfo primaryInfo" v-show="todo.expectedEndTime">
+			 <div class="centerElement smallInfo primaryInfo" v-show="todo.expectedStartTime && todo.expectedEndTime">
 				{{todo.expectedStartTime}}-{{todo.expectedEndTime}}
 			</div>
 

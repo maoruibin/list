@@ -15,12 +15,42 @@
            :model="todo"
            @submit.native.prevent
            label-width="80px"
-           label-position="top">
-            <el-form-item label="名称" size="medium">
-              <el-input v-model="todo.title"></el-input>
+           label-position="top"
+           style="">
+            <el-form-item label="名称" size="medium" style="">
+              <el-input style="border:0px solid red;" v-model="todo.title"></el-input>
             </el-form-item>
             <el-form-item label="详情备注" size="medium">
               <el-input type="textarea" v-model="todo.content"></el-input>
+            </el-form-item>
+            <el-form-item
+              label="起始时间"
+              size="medium">
+              <el-time-select
+                placeholder="开始"
+                v-model="todo.expectedStartTime"
+                size="small"
+                editable=False
+                style="width:30%;"
+                :picker-options="{
+                  start: nowTime,
+                  step: '00:15',
+                  end: '24:00'
+                }">
+              </el-time-select>
+              <el-time-select
+                placeholder="结束"
+                v-model="todo.expectedEndTime"
+                size="small"
+                editable=False
+                style="width:30%;"
+                :picker-options="{
+                  start: nowTime,
+                  step: '00:15',
+                  end: '24:00',
+                  minTime: todo.expectedStartTime
+                }">
+              </el-time-select>
             </el-form-item>
 
             <el-form-item size="medium" style="margin-bottom:4px;" >
@@ -104,7 +134,8 @@ export default{
       onFilePoint:false,
       // 正在更新数据
       updatingData:false,
-      loadingSubTodo: false
+      loadingSubTodo: false,
+      nowTime:''
 		}
 	},
 	props:{
@@ -140,7 +171,18 @@ export default{
 
   },
   mounted:function(){
-
+    var hour = new Date().getHours();
+    var min = new Date().getMinutes();
+    var res = parseInt(min/15)
+    var resLeft = min%15
+    min = res * 15
+    if(resLeft>=8){
+      min+=15
+    }
+    if(min<10){
+      min = '0'+min
+    }
+    this.nowTime = hour+":"+min
   },
   watch: {
     todos(val) {
@@ -228,6 +270,8 @@ export default{
 
 
     fetchSubTodo(groupId) {
+
+
       const api = host+"/todos/api/"+api_version+"/todos/"+this.user.objectId+"/"+groupId
       this.loadingSubTodo = true
 		  this.$http.get(api).then(response => {
@@ -356,5 +400,9 @@ export default{
     }
     .normalLoading >span{
       text-align:center;
+    }
+    .el-form-item {
+      border:0px solid blue;
+      padding-bottom:0px;
     }
 </style>

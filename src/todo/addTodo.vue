@@ -16,36 +16,9 @@
 			</div>
 			<div class="bottom" style="margin-top:24px;" v-show="showMoreAction">
 
-				<div class="timeRegin">
-					<el-time-select
-						placeholder="开始"
-						v-model="expectedStartTime"
-						size="mini"
-						editable=false
-						style="width:50%;"
-						:picker-options="{
-							start: '08:30',
-							step: '00:15',
-							end: '23:30'
-						}">
-					</el-time-select>
-					<el-time-select
-						placeholder="结束"
-						v-model="expectedEndTime"
-						size="mini"
-						editable=false
-						style="width:50%;"
-						:picker-options="{
-							start: '08:30',
-							step: '00:15',
-							end: '23:30',
-							minTime: expectedStartTime
-						}">
-					</el-time-select>
-				</div>
 				<el-checkbox
 					v-model="insertEnd"
-					style="margin-top:12px;font-size:0.5em;font-weight:360;color:#636363">
+					style="font-size:0.5em;font-weight:340;color:#636363">
 					追加 todo 到列表末尾
 				</el-checkbox>
 			</div>
@@ -82,8 +55,6 @@ let api_version = process.env.API_VERSION
 				showMoreAction: false,
 				insertEnd: false,
 				inRequest: false,
-				expectedStartTime: '',
-        expectedEndTime: '',
 			}
 		},
 		methods:{
@@ -98,6 +69,13 @@ let api_version = process.env.API_VERSION
 			},
 			focus:function(){
 				this.$refs.inputForm.focus()
+			},
+			reset:function(){
+				this.input= ''
+				this.focus()
+				this.inRequest = false
+				this.insertEnd = false
+
 			},
 			// 添加一个 todo
 			addTodo(){
@@ -133,17 +111,14 @@ let api_version = process.env.API_VERSION
 				formData.append('completed', 'false');
 				formData.append('onFile', 'false');
 				formData.append('userId', this.user.objectId);
-				formData.append('expectedStartTime', this.expectedStartTime);
-				formData.append('expectedEndTime', this.expectedEndTime);
+
 				this.inRequest = true
 				// POST /someUrl
 				this.$http.post(api, formData).then(response => {
 					this.$emit('addTodo',response.body.entity,this.insertEnd)
-					this.input= ''
-					this.focus()
-					this.inRequest = false
+					this.reset()
 				}, response => {
-					this.inRequest = false
+					this.reset()
 				});
 
 			}
