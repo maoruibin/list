@@ -49,6 +49,10 @@ https://blog.csdn.net/b376924098/article/details/78286880
 
 [如何在同一局域网下，让手机连接pc开启的服务器的localhost \- CSDN博客](https://blog.csdn.net/wangxiaojingo/article/details/45078037)
 
+## 小程序
+
+* [微信小程序自定义组件 \- 陈耿生的博客 \| Mipaifu328](http://www.mipaifu328.com/2018/02/05/wx-03/)
+
 ## 技巧
 
 filter 用法
