@@ -19,7 +19,20 @@
 								<el-dropdown-item command="onFile">{{this.showOnFileList?'返回Todo列表':'查看已归档列表'}}</el-dropdown-item>
 								<el-dropdown-item command="onFileBatch" v-show="hasCompletedTodo" >归档所有已完成事项</el-dropdown-item>
 
-								<el-dropdown-item divided command="delete"   v-show="!showOnFileList" >彻底删除分组</el-dropdown-item>
+								<el-popover
+								 placement="bottom"
+								 v-model="onFileGroup"
+								 width="160">
+								 <p>归档后，分组将从主页列表移除，但不会被删除，是否继续归档？</p>
+								 <div style="text-align: right; margin: 0;margin-right:12px;">
+								   <el-button size="mini" type="text" @click="deleteDirect">直接删除</el-button>
+								   <el-button type="primary" size="mini" @click="fileGroup">归档</el-button>
+								 </div>
+
+								  <el-dropdown-item slot="reference" divided>归档</el-dropdown-item>
+
+								</el-popover>
+
 								<el-dropdown-item divided command="deleteAll" v-show="showOnFileList & todosOnFileList.length != 0">删除清空已归档任务</el-dropdown-item>
 				      </el-dropdown-menu>
 				</el-dropdown>
@@ -113,6 +126,7 @@ export default{
 			filter:'all',
 			// 显示添加 todo 的输入框
 			showInput:false,
+			onFileGroup: false,
 			showFirstTip:true,
 			// 是否展示已完成列表
 			showOnFileList:false,
@@ -269,9 +283,7 @@ export default{
 			}
 		},
 		handleCommand:function(command){
-			if(command === 'delete'){
-				this.showDeleteDialog()
-			}else if(command === 'editGroup'){
+			if(command === 'editGroup'){
 				console.log("this.group ---> "+this.group.projectId);
 				this.$emit('editGroup',this.group)
 			}else if(command === 'onFile'){
@@ -281,6 +293,15 @@ export default{
 			}else if(command === 'onFileBatch'){
 				this.showOnFileBatchDialog()
 			}
+		},
+		deleteDirect(){
+			this.showDeleteDialog()
+		},
+		// 归档分组
+		fileGroup(){
+			this.group.onFileAt = Number(new Date())
+			this.group.onFile = true;
+			this.$emit('onFileGroup',this.group)
 		},
 		// 提示将会归档所有已完成项目
 		showOnFileBatchDialog(){

@@ -12,6 +12,7 @@
 			@delete="deleteGroup"
 			@showTodoDetail="showTodoDetail"
 			@editGroup="showEditGroupDialog"
+			@onFileGroup="fileGroup"
 			@hideOtherInput="hideOtherInput"
 			@appendGroup="appendGroup"
 		/>
@@ -202,10 +203,25 @@ export default{
 
 		  this.$http.post(api, formData).then(response => {
 				this.groupTodos.splice(this.groupTodos.findIndex(item => item.objectId === group.objectId),1,response.body.entity)
-				callback(response.body.entity)
+				callback(response.body.entity,1)
 		  }, response => {
-
+				callback(null,-1)
 		  });
+		},
+		fileGroup(group){
+			const that = this
+			this.updateGroup(group,function(result,flag){
+				if(flag>0){
+					that.groupTodos.splice(that.groupTodos.findIndex(item => item.objectId === group.objectId),1)
+					that.$message({
+						type: 'success',
+						message: '已归档'+group.name
+					});
+				}else{
+
+				}
+
+			})
 		},
 		editGroup(group){
 			const that = this
