@@ -41,6 +41,7 @@
 
 
 		<el-container>
+
 			<el-header>
 					<Header
 					ref="header"
@@ -57,17 +58,20 @@
 			</el-header>
 
 			<el-main v-show="!isShowLoginDialog && !isShowRegisterDialog">
-					<Container
-						v-show="!dashboard"
-						:user="user"
-						:setting="setting"
-						ref="container"
-						@showTodoDetail="showTodoDetail"/>
+				 <!-- 路由出口 -->
+				 <!-- 路由匹配到的组件将渲染在这里 -->
+				 <router-view></router-view>
+				 <!-- <Container
+					 v-show="!dashboard"
+					 :user="user"
+					 :setting="setting"
+					 ref="container"
+					 @showTodoDetail="showTodoDetail"/>
 
-					<Dashboard
-						v-show="dashboard"
-						:user="user"
-						ref="dashboard"/>
+				 <Dashboard
+					 v-show="dashboard"
+					 :user="user"
+					 ref="dashboard"/> -->
 			</el-main>
 
 
@@ -85,11 +89,12 @@ import Login from './todo/login.vue'
 import Register from './todo/register.vue'
 
 import Editor from './todo/editor.vue'
-import About from './todo/about.vue'
+
 import Dashboard from './todo/dashboard.vue'
 import Container from './todo/container.vue'
 import Footer from './todo/footer.vue'
 import Profile from './todo/profile.vue'
+import About from './todo/about.vue'
 
 let host = process.env.API_HOST
 let api_version = process.env.API_VERSION
@@ -134,6 +139,7 @@ let api_version = process.env.API_VERSION
 			this.settingLean = JSON.parse(localStorage.getItem("settingLean"))
 			this.fetchUserTodos(this.user)
 			this.checkEmailVertify(this.user);
+			this.$router.push('/dashboard')
 		},
 
 		components: {

@@ -5,6 +5,10 @@ import App from './app.vue'
 import Resource from 'vue-resource'
 Vue.use(Resource)
 
+// 使用 Vue 路由组件
+import VueRouter from 'vue-router'
+Vue.use(VueRouter)
+
 // 自定义主题
 // 参考 http://element.eleme.io/#/zh-CN/component/custom-theme
 import './assets/theme/index.css'
@@ -26,6 +30,18 @@ meta.httpEquiv = "viewport";
 meta.content = "initial-scale=1";
 document.getElementsByTagName('head')[0].appendChild(meta);
 
+import Dashboard from './todo/dashboard.vue'
+import Container from './todo/container.vue'
+const routes = [
+  { path: '/', 					component: Container },
+  { path: '/dashboard', component: Dashboard }
+]
+const router = new VueRouter({
+  routes // (缩写) 相当于 routes: routes
+})
+
+
 new Vue({
+	router,
 	render:(h) => h(App)
 }).$mount(root)
