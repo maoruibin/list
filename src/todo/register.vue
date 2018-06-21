@@ -91,9 +91,11 @@ let api_version = process.env.API_VERSION
               { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
             ],
             password: [
+              { min: 6, max: 16, message: '长度在 6 到 16 个字符', trigger: 'blur' },
               { validator: validatePass, trigger: 'blur' }
             ],
             passwordAgain: [
+              { min: 6, max: 16, message: '长度在 6 到 16 个字符', trigger: 'blur' },
                { validator: validatePass2, trigger: 'blur' }
             ],
           }
