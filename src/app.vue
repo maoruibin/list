@@ -60,8 +60,8 @@
 			<el-main v-show="!isShowLoginDialog && !isShowRegisterDialog">
 				 <!-- 路由出口 -->
 				 <!-- 路由匹配到的组件将渲染在这里 -->
-				 <router-view></router-view>
-				 <!-- <Container
+				 <!-- <router-view></router-view> -->
+				 <Container
 					 v-show="!dashboard"
 					 :user="user"
 					 :setting="setting"
@@ -71,7 +71,7 @@
 				 <Dashboard
 					 v-show="dashboard"
 					 :user="user"
-					 ref="dashboard"/> -->
+					 ref="dashboard"/>
 			</el-main>
 
 
@@ -139,7 +139,7 @@ let api_version = process.env.API_VERSION
 			this.settingLean = JSON.parse(localStorage.getItem("settingLean"))
 			this.fetchUserTodos(this.user)
 			this.checkEmailVertify(this.user);
-			this.$router.push('/dashboard')
+			// this.$router.push('/dashboard')
 		},
 
 		components: {

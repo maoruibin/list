@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-  title="柳叶 - 条理每一天"
+  title="柳叶 - 有条有理每一天"
   @close="dismiss"
   :visible.sync="showAboutDialog"
   width="50%">
