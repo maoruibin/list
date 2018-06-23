@@ -1,10 +1,34 @@
 <template lang="html">
     <div>
-      
-        <header-bar></header-bar>
-        <div>
+      <el-container>
+
+        <el-header>
+            <Header
+            ref="header"
+            :project="currentProject"
+            :user="user"
+            :settingLean="settingLean"
+            :isSuperUser="isSuperUser"
+            @logout="logout"
+            @addProject="showAddProjectDialog"
+            @selectProject="selectProject"
+            @aboutAction="showAbout"
+            @profile="showProfileDialog"
+            @dashboard="showDashboard"/>
+        </el-header>
+
+        <el-main v-show="!isShowLoginDialog && !isShowRegisterDialog">
+          <div>
             <router-view></router-view>
-        </div>
+          </div>
+        </el-main>
+
+
+      </el-container>
+
+
+        <header-bar></header-bar>
+
     </div>
 </template>
 
