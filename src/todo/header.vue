@@ -1,4 +1,5 @@
 <template>
+	
 	<el-row style="border:0px solid red;margin-top:6px;">
 		<el-col :span="6">
 			<div class="grid-content left_top" style="border:0px solid black;">
@@ -27,7 +28,7 @@
 
 
 				<span style="font-family: Tahoma;font-size:20px;">柳叶</span><span style="font-size:12px;">-Beta</span>
-				
+
 			</div>
 		</el-col>
 		<el-col :span="6"  >
