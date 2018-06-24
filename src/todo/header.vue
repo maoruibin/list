@@ -1,71 +1,79 @@
 <template>
-	
-	<el-row style="border:0px solid red;margin-top:6px;">
-		<el-col :span="6">
-			<div class="grid-content left_top" style="border:0px solid black;">
+	<div class="">
+		<el-row style="border:0px solid red;margin-top:6px;">
+			<el-col :span="6">
+				<div class="grid-content left_top" style="border:0px solid black;">
 
-				<el-dropdown class="titleItem" v-show="isSuperUser" show-timeout=100 @command="selectProject">
-					<span class="el-dropdown-link" style="color:#ffffff;">
-						{{project.name}}<i class="el-icon-arrow-down el-icon--right"></i>
-					</span>
-
-					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item
-							v-for="project in projectList"
-							:key="project.objectId"
-							:command="project.objectId"
-							>
-							{{project.name}}
-						</el-dropdown-item>
-					</el-dropdown-menu>
-
-				</el-dropdown>
-
-			</div>
-		</el-col>
-		<el-col :span="12">
-			<div class="grid-content center_title" style="border:0px solid black;">
-
-
-				<span style="font-family: Tahoma;font-size:20px;">柳叶</span><span style="font-size:12px;">-Beta</span>
-
-			</div>
-		</el-col>
-		<el-col :span="6"  >
-			<div class="grid-content right_top" >
-					<i
-					class="headIcon el-icon-about"
-					@click="showAboutApp"/>
-
-					<el-tooltip effect="dark" content="欢迎大家来这里交流意见" placement="bottom">
-						<i
-						class="headIcon el-icon-fankuiyijian"
-						@click="gotoOpinion"/>
-
-					</el-tooltip>
-
-					<i
-						v-show="isSuperUser"
-						class="headIcon el-icon-add"
-						@click="addProject"/>
-
-					<el-dropdown class="titleItem" @command="handleCommand" show-timeout=100>
+					<el-dropdown class="titleItem" v-show="isSuperUser" show-timeout=100 @command="selectProject">
 						<span class="el-dropdown-link" style="color:#ffffff;">
-							{{this.user.nickname}}<i class="el-icon-arrow-down el-icon--right"></i>
+							{{project.name}}<i class="el-icon-arrow-down el-icon--right"></i>
 						</span>
-						<el-dropdown-menu v-show="this.user != null" slot="dropdown">
-							<el-dropdown-item command="profile">个人信息</el-dropdown-item>
-							<el-dropdown-item command="dashboard" v-show="isSuperUser">数据面板</el-dropdown-item>
-							<el-dropdown-item command="logout">注销</el-dropdown-item>
+
+						<el-dropdown-menu slot="dropdown">
+							<el-dropdown-item
+								v-for="project in projectList"
+								:key="project.objectId"
+								:command="project.objectId"
+								>
+								{{project.name}}
+							</el-dropdown-item>
 						</el-dropdown-menu>
+
 					</el-dropdown>
-			</div>
-		</el-col>
-	</el-row>
+
+				</div>
+			</el-col>
+			<el-col :span="12">
+				<div class="grid-content center_title" style="border:0px solid black;">
+
+
+					<span style="font-family: Tahoma;font-size:20px;">柳叶</span><span style="font-size:12px;">-Beta</span>
+
+				</div>
+			</el-col>
+			<el-col :span="6"  >
+				<div class="grid-content right_top" >
+						<i
+						class="headIcon el-icon-about"
+						@click="showAboutApp"/>
+
+						<el-tooltip effect="dark" content="欢迎大家来这里交流意见" placement="bottom">
+							<i
+							class="headIcon el-icon-fankuiyijian"
+							@click="gotoOpinion"/>
+
+						</el-tooltip>
+
+						<i
+							v-show="isSuperUser"
+							class="headIcon el-icon-add"
+							@click="addProject"/>
+
+						<el-dropdown class="titleItem" @command="handleCommand" show-timeout=100>
+							<span class="el-dropdown-link" style="color:#ffffff;">
+								{{this.user.nickname}}<i class="el-icon-arrow-down el-icon--right"></i>
+							</span>
+							<el-dropdown-menu v-show="this.user != null" slot="dropdown">
+								<el-dropdown-item command="profile">个人信息</el-dropdown-item>
+								<el-dropdown-item command="dashboard" v-show="isSuperUser">数据面板</el-dropdown-item>
+								<el-dropdown-item command="logout">注销</el-dropdown-item>
+							</el-dropdown-menu>
+						</el-dropdown>
+				</div>
+			</el-col>
+		</el-row>
+		<!-- <loading-block
+            v-if="showLoading"
+            :done="doneLoading"
+            :failed="loadFailed"/> -->
+	</div>
+
 
 
 </template>
 <script>
+	import LoadingBlock from './LoadingBlock.vue';
+
   export default {
 		props:{
 			project: {
@@ -94,7 +102,20 @@
 		mounted:function(){
 
 		},
-
+		computed:{
+			showLoading() {
+            return true;
+        },
+        doneLoading() {
+            return false;
+        },
+        loadFailed() {
+            return false;
+        },
+		},
+		components: {
+		   LoadingBlock
+		},
     methods: {
       showAboutApp() {
 				console.log("showAbout")

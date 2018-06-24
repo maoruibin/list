@@ -29,6 +29,14 @@ const config =  {
 				loader: 'vue-loader'
 			},
 			{
+        test: /\.less$/,
+        use: [
+          'style-loader',
+          { loader: 'css-loader', options: { importLoaders: 1 } },
+          'less-loader'
+        ]
+      },
+			{
 				test: /\.css$/,
 				use:[
 					'style-loader',
@@ -69,7 +77,7 @@ const config =  {
 			}
 		}),
 		new HTMLPlugin({
-			title:'柳叶-条理每一天',
+			title:'柳叶-有条有理每一天',
 			favicon:'./src/assets/images/favicon.ico'
 		})
 	]
