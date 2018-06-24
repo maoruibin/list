@@ -154,17 +154,30 @@ let api_version = process.env.API_VERSION
 			Container
 		},
 		methods:{
+			showAcviteEmailPoint(email){
+				this.$notify({
+					title: '激活提示',
+					type: 'warning',
+					message: '您的注册邮箱('+email+')尚未激活，请前往验证。',
+					position: 'bottom-right',
+					duration: 0
+				});
+			},
 			checkEmailVertify(user){
 				if(user.emailVerified){
 					return
 				}
-				this.$notify({
-					title: '激活提示',
-					type: 'warning',
-					message: '您的注册邮箱('+user.email+')尚未激活，请前往验证。',
-					position: 'bottom-right',
-					duration: 0
-				});
+				//如果用户未激活邮箱则请求一次服务器检查最新的用户信息
+				const api = host+"/users/api/"+api_version+"/fetchLastUserInfo"
+				var formData = new FormData();
+				formData.append('objectId',this.user['objectId']);
+				this.$http.post(api, formData).then((response) => {
+						this.user = response.body.user
+						if(this.user.emailVerified){
+							return
+						}
+						this.showAcviteEmailPoint(user.email)
+					}, (response) => {});
 			},
 			settingChange(setting){
 				this.settingLean = setting
@@ -247,6 +260,10 @@ let api_version = process.env.API_VERSION
 
 			loginCallback(user,setting,msg){
 				const that = this
+				if(!user.emailVerified){
+					this.showAcviteEmailPoint(user.email)
+				}
+
 				this.callback(user,setting,msg,function(res){
 					if(res<0){
 							that.isShowLoginDialog = true;
