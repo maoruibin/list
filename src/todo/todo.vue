@@ -17,7 +17,7 @@
 				      <el-dropdown-menu slot="dropdown">
 				        <el-dropdown-item command="editGroup"  v-show="!showOnFileList">编辑分组名称</el-dropdown-item>
 								<el-dropdown-item command="onFile">{{this.showOnFileList?'返回Todo列表':'查看已归档列表'}}</el-dropdown-item>
-								<el-dropdown-item command="onFileBatch" v-show="hasCompletedTodo" >归档所有已完成事项</el-dropdown-item>
+								<el-dropdown-item command="onFileBatch" v-show="hasCompletedTodo" >归档分组已完成</el-dropdown-item>
 
 								<el-popover
 								 placement="bottom"
@@ -29,7 +29,7 @@
 								   <el-button type="primary" size="mini" @click="fileGroup">归档</el-button>
 								 </div>
 
-								  <el-dropdown-item slot="reference" divided>归档</el-dropdown-item>
+								  <el-dropdown-item slot="reference" divided>归档该分组</el-dropdown-item>
 
 								</el-popover>
 
@@ -75,7 +75,7 @@
 
 
 		<div class="emptyInfo" v-show="isGroupEmpty" style="">
-			<span class="textDesc">{{this.showOnFileList?'还没归档任何事项':'还没有任何事项，点击右上角添加。'}}</span>
+			<span class="textDesc">{{this.showOnFileList?'还没归档任何内容':'还没有任何内容，点击右上角添加。'}}</span>
 		</div>
 	</div>
 
@@ -207,7 +207,7 @@ export default{
 			this.todos = [];
 		},
 		drag:function(){
-			console.log('drag');
+			this.hideAddForm()
 		},
 		// 移动到另一个 group 触发
 		moveTo:function(e){
@@ -388,6 +388,7 @@ export default{
 				this.moveDialogVisible = true
 		},
 		showTodoDetail(todo){
+			this.hideAddForm();
 			this.$emit('showTodoDetail',todo,this.filterTodos)
 		},
 
