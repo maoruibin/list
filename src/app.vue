@@ -42,7 +42,7 @@
 
 		<el-container>
 
-			<el-header>
+			<el-header height="46px">
 					<Header
 					ref="header"
 					:project="currentProject"

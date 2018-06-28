@@ -1,6 +1,6 @@
 <template>
 	<div class="">
-		<el-row style="border:0px solid red;margin-top:6px;">
+		<el-row class="rowHeader">
 			<el-col :span="6">
 				<div class="grid-content left_top" style="border:0px solid black;">
 
@@ -27,7 +27,7 @@
 				<div class="grid-content center_title" style="border:0px solid black;">
 
 
-					<span style="font-family: Tahoma;font-size:20px;">柳叶</span><span style="font-size:12px;">-Beta</span>
+					<span style="font-family: Tahoma;font-size:18px;">柳叶</span><span style="font-size:12px;">-Beta</span>
 
 				</div>
 			</el-col>
