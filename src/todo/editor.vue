@@ -21,9 +21,12 @@
               <el-input style="border:0px solid red;" v-model="todo.title"></el-input>
             </el-form-item>
             <el-form-item label="详情备注" size="medium">
-              <el-input type="textarea" v-model="todo.content"></el-input>
+              <el-input type="textarea"
+              :autosize="{ minRows: 3, maxRows: 7}"
+               v-model="todo.content"></el-input>
             </el-form-item>
             <el-form-item
+              style="display:none;"
               label="起始时间"
               size="medium">
               <el-time-select
