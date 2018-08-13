@@ -7,7 +7,7 @@
 			<span>{{group.name}}</span>
 			<div class="actionArea">
 
-				<i :class="['topIconAction icon_normal ', showOnFileList ? 'el-icon-arrow-left' : 'el-icon-plus']" @click="toogleAddOrReturn"></i>
+				<i :class="['topIconAction icon_normal ', showOnFileList || showOnCompleteList ? 'el-icon-arrow-left' : 'el-icon-plus']" @click="toogleAddOrReturn"></i>
 
 				<el-dropdown trigger="click" v-show="!asSubTodo"  @command="handleCommand">
 				      <span class="el-dropdown-link">
@@ -15,9 +15,9 @@
 
 				      </span>
 				      <el-dropdown-menu slot="dropdown">
-				        <el-dropdown-item command="editGroup"  v-show="!showOnFileList">编辑分组名称</el-dropdown-item>
-								<el-dropdown-item command="onFile">{{this.showOnFileList?'返回Todo列表':'查看已归档列表'}}</el-dropdown-item>
-								<el-dropdown-item command="onFileBatch" v-show="hasCompletedTodo" >归档分组已完成</el-dropdown-item>
+				        <el-dropdown-item command="editGroup"  v-show="!showOnFileList && !showOnCompleteList">编辑分组</el-dropdown-item>
+								<el-dropdown-item command="onFileList" v-show="!isGroupEmpty && todosOnFileList.length != 0 && !showOnCompleteList" >查看已归档</el-dropdown-item>
+								<el-dropdown-item command="onFileBatch" v-show="showOnCompleteList" >归档所有已完成事项</el-dropdown-item>
 
 								<el-popover
 								 placement="bottom"
@@ -29,7 +29,10 @@
 								   <el-button type="primary" size="mini" @click="fileGroup">归档</el-button>
 								 </div>
 
-								  <el-dropdown-item slot="reference" divided>归档该分组</el-dropdown-item>
+								  <el-dropdown-item
+									slot="reference"
+									v-show="!showOnFileList && !showOnCompleteList"
+									divided>归档分组</el-dropdown-item>
 
 								</el-popover>
 
@@ -77,6 +80,12 @@
 		<div class="emptyInfo" v-show="isGroupEmpty" style="">
 			<span class="textDesc">{{this.showOnFileList?'还没归档任何内容':'还没有任何内容，点击右上角添加。'}}</span>
 		</div>
+
+		<div class="fileList" v-show="!isGroupEmpty && todosCompleteList.length != 0" style="margin-top:10px;text-align:left;">
+			<span class="textDesc" @click="showOnCompleteList=!showOnCompleteList" style="cursor:pointer;font-size: 0.9em;">
+				{{this.showOnCompleteList?'查看未完成':'查看已完成'}}
+			</span>
+		</div>
 	</div>
 
 </template>
@@ -119,7 +128,7 @@ export default{
 			// 容纳 TODO 的集合
 			todos:[],
 			// 已完成 todo 集合
-			todosComplete:[],
+			todosCompleteList:[],
 			// 已归档 todo 集合
 			todosOnFileList:[],
 			// 过滤器
@@ -128,8 +137,10 @@ export default{
 			showInput:false,
 			onFileGroup: false,
 			showFirstTip:true,
-			// 是否展示已完成列表
+			// 是否展示已归档列表
 			showOnFileList:false,
+			// 是否展示已完成列表
+			showOnCompleteList:false,
 			moveDialogVisible: false
 		}
 	},
@@ -148,8 +159,8 @@ export default{
 	mounted:function(){
 		if(!this.isLastIndex){
 			this.todos = this.group.todos.results;
-
 			this.todosOnFileList = this.group.todos.resultsOnFile;
+			this.todosCompleteList = this.group.todos.resultsComplete;
 		}
   },
 	computed: {
@@ -164,25 +175,14 @@ export default{
 			return this.filterTodos.length == 0;
 		},
 		filterTodos(){
-			if(this.showOnFileList){
+			if(this.showOnCompleteList){
+				return this.todosCompleteList
+			}else if(this.showOnFileList){
 				return this.todosOnFileList
 			}else{
 				return this.todos
 			}
 		},
-		// 列表是否包含已完成 todo
-		hasCompletedTodo(){
-			if(this.showOnFileList){
-				return false
-			}else{
-				let item = this.todos.find(function(item){
-					return item.completed
-				})
-				// 说明有已完成的 todo
-				return item != undefined
-			}
-		}
-
 	},
 	methods: {
 		addTodo:function(todo,appendEnd){
@@ -257,15 +257,21 @@ export default{
 			})
 		},
 		toogleAddOrReturn:function(){
+			if(this.showOnCompleteList){
+				this.showOnCompleteList = !this.showOnCompleteList
+				return;
+			}
+
 			if(this.showOnFileList){
 				this.showOnFileList = !this.showOnFileList
-			}else{
-				this.showInput = !this.showInput
-				this.$emit('hideOtherInput',this.group)
-				// 自动聚焦
-				if(this.showInput){
-					this.$refs.addForm.focus()
-				}
+				return;
+			}
+
+			this.showInput = !this.showInput
+			this.$emit('hideOtherInput',this.group)
+			// 自动聚焦
+			if(this.showInput){
+				this.$refs.addForm.focus()
 			}
 		},
 
@@ -284,14 +290,13 @@ export default{
 		},
 		handleCommand:function(command){
 			if(command === 'editGroup'){
-				console.log("this.group ---> "+this.group.projectId);
 				this.$emit('editGroup',this.group)
-			}else if(command === 'onFile'){
-				this.showOnFileList = !this.showOnFileList
 			}else if(command === 'deleteAll'){
 				this.showDelteFileListDialog(this.todosOnFileList)
 			}else if(command === 'onFileBatch'){
 				this.showOnFileBatchDialog()
+			}else if(command === 'onFileList'){
+				this.showOnFileList = !this.showOnFileList
 			}
 		},
 		deleteDirect(){
@@ -402,6 +407,7 @@ export default{
 				if(result.onFile){
 					that.todos.splice(that.todos.findIndex(todo => todo.objectId === todoId),1)
 					that.todosOnFileList.push(result)
+
 					if(showToast){
 						that.$message({
 							type: 'success',
@@ -475,10 +481,20 @@ export default{
 			const that = this
 			this.updateTodo(todo,function(result){
 					that.$emit('todoChange','toggle')
+					var todoId = result.objectId;
 					if(result.completed){
 						that.$message({
 							type: 'success',
 							message: '完成任务 '+todo.title
+						});
+						that.todos.splice(that.todos.findIndex(todo => todo.objectId === todoId),1)
+						that.todosCompleteList.push(result)
+					}else{
+						that.todosCompleteList.splice(that.todosCompleteList.findIndex(todo => todo.objectId === todoId),1)
+						that.todos.push(result)
+						that.$message({
+							type: 'success',
+							message: '已还原'
 						});
 					}
 			})
