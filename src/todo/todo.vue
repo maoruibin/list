@@ -81,7 +81,7 @@
 			<span class="textDesc">{{this.showOnFileList?'还没归档任何内容':'还没有任何内容，点击右上角添加。'}}</span>
 		</div>
 
-		<div class="fileList" v-show="!isGroupEmpty && todosCompleteList.length != 0" style="margin-top:10px;text-align:left;">
+		<div class="fileList" v-show="todosCompleteList.length != 0" style="margin-top:10px;text-align:left;">
 			<span class="textDesc" @click="showOnCompleteList=!showOnCompleteList" style="cursor:pointer;font-size: 0.9em;">
 				{{this.showOnCompleteList?'查看未完成':'查看已完成'}}
 			</span>
