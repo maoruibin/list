@@ -1,13 +1,13 @@
 <template>
   <div style="background-color:#f5f5f5;">
-    <el-radio-group v-model="tabDay" @change="changeHandler" style="margin-bottom: 20px;margin-top: 15px;">
+    <el-radio-group v-model="tabDay" @change="changeHandler" style="margin-bottom: 0px;margin-top: 15px;margin-left: 15px;">
      <el-radio-button label="today">今天</el-radio-button>
      <el-radio-button label="yesterday">昨天</el-radio-button>
      <el-radio-button label="lastDay">前天</el-radio-button>
      <el-radio-button label="lastWeek">一周内</el-radio-button>
    </el-radio-group>
 
-   <div class="content">
+   <div class="content" style="margin-left: 15px;margin-right: 15px;margin-bottom: 15px;">
      <div
        class="normalLoading"
        v-show="loadingTodos">
@@ -112,7 +112,7 @@
         }
       }
     },
-    
+
 		mounted:function(){
       console.log("dashboard mount");
 		},
