@@ -4,7 +4,7 @@
 	<div :class="['groupItem',asSubTodo?'subTodo':'']">
 
 		<div v-show="!isLastIndex" class="topAction" style="border:0px solid red;">
-			<span>{{group.name}}</span>
+			<span>{{group.name}}</span><span v-show="listType != ''"  style="color:#a8a8a8;font-size: 0.8em;">({{listType}})</span>
 			<div class="actionArea">
 
 				<i :class="['topIconAction icon_normal ', showOnFileList || showOnCompleteList ? 'el-icon-arrow-left' : 'el-icon-plus']" @click="toogleAddOrReturn"></i>
@@ -15,7 +15,7 @@
 				      </span>
 				      <el-dropdown-menu slot="dropdown">
 				        <el-dropdown-item command="editGroup"  v-show="!showOnFileList && !showOnCompleteList">编辑分组</el-dropdown-item>
-								<el-dropdown-item command="onFileList" v-show="!isGroupEmpty && todosOnFileList.length != 0 && !showOnCompleteList" >查看已归档</el-dropdown-item>
+								<el-dropdown-item command="onFileList" v-show="todosOnFileList.length != 0 && !showOnCompleteList" >查看已归档</el-dropdown-item>
 								<el-dropdown-item command="onFileBatch" v-show="showOnCompleteList" >归档所有已完成事项</el-dropdown-item>
 
 								<el-popover
@@ -80,7 +80,7 @@
 			<span class="textDesc">{{this.showOnFileList?'还没归档任何内容':'还没有任何内容，点击右上角添加。'}}</span>
 		</div>
 
-		<div class="fileList" v-show="todosCompleteList.length != 0" style="margin-top:10px;text-align:left;">
+		<div class="fileList" v-show="todosCompleteList.length != 0 && !this.showOnFileList" style="margin-top:10px;text-align:left;">
 			<span class="textDesc" @click="showOnCompleteList=!showOnCompleteList" style="cursor:pointer;font-size: 0.9em;">
 				{{this.showOnCompleteList?'查看未完成':'查看已完成'}}
 			</span>
@@ -185,6 +185,18 @@ export default{
 				return this.todos
 			}
 		},
+		showOnFileListMenu(){
+
+		},
+		listType(){
+			if(this.showOnFileList){
+				return "已归档"
+			}
+			if(this.showOnCompleteList){
+				return "已完成"
+			}
+			return ""
+		}
 	},
 	methods: {
 		addTodo:function(todo,appendEnd){
@@ -320,19 +332,15 @@ export default{
 								cancelButtonText: '取消',
 								type: 'warning'
 							}).then(() => {
-
-								that.todos.forEach(function(item){
-
+								that.todosCompleteList.forEach(function(item){
 									item.onFileAt = Number(new Date())
 									item.onFile = true
-
-									if(item.completed){
-										that.fileItem(item,false)
-									}
+									that.fileItem(item,false)
 								})
+
 								that.$message({
 									type: 'success',
-									message: '已将所有已完成 Todo 归档'
+									message: '已完成归档'
 								});
 							}).catch(() => {});
 		},
@@ -409,7 +417,15 @@ export default{
 			this.updateTodo(todo,function(result){
 				var todoId = result.objectId;
 				if(result.onFile){
-					that.todos.splice(that.todos.findIndex(todo => todo.objectId === todoId),1)
+					if(result.completed){
+						//从已完成列表冲移除
+						that.todosCompleteList.splice(that.todosCompleteList.findIndex(todo => todo.objectId === todoId),1);
+					}else{
+						//从未完成列表冲移除
+						that.todos.splice(that.todos.findIndex(todo => todo.objectId === todoId),1);
+					}
+					
+					//添加到已归档列表
 					that.todosOnFileList.push(result)
 
 					if(showToast){
@@ -420,8 +436,13 @@ export default{
 					}
 
 				}else{
+					if(result.completed){
+						that.todosCompleteList.push(result)
+					}else{
+						that.todos.push(result)
+					}
 					that.todosOnFileList.splice(that.todosOnFileList.findIndex(todo => todo.objectId === todoId),1)
-					that.todos.push(result)
+
 					if(showToast){
 						that.$message({
 							type: 'success',
