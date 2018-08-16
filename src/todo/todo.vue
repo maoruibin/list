@@ -12,7 +12,6 @@
 				<el-dropdown trigger="click" v-show="!asSubTodo"  @command="handleCommand">
 				      <span class="el-dropdown-link">
 				        <i class="el-icon-more icon_normal"></i>
-
 				      </span>
 				      <el-dropdown-menu slot="dropdown">
 				        <el-dropdown-item command="editGroup"  v-show="!showOnFileList && !showOnCompleteList">编辑分组</el-dropdown-item>
@@ -161,6 +160,9 @@ export default{
 			this.todos = this.group.todos.results;
 			this.todosOnFileList = this.group.todos.resultsOnFile;
 			this.todosCompleteList = this.group.todos.resultsComplete;
+			if(this.todosCompleteList == undefined){
+				this.todosCompleteList = []
+			}
 		}
   },
 	computed: {
@@ -259,11 +261,13 @@ export default{
 		toogleAddOrReturn:function(){
 			if(this.showOnCompleteList){
 				this.showOnCompleteList = !this.showOnCompleteList
+				console.log("----showOnCompleteList---");
 				return;
 			}
 
 			if(this.showOnFileList){
 				this.showOnFileList = !this.showOnFileList
+				console.log("----showOnFileList---");
 				return;
 			}
 
@@ -316,7 +320,7 @@ export default{
 								cancelButtonText: '取消',
 								type: 'warning'
 							}).then(() => {
-								console.log("that.todos "+that.todos.length);
+
 								that.todos.forEach(function(item){
 
 									item.onFileAt = Number(new Date())
