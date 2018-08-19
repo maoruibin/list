@@ -26,7 +26,6 @@
                 <el-tag
                   :key="tag"
                   size="medium"
-                  class="todoTag"
                   v-for="tag in todo.tags"
                   :color="tag.color"
                   closable
