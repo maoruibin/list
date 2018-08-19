@@ -40,6 +40,14 @@
 
 				<span :class="['statusIcon smallInfo',todo.hasCompletedSubTodo?'statusCompleted':'']" v-show="todo.hasSubTodo">{{todo.subTodoCompletedCount}}/{{todo.subTodoCount}}</span>
 
+				<div style="width:auto;display:block;white-space:pre-wrap;word-wrap : break-word;overflow: hidden ">
+					<el-tag class="todoTag" :key="tag.objectId" v-for="tag in todo.tags" size="mini" :color="tag.color" >
+	 				  {{tag.name}}
+	 				</el-tag>
+				</div>
+
+
+
 			</div>
 
 			 <el-dropdown trigger="click" v-show="showAction" class="dragHandleItem"  @command="handleCommand">
