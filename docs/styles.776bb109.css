@@ -99,3 +99,11 @@ body > .el-container {
   font-size: 0.8em;
   font-weight: 360;
 }
+/* 全局的 tag 基本设置 */
+.el-tag + .el-tag {
+  margin-left: 10px;
+  margin-top: 6px;
+}
+.todoTag {
+  color: #fff;
+}

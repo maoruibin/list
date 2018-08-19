@@ -20,11 +20,67 @@
             <el-form-item label="名称" size="medium" style="">
               <el-input style="border:0px solid red;" v-model="todo.title"></el-input>
             </el-form-item>
+
+            <el-form-item label="标签" size="medium">
+              <div >
+                <el-tag
+                  :key="tag"
+                  size="medium"
+                  class="todoTag"
+                  v-for="tag in todo.tags"
+                  :color="tag.color"
+                  closable
+                  :disable-transitions="false"
+                  @close="handleClose(tag)">
+                  {{tag.name}}
+                </el-tag>
+
+
+                <el-color-picker
+                  v-if="inputTagVisible"
+                  v-show="!isTagsOverCount"
+                  v-model="inputTag.color"
+                  style="margin-left:10px;"
+                  @change="tagColorChange"
+                  :predefine="predefineColors">
+                </el-color-picker>
+
+                <el-autocomplete
+                 popper-class="tag-autocomplete"
+                 v-if="inputTagVisible"
+                 v-show="!isTagsOverCount"
+                 v-model="inputTag.name"
+                 ref="saveTagInput"
+                 @keyup.enter.native="handleInputTagConfirm"
+                 :fetch-suggestions="querySearch"
+                 style="width:80px;"
+                 @select="handleSelect">
+
+                  <i
+                    class="el-icon-edit el-input__icon"
+                    slot="suffix"
+                    @click="handleIconClick">
+                  </i>
+
+                  <template slot-scope="{ item }">
+
+                    <span class="itemTagName" :style="{'color': item.color}">{{ item.name }}</span>
+
+                  </template>
+
+               </el-autocomplete>
+
+                <el-button v-else v-show="!isTagsOverCount" class="button-new-tag" size="small" @click="showInputTag">+ 添加</el-button>
+              </div>
+
+            </el-form-item>
+
             <el-form-item label="详情备注" size="medium">
               <el-input type="textarea"
               :autosize="{ minRows: 3, maxRows: 7}"
                v-model="todo.content"></el-input>
             </el-form-item>
+
             <el-form-item
               style="display:none;"
               label="起始时间"
@@ -138,7 +194,28 @@ export default{
       // 正在更新数据
       updatingData:false,
       loadingSubTodo: false,
-      nowTime:''
+      nowTime:'',
+      inputTagVisible: false,
+      // 是否已经选择了标签颜色
+      hasSelectTagColor: false,
+      allTags:[],
+      inputTag: {
+        "name":"",
+        "color":'#4D4F4E'
+      },
+      predefineColors: [
+          '#f44336',
+          '#9C27B0',
+          '#3F51B5',
+          '#2196F3',
+          '#009688',
+          '#4CAF50',
+          '#FFEB3B',
+          '#FF9800',
+          '#FF5722',
+          '#795548',
+          '#607D8B'
+        ]
 		}
 	},
 	props:{
@@ -171,7 +248,10 @@ export default{
 		Todo
 	},
   computed: {
-
+    // tag 数量是否超过三个
+    isTagsOverCount(){
+			return this.todo.tags.length >= 3;
+		}
   },
   mounted:function(){
     var hour = new Date().getHours();
@@ -186,6 +266,7 @@ export default{
       min = '0'+min
     }
     this.nowTime = hour+":"+min
+    this.fetchAllTags();
   },
   watch: {
     todos(val) {
@@ -198,6 +279,94 @@ export default{
     }
   },
 	methods:{
+    tagColorChange(){
+      console.log("color change and result is "+this.inputTag.color);
+
+      this.hasSelectTagColor = this.inputTag.color != null;
+    },
+    querySearch(queryString, cb) {
+        var allTags = this.allTags;
+        var results = queryString ? allTags.filter(this.createFilter(queryString)) : allTags;
+        // 调用 callback 返回建议列表的数据
+        cb(results);
+    },
+
+    createFilter(queryString) {
+        return (item) => {
+          return (item.name.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+        };
+      },
+
+    // tab 被删除
+    handleClose(tag) {
+        this.todo.tags.splice(this.todo.tags.indexOf(tag), 1);
+
+        this.updateTodo(this.todo)
+    },
+    showInputTag() {
+        this.inputTagVisible = true;
+        this.$nextTick(_ => {
+          this.$refs.saveTagInput.$refs.input.focus();
+        });
+      },
+
+    handleSelect(item) {
+      this.todo.tags.push(item);
+      this.inputTagVisible = false;
+      this.inputTag.name = '';
+      const that = this
+      this.updateTodo(this.todo,function(result){
+        that.checkTagCountAndPoint();
+        that.hasSelectTagColor = false;
+      })
+    },
+    handleIconClick(ev) {
+        console.log(ev);
+    },
+    checkTagCountAndPoint(){
+      if(this.todo.tags.length == 3){
+        this.$message({
+          type: 'warning',
+          message: "不能继续添加标签了，标签不能多于三个"
+        });
+      }
+    },
+    handleInputTagConfirm() {
+      this.inputTag.userId = this.user.objectId;
+      const that = this;
+      this.createTags(this.inputTag,function(result,msg){
+        if(result != undefined){
+          that.todo.tags.push(result);
+          that.allTags.push(result);
+          that.inputTagVisible = false;
+          that.hasSelectTagColor = false;
+          that.inputTag.name = '';
+          that.inputTag.color = '#4D4F4E';
+          that.checkTagCountAndPoint();
+          that.updateTodo(that.todo)
+        }else{
+          that.$message({
+            type: 'fail',
+            message: msg
+          });
+        }
+      });
+    },
+
+    fetchAllTags(){
+      this.user = JSON.parse(localStorage.getItem("user"))
+      const apiTagsAll = host+"/tags/api/"+api_version+"/"+this.user.objectId
+      this.$http.get(apiTagsAll).then(response => {
+          this.allTags = response.body.results
+          this.allTags.forEach(function(item){
+            item.value = item.name
+          })
+
+        }, response => {
+
+        });
+    },
+
     //status todo 发生的更改类型
     todoChange(status){
       const that = this
@@ -255,6 +424,30 @@ export default{
       });
     },
 
+    createTags(tag,callback){
+      const api = host+"/tags/api/"+api_version
+      const config = {
+          headers : {
+              'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+          }
+      }
+      //拼装参数
+      var formData = new FormData();
+      for(var key in tag) {
+        if(tag[key] != undefined){
+          console.log("create tag "+key+" to "+tag[key]);
+          formData.append(key, tag[key]);
+        }
+      }
+
+      this.$http.post(api,formData,config).then(response => {
+            callback(response.body.entity)
+      }, response => {
+        callback(null,response.body.msg)
+      });
+    },
+
+
     deleteTodoCallback(todo,callback){
       const objectId = todo.objectId
       const api = host+"/todos/api/"+api_version+"/todos/"+objectId
@@ -273,8 +466,6 @@ export default{
 
 
     fetchSubTodo(groupId) {
-
-
       const api = host+"/todos/api/"+api_version+"/todos/"+this.user.objectId+"/"+groupId
       this.loadingSubTodo = true
 		  this.$http.get(api).then(response => {
@@ -324,6 +515,10 @@ export default{
       this.hasSubTodo = false;
       this.onFilePoint = false;
       this.$refs.childTodo.clearTodos()
+
+      this.inputTagVisible = false;
+      this.inputTag.name = '';
+      this.inputTag.color = '#4D4F4E';
     },
 
     updateTodo(todo,callback){
@@ -343,6 +538,20 @@ export default{
           formData.append(key, todo[key]);
         }
       }
+
+      // 格式化 tags
+      let tagCount = todo.tags.length;
+      if(tagCount > 0){
+        let tagArray = ''
+        for (var i=0;i<tagCount;i++){
+            tagArray += todo.tags[i]['objectId']
+            if(i<tagCount-1){
+              tagArray += ','
+            }
+        }
+        formData.append("tags", tagArray);
+      }
+
 
       this.$http.put(api, formData, config).then(response => {
           //编辑完的 todo 结果
@@ -365,6 +574,21 @@ export default{
 </script>
 
 <style lang="stylus" scoped>
+    /* begin tag */
+
+    .button-new-tag {
+      margin-left: 10px;
+      height: 32px;
+      line-height: 30px;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    .input-new-tag {
+      width: 90px;
+      margin-left: 10px;
+      vertical-align: bottom;
+    }
+    /* end tag */
 
 		.bg-purple {
 			 background: #eff1f3;
@@ -407,5 +631,23 @@ export default{
     .el-form-item {
       border:0px solid blue;
       padding-bottom:0px;
+    }
+
+    .tag-autocomplete {
+      li {
+        line-height: normal;
+        padding: 7px;
+
+        .itemTagName {
+          text-overflow: ellipsis;
+          overflow: hidden;
+          font-size: 12px;
+          color: #b4b4b4;
+        }
+
+        .highlighted .itemTagName {
+          color: #ddd;
+        }
+      }
     }
 </style>
