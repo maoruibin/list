@@ -29,6 +29,7 @@
                   v-for="tag in todo.tags"
                   :color="tag.color"
                   closable
+                  style="color:#FFFFFF;"
                   :disable-transitions="false"
                   @close="handleClose(tag)">
                   {{tag.name}}
