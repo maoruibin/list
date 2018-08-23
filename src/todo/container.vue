@@ -145,15 +145,12 @@ export default{
 
 					this.addNewGroup(group)
         }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '取消添加'
-          });
+          
         });
 		},
 
 		showEditGroupDialog(group){
-			this.$prompt('', '编辑分组', {
+			this.$prompt('', '修改分组名称', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           inputValue: group.name,
@@ -163,10 +160,7 @@ export default{
 					group.name = value
 					this.editGroup(group)
         }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '取消添加'
-          });
+
         });
 		},
 

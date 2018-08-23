@@ -104,6 +104,6 @@ body > .el-container {
   margin-left: 10px;
   margin-top: 6px;
 }
-.todoTag {
-  color: #fff;
+.default_icon {
+  color: #a8a8a8;
 }

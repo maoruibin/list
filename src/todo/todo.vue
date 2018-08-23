@@ -5,6 +5,8 @@
 
 		<div v-show="!isLastIndex" class="topAction" style="border:0px solid red;">
 			<span>{{group.name}}</span><span v-show="listType != ''"  style="color:#a8a8a8;font-size: 0.8em;">({{listType}})</span>
+			<i class="el-icon-edit default_icon" v-show="listType == ''" @click="editGroupName" ></i>
+
 			<div class="actionArea">
 
 				<i :class="['topIconAction icon_normal ', showOnFileList || showOnCompleteList ? 'el-icon-arrow-left' : 'el-icon-plus']" @click="toogleAddOrReturn"></i>
@@ -14,7 +16,7 @@
 				        <i class="el-icon-more icon_normal"></i>
 				      </span>
 				      <el-dropdown-menu slot="dropdown">
-				        <el-dropdown-item command="editGroup"  v-show="!showOnFileList && !showOnCompleteList">编辑分组</el-dropdown-item>
+				        <el-dropdown-item command="editGroup"  v-show="!showOnFileList && !showOnCompleteList && false">编辑分组</el-dropdown-item>
 								<el-dropdown-item command="onFileList" v-show="todosOnFileList.length != 0 && !showOnCompleteList" >查看已归档</el-dropdown-item>
 								<el-dropdown-item command="onFileBatch" v-show="showOnCompleteList" >归档所有已完成事项</el-dropdown-item>
 
@@ -304,6 +306,9 @@ export default{
 					this.hideAddForm()
 			}
 		},
+		editGroupName(){
+			this.$emit('editGroup',this.group)
+		},
 		handleCommand:function(command){
 			if(command === 'editGroup'){
 				this.$emit('editGroup',this.group)
@@ -424,7 +429,7 @@ export default{
 						//从未完成列表冲移除
 						that.todos.splice(that.todos.findIndex(todo => todo.objectId === todoId),1);
 					}
-					
+
 					//添加到已归档列表
 					that.todosOnFileList.push(result)
 

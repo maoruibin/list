@@ -25,6 +25,10 @@
 			</span>
 
 
+			<el-tag class="statusIcon smallInfo" :key="tag.objectId" v-for="tag in todo.tags" size="mini" :color="tag.color" style="color:#FFFFFF;height:18px;">
+				{{tag.name}}
+			</el-tag>
+
 			 <el-popover
 				  placement="bottom-start"
 				  width="180"
@@ -35,16 +39,10 @@
 					<i class="statusIcon el-icon-document" v-show="todo.content != undefined && todo.content.length != 0" slot="reference" ></i>
 				</el-popover>
 
-
-				<i :class="['statusIcon el-icon-circle-check-outline',todo.hasCompletedSubTodo?'statusCompleted':'']" style="margin-left:6px;" v-show="todo.hasSubTodo" ></i>
+				<i :class="['statusIcon el-icon-circle-check-outline',todo.hasCompletedSubTodo?'statusCompleted':'']" style="margin-left:2px;" v-show="todo.hasSubTodo" ></i>
 
 				<span :class="['statusIcon smallInfo',todo.hasCompletedSubTodo?'statusCompleted':'']" v-show="todo.hasSubTodo">{{todo.subTodoCompletedCount}}/{{todo.subTodoCount}}</span>
 
-				<div style="width:auto;display:block;white-space:pre-wrap;word-wrap : break-word;overflow: hidden ">
-					<el-tag :key="tag.objectId" v-for="tag in todo.tags" size="mini" :color="tag.color" style="color:#FFFFFF;">
-	 				  {{tag.name}}
-	 				</el-tag>
-				</div>
 
 
 
