@@ -25,7 +25,7 @@
 			</span>
 
 
-			<el-tag class="statusIcon smallInfo" :key="tag.objectId" v-for="tag in todo.tags" size="mini" :color="tag.color" style="color:#FFFFFF;height:18px;">
+			<el-tag class="statusIcon smallInfo" :key="tag.objectId" v-for="tag in todo.tags" size="mini" :color="tag.color" style="color:#FFFFFF;">
 				{{tag.name}}
 			</el-tag>
 

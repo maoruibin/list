@@ -1,0 +1,109 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+body {
+  background-color: #3e4145;
+  background-size: cover;
+  background-position: center;
+  font: 14px 'microsoft yahei';
+  color: #333;
+  font-weight: 500;
+}
+.el-header {
+  background-color: #4d4f4e;
+  color: #fff;
+  border: 0px solid #ff0;
+  min-height: 46px;
+  line-height: 46px;
+}
+.rowHeader {
+  border: 0px solid #f00;
+  height: 46px;
+}
+.el-footer {
+  background-color: #7dba6a;
+  color: #fff;
+  text-align: center;
+}
+.el-main {
+  width: 100%;
+  height: 570px;
+  padding: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  overflow-x: auto;
+  -webkit-backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  -webkit-overflow-scrolling: touch; /* 2 */
+  text-align: justify; /* 3 */
+  border: 0px solid #000;
+}
+.el-main::-webkit-scrollbar {
+  display: block;
+}
+.ghost {
+  opacity: 0.1;
+}
+body > .el-container {
+  margin-bottom: 0px;
+}
+/* 灰白的提示文字 不重要的信息样式 */
+.textDesc {
+  font-size: 1em;
+  font-weight: 320;
+  color: #a8a8a8;
+}
+.icon_normal {
+  color: #4d4d4d;
+}
+/* loading 通用样式*/
+.normalLoading {
+  text-align: center;
+  line-height: 100px;
+  border: 0px solid #f00;
+}
+/* item 内容样式 */
+.content {
+  cursor: pointer;
+  color: #4d4d4d;
+  font-weight: 380;
+  font-size: 1em;
+  word-break: normal;
+  text-align: left;
+  width: auto;
+  display: block;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow: hidden;
+}
+/* 小文子样式 */
+.smallInfo {
+  font-size: 0.4em;
+  font-weight: 350;
+  border: 0px solid #00f;
+}
+/* 空信息样式 */
+.emptyInfo {
+  text-align: center;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+      flex-direction: column;
+  line-height: 60px;
+  padding-bottom: 12px;
+  border: 0px solid #f00;
+  font-size: 0.8em;
+  font-weight: 360;
+}
+/* 全局的 tag 基本设置 */
+.el-tag + .el-tag {
+  margin-left: 10px;
+  margin-top: 6px;
+}
+.default_icon {
+  color: #a8a8a8;
+}
