@@ -89,14 +89,14 @@ let api_version = process.env.API_VERSION
         });
       },
       loginByNet(callback){
-        const api = host+"/users/api/"+api_version+"/login"
+        const api = host+"/api/"+api_version+"/users/login"
         var formData = new FormData();
         for (var key in this.user) {
           formData.append(key,this.user[key]);
         }
 
         this.$http.post(api, formData).then((response) => {
-              callback(response.body.user,response.body.setting,response.body.msg)
+              callback(response.body.data.user,response.body.data.setting,response.body.msg)
           }, (response) => {
               callback(null,null,response.body.msg)
           });

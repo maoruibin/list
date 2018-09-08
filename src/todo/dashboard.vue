@@ -132,12 +132,12 @@
       },
       fetchDay(day){
         this.loadingTodos = true;
-        const apiTodosAll = host+"/todos/api/"+api_version+"/todos/time/"+this.user.objectId+"/"+day
+        const apiTodosAll = host+"/api/"+api_version+"/todos/time/"+this.user.objectId+"/"+day
         this.$http.get(apiTodosAll).then(response => {
             this.loadingTodos = false;
-            this.completedList = response.body.todos.completed
-            this.createdList = response.body.todos.created
-            this.onFileList = response.body.todos.onFile
+            this.completedList = response.body.data.todos.completed
+            this.createdList = response.body.data.todos.created
+            this.onFileList = response.body.data.todos.onFile
 
             this.isCompletedEmpty = this.completedList.length == 0
             this.isCreatedEmpty = this.createdList.length == 0

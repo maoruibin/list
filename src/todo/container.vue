@@ -68,12 +68,12 @@ export default{
 	          background: 'rgba(0, 0, 0, 0.7)'
 	        });
 
-	    const apiTodosAll = host+"/todos/api/"+api_version+"/todos/list/"+this.user.objectId+"/"+this.project.objectId
+	    const apiTodosAll = host+"/api/"+api_version+"/todos/projects/"+this.user.objectId+"/"+this.project.objectId
 			console.log("select project is "+project.name);
 			console.log("host "+apiTodosAll);
-			//http://0.0.0.0:3000/todos/api/v1.0/todos/list/5ae33e0d9f5454003f0e1ced/5b0c10cc2f301e00381bda9f
+
 	    this.$http.get(apiTodosAll).then(response => {
-	        this.groupTodos = response.body.groupTodos
+	        this.groupTodos = response.body.data
 					this.groupForAppend.priority = this.groupTodos.length
 					this.groupTodos.push(this.groupForAppend)
 	        console.log("len is "+this.groupTodos.length);
@@ -107,7 +107,7 @@ export default{
 					}
 			})
 
-			const api = host+"/todos/api/"+api_version+"/group/batchEdit"
+			const api = host+"/api/"+api_version+"/todos/groups/batchEdit"
 			const config = {
 					headers : {
 							'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
@@ -145,7 +145,7 @@ export default{
 
 					this.addNewGroup(group)
         }).catch(() => {
-          
+
         });
 		},
 
@@ -165,7 +165,7 @@ export default{
 		},
 
 		addNewGroup(group){
-			const api = host+"/todos/api/"+api_version+"/group"
+			const api = host+"/api/"+api_version+"/todos/groups"
 			var formData = new FormData();
 			formData.append('name', group.name);
 			formData.append('projectId', group.projectId);
@@ -174,7 +174,7 @@ export default{
 
 			// POST /someUrl
 		  this.$http.post(api, formData).then(response => {
-				this.groupTodos.splice(this.groupTodos.length-1,0,response.body.entity)
+				this.groupTodos.splice(this.groupTodos.length-1,0,response.body.data)
 				this.$message({
 					type: 'success',
 					message: '插入新分组成功'
@@ -185,7 +185,7 @@ export default{
 		},
 		// 更新 group
 		updateGroup(group,callback){
-			const api = host+"/todos/api/"+api_version+"/group/edit"
+			const api = host+"/api/"+api_version+"/todos/groups"
 			var formData = new FormData();
 
 			for(var key in group) {
@@ -195,9 +195,9 @@ export default{
 				}
 			}
 
-		  this.$http.post(api, formData).then(response => {
-				this.groupTodos.splice(this.groupTodos.findIndex(item => item.objectId === group.objectId),1,response.body.entity)
-				callback(response.body.entity,1)
+		  this.$http.put(api, formData).then(response => {
+				this.groupTodos.splice(this.groupTodos.findIndex(item => item.objectId === group.objectId),1,response.body.data)
+				callback(response.body.data,1)
 		  }, response => {
 				callback(null,-1)
 		  });
@@ -234,7 +234,7 @@ export default{
 			})
 		},
 		deleteGroup(objectId){
-			const api = host+"/todos/api/"+api_version+"/group/"+objectId
+			const api = host+"/api/"+api_version+"/todos/groups/"+objectId
 			const config =
 				{
 				    headers : {
@@ -243,7 +243,7 @@ export default{
 				}
 
 			this.$http.delete(api,config).then(response => {
-					console.log("result is "+response.body.result);
+					console.log("result is "+response.body.data);
 					this.groupTodos.splice(this.groupTodos.findIndex(group => group.objectId === objectId),1)
 
 					this.$message({

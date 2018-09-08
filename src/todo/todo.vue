@@ -249,7 +249,7 @@ export default{
 					updateList.push(updateItem)
 			})
 
-			const api = host+"/todos/api/"+api_version+"/todos/batchUpdate"
+			const api = host+"/api/"+api_version+"/todos/batchUpdate"
 			const config = {
 					headers : {
 							'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
@@ -371,7 +371,7 @@ export default{
 
 		deleteTodoCallback(todo,callback){
 			const objectId = todo.objectId
-			const api = host+"/todos/api/"+api_version+"/todos/"+objectId
+			const api = host+"/api/"+api_version+"/todos/"+objectId
 			const config =
 				{
 						headers : {
@@ -472,7 +472,7 @@ export default{
 		// isToggle 是不是编辑完成状态 默认为 false
 		updateTodo(todo,callback){
 			var todoId = todo.objectId
-			const api = host+"/todos/api/"+api_version+"/todos/"+todoId
+			const api = host+"/api/"+api_version+"/todos/"+todoId
 			const config = {
 					headers : {
 							'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
@@ -488,9 +488,9 @@ export default{
 
 			this.$http.put(api, formData, config).then(response => {
 					//更新当前的 todo
-					this.filterTodos.splice(this.filterTodos.findIndex(todo => todo.objectId === todoId),1,response.body.entity)
+					this.filterTodos.splice(this.filterTodos.findIndex(todo => todo.objectId === todoId),1,response.body.data)
 					// 将编辑完的结果回调回去
-					callback(response.body.entity)
+					callback(response.body.data)
 				}, response => {});
 		},
 		checkAndAppend(formData,key,value){

@@ -168,11 +168,10 @@ let api_version = process.env.API_VERSION
 					return
 				}
 				//如果用户未激活邮箱则请求一次服务器检查最新的用户信息
-				const api = host+"/users/api/"+api_version+"/fetchLastUserInfo"
-				var formData = new FormData();
-				formData.append('objectId',this.user['objectId']);
-				this.$http.post(api, formData).then((response) => {
-						this.user = response.body.user
+				const api = host+"/api/"+api_version+"/users/"+this.user['objectId']
+
+				this.$http.get(api).then((response) => {
+						this.user = response.body.data
 						if(this.user.emailVerified){
 							return
 						}
@@ -226,9 +225,9 @@ let api_version = process.env.API_VERSION
 					}
 				}
 
-				const apiProjectAll = host+"/todos/api/"+api_version+"/project/"+user.objectId
+				const apiProjectAll = host+"/api/"+api_version+"/projects/"+user.objectId
 				this.$http.get(apiProjectAll).then(response => {
-						this.projectList = response.body.results
+						this.projectList = response.body.data
 
 						if(this.setting.currentProject.objectId === ''){
 							this.setting.currentProject = this.projectList[0];
@@ -333,7 +332,7 @@ let api_version = process.env.API_VERSION
 
 			addProject(project,callback){
 				console.log("name is "+project.name+" pri "+project.priority);
-				const apiHost = host+"/todos/api/"+api_version+"/project"
+				const apiHost = host+"/api/"+api_version+"/projects"
 				const config = {
 						headers : {
 								'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
@@ -346,7 +345,7 @@ let api_version = process.env.API_VERSION
 				this.checkAndAppend(formData,'userId',this.user.objectId)
 
 				this.$http.post(apiHost, formData, config).then(response => {
-						callback(response.body.entity)
+						callback(response.body.data)
 					}, response => {
 						this.$message.error('添加失败，请重试。('+response.status+"-"+response.statusText+")");
 					});

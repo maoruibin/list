@@ -94,7 +94,7 @@ let api_version = process.env.API_VERSION
 					})
 				}
 
-				const api = host+"/todos/api/"+api_version+"/todos"
+				const api = host+"/api/"+api_version+"/todos"
 				var that = this
 				//insertEnd
 				//新增 todo 的排序 index 就是当前 todo 的大小
@@ -115,7 +115,7 @@ let api_version = process.env.API_VERSION
 				this.inRequest = true
 				// POST /someUrl
 				this.$http.post(api, formData).then(response => {
-					this.$emit('addTodo',response.body.entity,this.insertEnd)
+					this.$emit('addTodo',response.body.data,this.insertEnd)
 					this.reset()
 				}, response => {
 					this.reset()

@@ -355,9 +355,9 @@ export default{
 
     fetchAllTags(){
       this.user = JSON.parse(localStorage.getItem("user"))
-      const apiTagsAll = host+"/tags/api/"+api_version+"/"+this.user.objectId
+      const apiTagsAll = host+"/api/"+api_version+"/tags/"+this.user.objectId
       this.$http.get(apiTagsAll).then(response => {
-          this.allTags = response.body.results
+          this.allTags = response.body.data
           this.allTags.forEach(function(item){
             item.value = item.name
           })
@@ -425,7 +425,7 @@ export default{
     },
 
     createTags(tag,callback){
-      const api = host+"/tags/api/"+api_version
+      const api = host+"/api/"+api_version+"/tags"
       const config = {
           headers : {
               'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
@@ -441,7 +441,7 @@ export default{
       }
 
       this.$http.post(api,formData,config).then(response => {
-            callback(response.body.entity)
+            callback(response.body.data)
       }, response => {
         callback(null,response.body.msg)
       });
@@ -450,7 +450,7 @@ export default{
 
     deleteTodoCallback(todo,callback){
       const objectId = todo.objectId
-      const api = host+"/todos/api/"+api_version+"/todos/"+objectId
+      const api = host+"/api/"+api_version+"/todos/"+objectId
       const config =
         {
             headers : {
@@ -466,11 +466,11 @@ export default{
 
 
     fetchSubTodo(groupId) {
-      const api = host+"/todos/api/"+api_version+"/todos/"+this.user.objectId+"/"+groupId
+      const api = host+"/api/"+api_version+"/todos/groups/"+this.user.objectId+"/"+groupId
       this.loadingSubTodo = true
 		  this.$http.get(api).then(response => {
         this.loadingSubTodo = false
-        this.group.todos.results = response.body.results
+        this.group.todos.results = response.body.data.results
         console.log("subTodo size "+this.group.todos.results.length);
         if(this.group.todos.results.length>0){
           this.hasSubTodo = true;
@@ -524,7 +524,7 @@ export default{
     updateTodo(todo,callback){
       var todoId = todo.objectId
 
-      const api = host+"/todos/api/"+api_version+"/todos/"+todoId
+      const api = host+"/api/"+api_version+"/todos/"+todoId
       const config = {
           headers : {
               'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
@@ -555,7 +555,7 @@ export default{
 
       this.$http.put(api, formData, config).then(response => {
           //编辑完的 todo 结果
-          const editResult = response.body.entity;
+          const editResult = response.body.data;
           //更新当前的 todo
           this.subTodos.splice(this.subTodos.findIndex(todo => todo.objectId === todoId),1,editResult)
           // 将编辑完的结果回调回去

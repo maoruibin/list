@@ -102,7 +102,7 @@ let api_version = process.env.API_VERSION
           });
         }else{
           //发送验证邮件
-          const api = host+"/users/api/"+api_version+"/requestEmailVerify"
+          const api = host+"/api/"+api_version+"/users/requestEmailVerify"
           var formData = new FormData();
           for (var key in this.user) {
             formData.append(key,this.user[key]);
@@ -142,13 +142,13 @@ let api_version = process.env.API_VERSION
 
       },
       updateSettingByNet(callback){
-        const api = host+"/users/api/"+api_version+"/setting"
+        const api = host+"/api/"+api_version+"/users/setting"
         var formData = new FormData();
         for (var key in this.settingLean) {
           formData.append(key,this.settingLean[key]);
         }
         this.$http.post(api, formData).then((response) => {
-              callback(response.body.setting,response.body.msg)
+              callback(response.body.data,response.body.msg)
           }, (response) => {
               callback(null,response.body.msg)
           });
