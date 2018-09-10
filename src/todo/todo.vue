@@ -31,13 +31,14 @@
 								 </div>
 
 								  <el-dropdown-item
-									slot="reference"
-									v-show="!showOnFileList && !showOnCompleteList"
-									divided>归档分组</el-dropdown-item>
+										slot="reference"
+										v-show="!showOnFileList && !showOnCompleteList">
+										归档分组
+									</el-dropdown-item>
 
 								</el-popover>
 
-								<el-dropdown-item divided command="deleteAll" v-show="showOnFileList & todosOnFileList.length != 0">删除清空已归档任务</el-dropdown-item>
+								<el-dropdown-item command="deleteAll" v-show="showOnFileList & todosOnFileList.length != 0">删除清空已归档任务</el-dropdown-item>
 				      </el-dropdown-menu>
 				</el-dropdown>
 			</div>

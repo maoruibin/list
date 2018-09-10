@@ -4,7 +4,7 @@
 			<el-col :span="6">
 				<div class="grid-content left_top" style="border:0px solid black;">
 
-					<el-dropdown class="titleItem" v-show="isSuperUser" show-timeout=100 @command="selectProject">
+					<el-dropdown class="titleItem" show-timeout=100 @command="selectProject">
 						<span class="el-dropdown-link" style="color:#ffffff;">
 							{{project.name}}<i class="el-icon-arrow-down el-icon--right"></i>
 						</span>
@@ -45,7 +45,6 @@
 						</el-tooltip>
 
 						<i
-							v-show="isSuperUser"
 							class="headIcon el-icon-add"
 							@click="addProject"/>
 
@@ -133,6 +132,13 @@
 				this.projectList.push(project)
 			},
       addProject() {
+				if(!this.isSuperUser && this.projectList.length>=5){
+					this.$message({
+            type: 'info',
+            message: '非高级用户只能创建不超过5个项目面板'
+          });
+					return ;
+				}
 				var last = this.projectList[this.projectList.length-1]
 				var priority = 0
 				if(last != undefined){
