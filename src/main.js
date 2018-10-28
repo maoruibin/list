@@ -25,10 +25,26 @@ import './assets/icon/iconfont.css'
 const root = document.createElement('div')
 document.body.appendChild(root)
 
-var meta = document.createElement('meta');
-meta.httpEquiv = "viewport";
-meta.content = "initial-scale=1";
-document.getElementsByTagName('head')[0].appendChild(meta);
+// var meta = document.createElement('meta');
+// meta.httpEquiv = "viewport";
+// meta.content = "initial-scale=1";
+
+var metaViewPort = document.createElement('meta');
+metaViewPort.name = "viewport";
+metaViewPort.content = "width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no";
+
+var metaUa = document.createElement('meta');
+metaUa.httpEquiv = "X-UA-Compatible";
+metaUa.content = "IE=edge,chrome=1";
+
+var metaHandheldFriendly = document.createElement('meta');
+metaHandheldFriendly.name = "HandheldFriendly";
+metaHandheldFriendly.content = "true";
+
+
+document.getElementsByTagName('head')[0].appendChild(metaViewPort);
+document.getElementsByTagName('head')[0].appendChild(metaUa);
+document.getElementsByTagName('head')[0].appendChild(metaHandheldFriendly);
 
 import Dashboard from './todo/dashboard.vue'
 import Container from './todo/container.vue'

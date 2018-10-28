@@ -77,8 +77,27 @@
 
             <el-form-item label="详情备注" size="medium">
               <el-input type="textarea"
+              v-if="inputContentVisible"
               :autosize="{ minRows: 3, maxRows: 7}"
                v-model="todo.content"></el-input>
+
+               <el-row :gutter="20"
+               style="border:1px #d3d7d4 solid; border-radius: 4px;margin-left:4px;margin-right:4px;padding-top:6px;"
+               v-show="!inputContentVisible">
+                 <el-col :span="22" style="padding-left:0px;">
+                   <div class="grid-content bg-purple"
+                   style="line-height: 20px;"
+                    v-html="urlify(todo.content)"></div>
+                 </el-col>
+
+                 <el-col :span="2">
+                   <div class="grid-content bg-purple" style="float:right">
+                     <i class="el-icon-edit default_icon" @click="showInputContent" ></i>
+                   </div>
+                 </el-col>
+               </el-row>
+
+
             </el-form-item>
 
             <el-form-item
@@ -196,6 +215,9 @@ export default{
       loadingSubTodo: false,
       nowTime:'',
       inputTagVisible: false,
+      inputContentVisible: false,
+      // 是否已经点击了保存按钮
+      hasSaveData: false,
       // 是否已经选择了标签颜色
       hasSelectTagColor: false,
       allTags:[],
@@ -267,6 +289,7 @@ export default{
     }
     this.nowTime = hour+":"+min
     this.fetchAllTags();
+
   },
   watch: {
     todos(val) {
@@ -283,6 +306,12 @@ export default{
       console.log("color change and result is "+this.inputTag.color);
 
       this.hasSelectTagColor = this.inputTag.color != null;
+    },
+    urlify(text) {
+      var urlRegex = /(https?:\/\/[^\s]+)/g;
+      return text.replace(urlRegex, function(url) {
+          return '<a target="_blank" href="' + url + '">' + url + '</a>';
+      })
     },
     querySearch(queryString, cb) {
         var allTags = this.allTags;
@@ -310,9 +339,15 @@ export default{
         });
       },
 
+    showInputContent() {
+        console.log("===================");
+        this.inputContentVisible = true;
+    },
+
     handleSelect(item) {
       this.todo.tags.push(item);
       this.inputTagVisible = false;
+      this.inputContentVisible = false;
       this.inputTag.name = '';
       const that = this
       this.updateTodo(this.todo,function(result){
@@ -339,6 +374,7 @@ export default{
           that.todo.tags.push(result);
           that.allTags.push(result);
           that.inputTagVisible = false;
+          that.inputContentVisible = false;
           that.hasSelectTagColor = false;
           that.inputTag.name = '';
           that.inputTag.color = '#4D4F4E';
@@ -485,6 +521,7 @@ export default{
     onSubmit(quite) {
       console.log("quite -> "+quite);
       const that = this
+      this.hasSaveData = true
       this.todo.subTodoCount = that.$refs.childTodo.getCount();
       this.todo.subTodoCompletedCount = that.$refs.childTodo.getCompletedCount();
       if(!quite){
@@ -517,6 +554,7 @@ export default{
       this.$refs.childTodo.clearTodos()
 
       this.inputTagVisible = false;
+      this.inputContentVisible = false;
       this.inputTag.name = '';
       this.inputTag.color = '#4D4F4E';
     },
@@ -598,6 +636,7 @@ export default{
 		 }
 		 .grid-content {
 			 border-radius: 4px;
+       border: 0px red solid;
 			 min-height: 36px;
 			 padding-left:10px;
 			 padding-right:10px;

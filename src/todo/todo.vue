@@ -5,7 +5,7 @@
 
 		<div v-show="!isLastIndex" class="topAction" style="border:0px solid red;">
 			<span>{{group.name}}</span><span v-show="listType != ''"  style="color:#a8a8a8;font-size: 0.8em;">({{listType}})</span>
-			<i class="el-icon-edit default_icon" v-show="listType == ''" @click="editGroupName" ></i>
+			<i class="el-icon-edit default_icon" v-show="listType == '' && !asSubTodo" @click="editGroupName" ></i>
 
 			<div class="actionArea">
 

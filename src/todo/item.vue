@@ -29,23 +29,14 @@
 				{{tag.name}}
 			</el-tag>
 
-			 <el-popover
-				  placement="bottom-start"
-				  width="180"
-					title="备注信息"
-				  trigger="hover"
-				  :content="todo.content">
-
-					<i class="statusIcon el-icon-document" v-show="todo.content != undefined && todo.content.length != 0" slot="reference" ></i>
-				</el-popover>
+			<i
+				class="statusIcon el-icon-document"
+				v-show="todo.content != undefined && todo.content.length != 0"
+			 	@click="showDetail"></i>
 
 				<i :class="['statusIcon el-icon-circle-check-outline',todo.hasCompletedSubTodo?'statusCompleted':'']" style="margin-left:2px;" v-show="todo.hasSubTodo" ></i>
 
 				<span :class="['statusIcon smallInfo',todo.hasCompletedSubTodo?'statusCompleted':'']" v-show="todo.hasSubTodo">{{todo.subTodoCompletedCount}}/{{todo.subTodoCount}}</span>
-
-
-
-
 			</div>
 
 			 <el-dropdown trigger="click" v-show="showAction" class="dragHandleItem"  @command="handleCommand">
