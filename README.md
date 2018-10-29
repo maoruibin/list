@@ -28,8 +28,9 @@
 ## Todo
 
 - [x] 加入数据存储（leancloud）
-- [ ] 加入用户系统
-- [ ] 替换背景图片
+- [x] 加入用户系统
+- [x] 替换背景图片
+- [x] 使用 markdown 解析备注信息
 
 ## Thanks
 
@@ -40,6 +41,10 @@
 * [LeanCloud](https://leancloud.cn/)
 
 > 提供后端数据支持
+
+## 第三方 lib
+
+* [showdownjs/showdown: A bidirectional Markdown to HTML to Markdown converter written in Javascript](https://github.com/showdownjs/showdown)
 
 
 ## License

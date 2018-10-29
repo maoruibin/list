@@ -78,25 +78,23 @@
             <el-form-item label="详情备注" size="medium">
               <el-input type="textarea"
               v-if="inputContentVisible"
-              :autosize="{ minRows: 3, maxRows: 7}"
+              :autosize="{ minRows: 3, maxRows: 15}"
+              style="line-height: 1;"
                v-model="todo.content"></el-input>
 
                <el-row :gutter="20"
                style="border:1px #d3d7d4 solid; border-radius: 4px;margin-left:4px;margin-right:4px;padding-top:6px;"
                v-show="!inputContentVisible">
-                 <el-col :span="22" style="padding-left:0px;">
-                   <div class="grid-content bg-purple"
-                   style="line-height: 20px;"
-                    v-html="urlify(todo.content)"></div>
-                 </el-col>
+               <div
+                  class="grid-content bg-purple"
+                  style="line-height: 20px;"
+                  v-html="mdToHtml(todo.content)"/>
 
-                 <el-col :span="2">
-                   <div class="grid-content bg-purple" style="float:right">
-                     <i class="el-icon-edit default_icon" @click="showInputContent" ></i>
-                   </div>
-                 </el-col>
                </el-row>
 
+
+              <!-- showOnCompleteList ? 'el-icon-arrow-left' : 'el-icon-plus'  -->
+               <el-button type="text" style="margin-left:4px;" @click="showInputContent">{{inputContentVisible?'预览':'编辑'}}</el-button>
 
             </el-form-item>
 
@@ -198,8 +196,14 @@
 </template>
 
 <script>
+// import Vue from 'vue'
 import Todo from './todo.vue'
 
+// import { VueShowdown } from 'vue-showdown'
+// Vue.component('VueShowdown', VueShowdown)
+
+var showdown  = require('showdown')
+let converter = new showdown.Converter()
 
 let host = process.env.API_HOST
 let api_version = process.env.API_VERSION
@@ -313,6 +317,11 @@ export default{
           return '<a target="_blank" href="' + url + '">' + url + '</a>';
       })
     },
+
+    mdToHtml(text) {
+      return converter.makeHtml(text);
+    },
+
     querySearch(queryString, cb) {
         var allTags = this.allTags;
         var results = queryString ? allTags.filter(this.createFilter(queryString)) : allTags;
@@ -340,8 +349,7 @@ export default{
       },
 
     showInputContent() {
-        console.log("===================");
-        this.inputContentVisible = true;
+        this.inputContentVisible = !this.inputContentVisible;
     },
 
     handleSelect(item) {
