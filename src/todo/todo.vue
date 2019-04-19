@@ -82,9 +82,9 @@
 		<div class="emptyInfo" v-show="isGroupEmpty" style="">
 			<span class="textDesc">{{this.showOnFileList?'还没归档任何内容':'还没有任何内容，点击右上角添加。'}}</span>
 		</div>
-
-		<div class="fileList" v-show="todosCompleteList.length != 0 && !this.showOnFileList" style="margin-top:10px;text-align:left;">
-			<span class="textDesc" @click="showOnCompleteList=!showOnCompleteList" style="cursor:pointer;font-size: 0.9em;">
+		<!-- v-show="todosCompleteList.length != 0 && !this.showOnFileList" -->
+		<div class="fileList" style="margin-top:10px;text-align:left;">
+			<span class="textDesc" @click="showCompleteList" style="cursor:pointer;font-size: 0.9em;">
 				{{this.showOnCompleteList?'查看未完成':'查看已完成'}}
 			</span>
 		</div>
@@ -223,6 +223,19 @@ export default{
 		clearTodos:function(todos){
 			this.todos = [];
 		},
+		showCompleteList:function(){
+			const that = this;
+			const apiTodosComplete = host+"/api/"+api_version+"/todos/groups/"+this.user.objectId+"/"+this.group.objectId+"/complete"
+			
+			console.log("host "+apiTodosComplete);
+
+			this.$http.get(apiTodosComplete).then(response => {
+					this.todosCompleteList = response.body.data.todos
+					that.showOnCompleteList=!that.showOnCompleteList
+			}, response => {
+				
+			});
+		},
 		drag:function(){
 			this.hideAddForm()
 		},
@@ -276,7 +289,6 @@ export default{
 		toogleAddOrReturn:function(){
 			if(this.showOnCompleteList){
 				this.showOnCompleteList = !this.showOnCompleteList
-				console.log("----showOnCompleteList---");
 				return;
 			}
 
