@@ -85,7 +85,7 @@
 		<!-- v-show="todosCompleteList.length != 0 && !this.showOnFileList" -->
 		<div class="fileList" style="margin-top:10px;text-align:left;">
 			<span class="textDesc" @click="showCompleteList" style="cursor:pointer;font-size: 0.9em;">
-				{{this.showOnCompleteList?'查看未完成':'查看已完成'}}
+				{{this.isLoadingList ?  "加载中..." : this.showOnCompleteList?'查看未完成':'查看已完成'}}
 			</span>
 		</div>
 	</div>
@@ -143,6 +143,8 @@ export default{
 			showOnFileList:false,
 			// 是否展示已完成列表
 			showOnCompleteList:false,
+			//是否正在加载列表
+			isLoadingList:false,
 			moveDialogVisible: false
 		}
 	},
@@ -228,12 +230,13 @@ export default{
 			const apiTodosComplete = host+"/api/"+api_version+"/todos/groups/"+this.user.objectId+"/"+this.group.objectId+"/complete"
 			
 			console.log("host "+apiTodosComplete);
-
+			this.isLoadingList = true
 			this.$http.get(apiTodosComplete).then(response => {
-					this.todosCompleteList = response.body.data.todos
+					that.todosCompleteList = response.body.data.todos
+					that.isLoadingList = false
 					that.showOnCompleteList=!that.showOnCompleteList
 			}, response => {
-				
+					that.isLoadingList = false
 			});
 		},
 		drag:function(){
