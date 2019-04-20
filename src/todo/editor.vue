@@ -35,16 +35,6 @@
                   {{tag.name}}
                 </el-tag>
 
-
-                <el-color-picker
-                  v-if="inputTagVisible"
-                  v-show="!isTagsOverCount"
-                  v-model="inputTag.color"
-                  style="margin-left:10px;"
-                  @change="tagColorChange"
-                  :predefine="predefineColors">
-                </el-color-picker>
-
                 <el-autocomplete
                  popper-class="tag-autocomplete"
                  v-if="inputTagVisible"
@@ -55,12 +45,6 @@
                  :fetch-suggestions="querySearch"
                  style="width:80px;"
                  @select="handleSelect">
-
-                  <i
-                    class="el-icon-edit el-input__icon"
-                    slot="suffix"
-                    @click="handleIconClick">
-                  </i>
 
                   <template slot-scope="{ item }">
 
@@ -222,8 +206,7 @@ export default{
       inputContentVisible: false,
       // 是否已经点击了保存按钮
       hasSaveData: false,
-      // 是否已经选择了标签颜色
-      hasSelectTagColor: false,
+      
       allTags:[],
       inputTag: {
         "name":"",
@@ -306,11 +289,7 @@ export default{
     }
   },
 	methods:{
-    tagColorChange(){
-      console.log("color change and result is "+this.inputTag.color);
-
-      this.hasSelectTagColor = this.inputTag.color != null;
-    },
+    
     urlify(text) {
       var urlRegex = /(https?:\/\/[^\s]+)/g;
       return text.replace(urlRegex, function(url) {
@@ -335,7 +314,7 @@ export default{
         };
       },
 
-    // tab 被删除
+    // tag 被删除
     handleClose(tag) {
         this.todo.tags.splice(this.todo.tags.indexOf(tag), 1);
 
@@ -360,12 +339,9 @@ export default{
       const that = this
       this.updateTodo(this.todo,function(result){
         that.checkTagCountAndPoint();
-        that.hasSelectTagColor = false;
       })
     },
-    handleIconClick(ev) {
-        console.log(ev);
-    },
+    
     checkTagCountAndPoint(){
       if(this.todo.tags.length == 3){
         this.$message({
@@ -374,8 +350,26 @@ export default{
         });
       }
     },
+    
+    //生成从minNum到maxNum的随机数
+    randomNum(minNum,maxNum){ 
+        switch(arguments.length){ 
+            case 1: 
+                return parseInt(Math.random()*minNum+1,10); 
+            break; 
+            case 2: 
+                return parseInt(Math.random()*(maxNum-minNum+1)+minNum,10); 
+            break; 
+                default: 
+                    return 0; 
+                break; 
+        } 
+    },
+    
     handleInputTagConfirm() {
       this.inputTag.userId = this.user.objectId;
+      //随机选一个颜色
+      this.inputTag.color = this.predefineColors[this.randomNum(0,this.predefineColors.length-1)];
       const that = this;
       this.createTags(this.inputTag,function(result,msg){
         if(result != undefined){
@@ -383,9 +377,7 @@ export default{
           that.allTags.push(result);
           that.inputTagVisible = false;
           that.inputContentVisible = false;
-          that.hasSelectTagColor = false;
           that.inputTag.name = '';
-          that.inputTag.color = '#4D4F4E';
           that.checkTagCountAndPoint();
           that.updateTodo(that.todo)
         }else{
@@ -564,7 +556,6 @@ export default{
       this.inputTagVisible = false;
       this.inputContentVisible = false;
       this.inputTag.name = '';
-      this.inputTag.color = '#4D4F4E';
     },
 
     updateTodo(todo,callback){
