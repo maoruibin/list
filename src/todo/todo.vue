@@ -16,8 +16,8 @@
 				        <i class="el-icon-more icon_normal"></i>
 				      </span>
 				      <el-dropdown-menu slot="dropdown">
-				        <el-dropdown-item command="editGroup"  v-show="!showOnFileList && !showOnCompleteList && false">编辑分组</el-dropdown-item>
-								<el-dropdown-item command="onFileList" v-show="todosOnFileList.length != 0 && !showOnCompleteList" >查看已归档</el-dropdown-item>
+				        
+								<el-dropdown-item command="onFileList" v-show="hasOnFileList && !showOnCompleteList" >查看已归档</el-dropdown-item>
 								<el-dropdown-item command="onFileBatch" v-show="showOnCompleteList" >归档所有已完成事项</el-dropdown-item>
 
 								<el-popover
@@ -33,12 +33,12 @@
 								  <el-dropdown-item
 										slot="reference"
 										v-show="!showOnFileList && !showOnCompleteList">
-										归档分组
+										归档该分组
 									</el-dropdown-item>
 
 								</el-popover>
 
-								<el-dropdown-item command="deleteAll" v-show="showOnFileList & todosOnFileList.length != 0">删除清空已归档任务</el-dropdown-item>
+								<el-dropdown-item command="deleteAll" v-show="showOnFileList & todosOnFileList.length != 0">清空已归档任务</el-dropdown-item>
 				      </el-dropdown-menu>
 				</el-dropdown>
 			</div>
@@ -54,7 +54,7 @@
 			v-show="showInput" />
 
 		<!-- dragHandleItem 指定拖动区域 -->
-		<draggable class="dragList" :list="filterTodos" :options="{handle:'.dragHandleItem',ghostClass:'ghost',scroll: true,disabled:showOnFileList,animation: 150,group:{ name:'todoList'}}" @add="moveTo" @start="drag" @end="drop" >
+		<draggable v-show="!isLoadingList" class="dragList" :list="filterTodos" :options="{handle:'.dragHandleItem',ghostClass:'ghost',scroll: true,disabled:showOnFileList,animation: 150,group:{ name:'todoList'}}" @add="moveTo" @start="drag" @end="drop" >
 
 				<Item
 					v-for="(todo, index) in filterTodos"
@@ -82,10 +82,13 @@
 		<div class="emptyInfo" v-show="isGroupEmpty" style="">
 			<span class="textDesc">{{this.showOnFileList?'还没归档任何内容':'还没有任何内容，点击右上角添加。'}}</span>
 		</div>
+		<div class="emptyInfo" v-show="isLoadingList" >
+			<i class="el-icon-loading" style="margin-top:30px;margin-bottom:30px;"></i>
+		</div>
 		<!-- v-show="todosCompleteList.length != 0 && !this.showOnFileList" -->
-		<div class="fileList" style="margin-top:10px;text-align:left;">
+		<div v-show="hasCompleteList && !isLoadingList" class="fileList" style="margin-top:10px;text-align:left;">
 			<span class="textDesc" @click="showCompleteList" style="cursor:pointer;font-size: 0.9em;">
-				{{this.isLoadingList ?  "加载中..." : this.showOnCompleteList?'查看未完成':'查看已完成'}}
+				{{this.showOnCompleteList?'查看未完成':'查看已完成'}}
 			</span>
 		</div>
 	</div>
@@ -163,6 +166,11 @@ export default{
 	mounted:function(){
 		if(!this.isLastIndex){
 			this.todos = this.group.todos.results;
+			//是否有已完成
+			this.hasCompleteList = this.group.hasCompleteList;
+			//是否有已归档
+			this.hasOnFileList = this.group.hasOnFileList;
+
 			this.todosOnFileList = this.group.todos.resultsOnFile;
 			this.todosCompleteList = this.group.todos.resultsComplete;
 			if(this.todosCompleteList == undefined){
@@ -235,6 +243,19 @@ export default{
 					that.todosCompleteList = response.body.data.todos
 					that.isLoadingList = false
 					that.showOnCompleteList=!that.showOnCompleteList
+			}, response => {
+					that.isLoadingList = false
+			});
+		},
+		showFileList:function(){
+			const that = this;
+			const apiTodosList = host+"/api/"+api_version+"/todos/groups/"+this.user.objectId+"/"+this.group.objectId+"/onfile"
+			
+			this.isLoadingList = true
+			this.$http.get(apiTodosList).then(response => {
+					that.todosOnFileList = response.body.data.todos
+					that.isLoadingList = false
+					that.showOnFileList=!that.showOnFileList
 			}, response => {
 					that.isLoadingList = false
 			});
@@ -333,7 +354,8 @@ export default{
 			}else if(command === 'onFileBatch'){
 				this.showOnFileBatchDialog()
 			}else if(command === 'onFileList'){
-				this.showOnFileList = !this.showOnFileList
+				this.showFileList()
+
 			}
 		},
 		deleteDirect(){

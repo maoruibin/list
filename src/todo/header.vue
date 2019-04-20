@@ -5,7 +5,7 @@
 				<div class="grid-content left_top" style="border:0px solid black;">
 
 					<el-dropdown class="titleItem" show-timeout=100 @command="selectProject">
-						<span class="el-dropdown-link" style="color:#ffffff;">
+						<span class="el-dropdown-link" style="color:#ffffff;border:0px solid black;">
 							{{project.name}}<i class="el-icon-arrow-down el-icon--right"></i>
 						</span>
 
@@ -20,8 +20,11 @@
 						</el-dropdown-menu>
 
 					</el-dropdown>
-
+					<!-- <el-button icon="el-icon-search" size="mini" circle style="margin-left:16px;"></el-button> -->
+					<el-input v-model="input" placeholder="输入搜索" prefix-icon="el-icon-search" size="small" style="margin-left:16px;width:180px;display:none;"></el-input>
 				</div>
+				
+
 			</el-col>
 			<el-col :span="12">
 				<div class="grid-content center_title" style="border:0px solid black;">
@@ -197,6 +200,10 @@
 .left_top {
 	background: transparent;
 	padding-left:12px;
+	display:flex;
+	flex-direction: row;
+	align-items:center;
+	justify-content:flex-start;
 }
 
 .center_title {
