@@ -8,6 +8,7 @@
 			:isLastIndex="index == groupTodos.length -1"
 			:group="group"
 			:user="user"
+			:allTags="allTags"
 			ref="childTodo"
 			@delete="deleteGroup"
 			@showTodoDetail="showTodoDetail"
@@ -39,7 +40,8 @@ export default{
 	},
 	data(){
 		return{
-      groupTodos:[],
+			groupTodos:[],
+			allTags:[],
       project:{},
 			groupForAppend:{}
 		}
@@ -48,12 +50,14 @@ export default{
 		Todo,
 		draggable
 	},
+	created() {
+		
+	},
 	mounted:function(){
     if(!this.user){
       return
-    }
-
-
+		}
+		this.fetchAllTags();
   },
 	
   methods:{
@@ -125,6 +129,18 @@ export default{
 
 
 		},
+		fetchAllTags(){
+				this.user = JSON.parse(localStorage.getItem("user"))
+				const apiTagsAll = host+"/api/"+api_version+"/tags/"+this.user.objectId
+				this.$http.get(apiTagsAll).then(response => {
+						this.allTags = response.body.data
+						this.allTags.forEach(function(item){
+								item.value = item.name
+						})
+
+						}, response => {}
+				);
+    }, 
     appendGroup:function(event){
 			this.showAddGroupDialog();
     },

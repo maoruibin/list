@@ -50,6 +50,7 @@
 			:length="todos.length"
 			:group="group"
 			:user="user"
+			:allTags="allTags"
 			ref="addForm"
 			v-show="showInput" />
 
@@ -127,6 +128,10 @@ export default{
 			required: false,
 			default: false
 		},
+		allTags:{
+            type: Array,
+			required: true
+        },
 	},
 	data(){
 		return{

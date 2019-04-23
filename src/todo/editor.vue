@@ -613,13 +613,6 @@ export default{
 <style lang="stylus" scoped>
     /* begin tag */
 
-    .button-new-tag {
-      margin-left: 10px;
-      height: 32px;
-      line-height: 30px;
-      padding-top: 0;
-      padding-bottom: 0;
-    }
     .input-new-tag {
       width: 90px;
       margin-left: 10px;
