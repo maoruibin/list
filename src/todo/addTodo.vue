@@ -26,7 +26,7 @@
 				<el-checkbox
 					v-model="insertEnd"
 					style="font-size:0.5em;font-weight:340;color:#636363">
-					追加 todo 到列表末尾
+					追加至末尾
 				</el-checkbox>
 			</div>
 	</el-card>
@@ -92,6 +92,7 @@ export default{
 		},
 		reset:function(){
 			this.todo.title= ''
+			this.todo.tags = []
 			this.focus()
 			this.inRequest = false
 			this.insertEnd = false
@@ -131,6 +132,19 @@ export default{
 			formData.append('completed', 'false');
 			formData.append('onFile', 'false');
 			formData.append('userId', this.user.objectId);
+
+			// 格式化 tags
+			let tagCount = this.todo.tags.length;
+			if(tagCount > 0){
+				let tagArray = ''
+				for (var i=0;i<tagCount;i++){
+					tagArray += this.todo.tags[i]['objectId']
+					if(i<tagCount-1){
+						tagArray += ','
+					}
+				}
+				formData.append("tags", tagArray);
+			}
 
 			this.inRequest = true
 			// POST /someUrl
