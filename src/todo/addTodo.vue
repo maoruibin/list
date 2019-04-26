@@ -150,6 +150,7 @@ export default{
 			// POST /someUrl
 			this.$http.post(api, formData).then(response => {
 				this.$emit('addTodo',response.body.data,this.insertEnd)
+				this.hideAddForm()
 				this.reset()
 			}, response => {
 				this.reset()

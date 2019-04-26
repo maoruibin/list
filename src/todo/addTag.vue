@@ -75,7 +75,7 @@ export default{
         },
         allTags:{
             type: Array,
-			required: true
+			required: false
         }
     },
     mounted:function(){

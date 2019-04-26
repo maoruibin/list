@@ -82,37 +82,6 @@
 
             </el-form-item>
 
-            <el-form-item
-              style="display:none;"
-              label="起始时间"
-              size="medium">
-              <el-time-select
-                placeholder="开始"
-                v-model="todo.expectedStartTime"
-                size="small"
-                editable=False
-                style="width:30%;"
-                :picker-options="{
-                  start: nowTime,
-                  step: '00:15',
-                  end: '24:00'
-                }">
-              </el-time-select>
-              <el-time-select
-                placeholder="结束"
-                v-model="todo.expectedEndTime"
-                size="small"
-                editable=False
-                style="width:30%;"
-                :picker-options="{
-                  start: nowTime,
-                  step: '00:15',
-                  end: '24:00',
-                  minTime: todo.expectedStartTime
-                }">
-              </el-time-select>
-            </el-form-item>
-
             <el-form-item size="medium" style="margin-bottom:4px;" >
               <el-button style="float:right;border:0px solid red;"
                @click="onSubmit(false)"
@@ -124,7 +93,7 @@
           <el-form
             class="grid-content bg-purple-light"
             @submit.native.prevent
-            style="margin-top:10px;padding:0px;">
+            style="margin-top:10px;padding:0px;display:none;">
             <div
               class="normalLoading"
               v-show="loadingSubTodo">
@@ -533,7 +502,7 @@ export default{
           return;
         }
 
-        that.$emit('hideEditor')
+        // that.$emit('hideEditor')
         if(response === undefined){
           that.$message({
             type: 'success',
