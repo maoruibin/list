@@ -59,27 +59,28 @@
 
             </el-form-item>
 
-            <el-form-item label="详情备注" size="medium">
-              <el-input type="textarea"
-              v-if="inputContentVisible"
-              :autosize="{ minRows: 3, maxRows: 15}"
-              style="line-height: 1;"
-               v-model="todo.content"></el-input>
+            <el-form-item label="详情备注" size="medium" >
+                  <el-input 
+                    type="textarea"
+                    v-if="inputContentVisible"
+                    autofocus=true
+                    ref="backup"
+                    @blur="showInputContent"
+                    @keyup.esc.native="showInputContent"
+                    :autosize="{ minRows: 3, maxRows: 15}"
+                    style="line-height: 1;"
+                    v-model="todo.content"/>
 
-               <el-row :gutter="20"
-               style="border:1px #d3d7d4 solid; border-radius: 4px;margin-left:4px;margin-right:4px;padding-top:6px;"
-               v-show="!inputContentVisible">
-               <div
-                  class="grid-content bg-purple"
-                  style="line-height: 20px;"
-                  v-html="mdToHtml(todo.content)"/>
+                  <el-row :gutter="20"
+                    style="border:1px #d3d7d4 solid; border-radius: 4px;margin-left:4px;margin-right:4px;padding-top:6px;"
+                    v-show="!inputContentVisible">
+                  <div
+                      class="grid-content bg-purple"
+                      style="line-height: 20px;border:0px #ffffff solid;color:#636363;font-weight:400;"
+                      @click="showInputContent"
+                      v-html="todo.content != undefined && todo.content.length != 0 ? mdToHtml(todo.content): '添加详细描述' "/>
 
                </el-row>
-
-
-              <!-- showOnCompleteList ? 'el-icon-arrow-left' : 'el-icon-plus'  -->
-               <el-button type="text" style="margin-left:4px;" @click="showInputContent">{{inputContentVisible?'预览':'编辑'}}</el-button>
-
             </el-form-item>
 
             <el-form-item size="medium" style="margin-bottom:4px;" >
@@ -298,6 +299,10 @@ export default{
 
     showInputContent() {
         this.inputContentVisible = !this.inputContentVisible;
+        if(this.inputContentVisible){
+          // this.$refs.backup.focus();
+
+        }
     },
 
     handleSelect(item) {
@@ -625,6 +630,7 @@ export default{
     .normalLoading >i{
       text-align:center;
     }
+    
     .normalLoading >span{
       text-align:center;
     }
