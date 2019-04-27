@@ -78,7 +78,7 @@
                       class="grid-content bg-purple"
                       style="line-height: 20px;border:0px #ffffff solid;color:#636363;font-weight:400;"
                       @click="showInputContent"
-                      v-html="todo.content != undefined && todo.content.length != 0 ? mdToHtml(todo.content): '添加详细描述' "/>
+                      v-html="todo.content != undefined && todo.content.length != 0 ? mdToHtml(todo.content): '点击添加描述' "/>
 
                </el-row>
             </el-form-item>

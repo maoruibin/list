@@ -17,7 +17,7 @@
 					ref="addTag"/>
 			</div>
 			<div class="bottom">
-				 <el-button  type="text" @click="addTodo" :disabled="inRequest">确定</el-button>
+				 <el-button type="primary" plain size="small" @click="addTodo" :disabled="inRequest">确定</el-button>
 				 <i class="el-icon-close" style="margin-left:12px;color: #a8a8a8;" @click="hideAddForm"></i>
 				 <i :class="['more', showMoreAction?'el-icon-arrow-up':'el-icon-arrow-down']"  @click="showMore"></i>
 			</div>
