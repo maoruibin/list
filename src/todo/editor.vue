@@ -72,7 +72,7 @@
                     v-model="todo.content"/>
 
                   <el-row :gutter="20"
-                    style="border:1px #d3d7d4 solid; border-radius: 4px;margin-left:4px;margin-right:4px;padding-top:6px;"
+                    style="border:1px #dddede solid; border-radius: 4px;margin-left:4px;margin-right:4px;padding-top:6px;"
                     v-show="!inputContentVisible">
                   <div
                       class="grid-content bg-purple"
