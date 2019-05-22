@@ -33,14 +33,10 @@
 			</el-col>
 			<el-col :span="6"  >
 				<div class="grid-content right_top" >
-						<i
-						class="headIcon el-icon-about"
-						@click="showAboutApp"/>
-
-						<el-tooltip effect="dark" content="欢迎大家来这里交流意见" placement="bottom">
+						<el-tooltip effect="dark" content="关于" placement="bottom">
 							<i
-							class="headIcon el-icon-fankuiyijian"
-							@click="gotoOpinion"/>
+								class="headIcon el-icon-about"
+								@click="showAboutApp"/>
 
 						</el-tooltip>
 
@@ -123,8 +119,10 @@
       gotoOpinion() {
 				window.open('http://support.qq.com/products/30228');
 			},
+      gotoApi() {
+				window.open('https://gudong.name/2018/09/07/todo-api.html');
+			},
       updateProjectList(projectList) {
-				console.log("updateProjectList size is "+projectList.length);
 				this.projectList = projectList
 			},
       appendProject(project) {

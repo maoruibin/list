@@ -4,7 +4,7 @@
   @close="dismiss"
   :visible.sync="showAboutDialog"
   width="50%">
-  <div class="footer"style="text-align:center">
+  <div class="footer" style="text-align:center">
 
 
     <span >
@@ -15,6 +15,13 @@
     </div>
     <div>
       <a href="https://leancloud.cn/" target="_blank">leancloud</a> &nbsp;&nbsp;<a href="http://element.eleme.io/#/" target="_blank">element</a> &nbsp;&nbsp;<a href="https://cn.vuejs.org/v2/guide/syntax.html" target="_blank">vue</a>
+    </div>
+    <br>
+    <div>
+      <a class="bottom" href="https://github.com/maoruibin/liuye" target="_blank">开放 Api</a>
+      &nbsp;&nbsp;
+      <a class="bottom" href="https://github.com/maoruibin/liuye/issue" target="_blank">意见反馈</a>
+      <!-- http://support.qq.com/products/30228 -->
     </div>
   </div>
 
@@ -63,5 +70,9 @@ let api_version = process.env.API_VERSION
   .footer a{
     text-decoration none;
     color: #409EFF;
+  }
+
+  .bottom{
+    font-size:10px;
   }
 </style>
