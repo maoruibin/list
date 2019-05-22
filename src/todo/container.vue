@@ -111,7 +111,7 @@ export default{
 					}
 			})
 
-			const api = host+"/api/"+api_version+"/todos/groups/batchEdit"
+			const api = host+"/api/"+api_version+"/groups/batchEdit"
 			const config = {
 					headers : {
 							'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
@@ -181,7 +181,7 @@ export default{
 		},
 
 		addNewGroup(group){
-			const api = host+"/api/"+api_version+"/todos/groups"
+			const api = host+"/api/"+api_version+"/groups"
 			var formData = new FormData();
 			formData.append('name', group.name);
 			formData.append('projectId', group.projectId);
@@ -201,7 +201,7 @@ export default{
 		},
 		// 更新 group
 		updateGroup(group,callback){
-			const api = host+"/api/"+api_version+"/todos/groups"
+			const api = host+"/api/"+api_version+"/groups"
 			var formData = new FormData();
 
 			for(var key in group) {
@@ -250,7 +250,7 @@ export default{
 			})
 		},
 		deleteGroup(objectId){
-			const api = host+"/api/"+api_version+"/todos/groups/"+objectId
+			const api = host+"/api/"+api_version+"/groups/"+objectId
 			const config =
 				{
 				    headers : {

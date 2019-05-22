@@ -476,7 +476,7 @@ export default{
 
 
     fetchSubTodo(groupId) {
-      const api = host+"/api/"+api_version+"/todos/groups/"+this.user.objectId+"/"+groupId
+      const api = host+"/api/"+api_version+"/"+this.user.objectId+"/"+groupId
       this.loadingSubTodo = true
 		  this.$http.get(api).then(response => {
         this.loadingSubTodo = false

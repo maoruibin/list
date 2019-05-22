@@ -240,7 +240,7 @@ export default{
 		},
 		showCompleteList:function(){
 			const that = this;
-			const apiTodosComplete = host+"/api/"+api_version+"/todos/groups/"+this.user.objectId+"/"+this.group.objectId+"/complete"
+			const apiTodosComplete = host+"/api/"+api_version+"/todos/"+this.user.objectId+"/"+this.group.objectId+"/complete"
 			
 			console.log("host "+apiTodosComplete);
 			this.isLoadingList = true
@@ -254,7 +254,7 @@ export default{
 		},
 		showFileList:function(){
 			const that = this;
-			const apiTodosList = host+"/api/"+api_version+"/todos/groups/"+this.user.objectId+"/"+this.group.objectId+"/onfile"
+			const apiTodosList = host+"/api/"+api_version+"/todos/"+this.user.objectId+"/"+this.group.objectId+"/onfile"
 			
 			this.isLoadingList = true
 			this.$http.get(apiTodosList).then(response => {
