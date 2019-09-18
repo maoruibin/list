@@ -18,7 +18,10 @@
            label-position="top"
            style="">
             <el-form-item label="名称" size="medium" style="">
-              <el-input style="border:0px solid red;" v-model="todo.title"></el-input>
+              <el-input 
+              style="border:0px solid red;" 
+              v-model="todo.title"
+              @keyup.enter.native="onSubmit(false)"></el-input>
             </el-form-item>
 
             <el-form-item label="标签" size="medium">
@@ -506,7 +509,7 @@ export default{
         if(quite){
           return;
         }
-
+        that.dismiss()
         // that.$emit('hideEditor')
         if(response === undefined){
           that.$message({
